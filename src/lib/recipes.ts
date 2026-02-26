@@ -13,28 +13,37 @@ function normalizeImagePath(img: string): string {
 }
 
 function getRecipeFiles(): { cuisine: string; filename: string; filePath: string }[] {
-  if (!fs.existsSync(recipesDirectory)) return [];
+  try {
+    if (!fs.existsSync(recipesDirectory)) {
+      console.warn(`Recipes directory not found: ${recipesDirectory}`);
+      return [];
+    }
 
-  const entries: { cuisine: string; filename: string; filePath: string }[] = [];
-  const items = fs.readdirSync(recipesDirectory);
+    const entries: { cuisine: string; filename: string; filePath: string }[] = [];
+    const items = fs.readdirSync(recipesDirectory);
 
-  for (const item of items) {
-    const itemPath = path.join(recipesDirectory, item);
-    if (!fs.statSync(itemPath).isDirectory()) continue;
+    for (const item of items) {
+      const itemPath = path.join(recipesDirectory, item);
+      const stat = fs.statSync(itemPath);
+      if (!stat.isDirectory()) continue;
 
-    const files = fs.readdirSync(itemPath);
-    for (const file of files) {
-      if (file.endsWith('.md') && !file.startsWith('_')) {
-        entries.push({
-          cuisine: item,
-          filename: file,
-          filePath: path.join(itemPath, file),
-        });
+      const files = fs.readdirSync(itemPath);
+      for (const file of files) {
+        if (file.endsWith('.md') && !file.startsWith('_')) {
+          entries.push({
+            cuisine: item,
+            filename: file,
+            filePath: path.join(itemPath, file),
+          });
+        }
       }
     }
-  }
 
-  return entries;
+    return entries;
+  } catch (error) {
+    console.error('Error reading recipe files:', error);
+    return [];
+  }
 }
 
 export function getAllRecipes(): Recipe[] {

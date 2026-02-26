@@ -7,12 +7,20 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const recipes = getAllRecipes();
-  return recipes.map((recipe) => ({
-    cuisine: recipe.cuisine.toLowerCase(),
-    slug: recipe.slug,
-  }));
+  try {
+    const recipes = getAllRecipes();
+    return recipes.map((recipe) => ({
+      cuisine: recipe.cuisine.toLowerCase(),
+      slug: recipe.slug,
+    }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
 }
+
+// Tell Next.js to generate these pages at build time
+export const dynamicParams = false;
 
 export async function generateMetadata({
   params,
