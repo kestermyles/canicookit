@@ -3,17 +3,18 @@ import { Inter } from 'next/font/google';
 import Script from 'next/script';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { AuthProvider } from '@/contexts/AuthContext';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Can I Cook It? — Simple Recipes for Real People',
+    default: 'Can I Cook It? — Tell us what you\'ve got. We\'ll build something delicious.',
     template: '%s | Can I Cook It?',
   },
   description:
-    "Simple, delicious recipes with clear instructions. No fuss, no jargon — just food you'll actually want to cook.",
+    'Tell us what you\'ve got. We\'ll build something delicious. Generate custom recipes from your ingredients or browse our community recipe collection.',
   metadataBase: new URL('https://canicookit.com'),
   icons: {
     icon: '/images/logo-color.png',
@@ -41,9 +42,11 @@ export default function RootLayout({
         )}
       </head>
       <body className={inter.className}>
-        <Header />
-        <main className="pt-16">{children}</main>
-        <Footer />
+        <AuthProvider>
+          <Header />
+          <main className="pt-16">{children}</main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

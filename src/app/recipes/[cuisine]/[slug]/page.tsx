@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { getRecipeBySlug, getAllRecipes } from '@/lib/recipes';
+import StarRating from '@/components/StarRating';
+import AbilityLevel from '@/components/AbilityLevel';
 
 interface PageProps {
   params: { cuisine: string; slug: string };
@@ -134,6 +136,13 @@ export default async function RecipePage({ params }: PageProps) {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Title */}
         <h1 className="text-3xl md:text-4xl font-bold mb-4 font-display">{recipe.title}</h1>
+
+        {/* Star Rating - Prominent placement */}
+        <div className="mb-6 p-4 bg-orange-50 rounded-lg inline-block">
+          <p className="text-sm text-gray-700 font-medium mb-2">Rate this recipe:</p>
+          <StarRating recipeSlug={params.slug} size="large" />
+        </div>
+
         <p className="text-secondary text-lg mb-6">{recipe.description}</p>
 
         {/* Dietary badges */}
@@ -164,6 +173,12 @@ export default async function RecipePage({ params }: PageProps) {
             </span>
           )}
         </div>
+
+        {/* Ability Level Selector */}
+        <section className="mb-8 p-6 bg-gray-50 rounded-xl">
+          <h2 className="text-lg font-bold mb-3">Cooking Ability Level</h2>
+          <AbilityLevel currentDifficulty={recipe.difficulty} readonly />
+        </section>
 
         {/* Stats Bar */}
         <div className="flex flex-wrap gap-4 py-4 border-y border-gray-200 mb-8">

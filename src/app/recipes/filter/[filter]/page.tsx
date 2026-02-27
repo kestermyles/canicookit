@@ -12,6 +12,14 @@ const FILTER_LABELS: Record<string, string> = {
   'student-kitchen': 'Student Kitchen',
   'dairy-free': 'Dairy Free',
   'gluten-free': 'Gluten Free',
+  breakfast: 'Breakfast',
+  lunch: 'Lunch',
+  dinner: 'Dinner',
+  snacks: 'Snacks',
+  baking: 'Baking',
+  starters: 'Starters',
+  desserts: 'Desserts',
+  drinks: 'Drinks',
 };
 
 const FILTER_DESCRIPTIONS: Record<string, string> = {
@@ -21,6 +29,14 @@ const FILTER_DESCRIPTIONS: Record<string, string> = {
     'Cheap, easy recipes for when all you have is a hob and a dream.',
   'dairy-free': 'Delicious dairy-free recipes for every occasion.',
   'gluten-free': "Gluten-free recipes that don't compromise on taste.",
+  breakfast: 'Start your day right with these breakfast recipes.',
+  lunch: 'Quick and satisfying lunch ideas.',
+  dinner: 'Delicious dinner recipes for every night of the week.',
+  snacks: 'Perfect snacks for any time of day.',
+  baking: 'From cakes to bread, bake something delicious.',
+  starters: 'Impressive starters to kick off any meal.',
+  desserts: 'Sweet treats to finish on a high note.',
+  drinks: 'Refreshing drinks and cocktails.',
 };
 
 export async function generateStaticParams() {

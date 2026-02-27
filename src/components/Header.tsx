@@ -3,10 +3,16 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import AuthModal from './AuthModal';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const pathname = usePathname();
+  const { user, signOut, loading } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,15 +35,16 @@ export default function Header() {
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/">
+        <Link href="/" className="flex items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/logo-color.svg"
             alt="Can I Cook It"
             style={{ height: '60px', width: 'auto' }}
+            className="mix-blend-darken"
           />
         </Link>
-        <nav className="flex gap-6 text-sm">
+        <nav className="flex gap-6 text-sm items-center">
           <Link
             href="/"
             className={`text-secondary hover:text-foreground transition-colors relative ${
@@ -70,7 +77,77 @@ export default function Header() {
           >
             Basics
           </Link>
+
+          {!loading && (
+            <>
+              {user ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center gap-2 px-3 py-1.5 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors"
+                  >
+                    <span>{user.user_metadata?.name || 'Account'}</span>
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+                  {showUserMenu && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                      <div className="px-4 py-2 text-sm text-gray-700 border-b">
+                        {user.email}
+                      </div>
+                      <button
+                        onClick={() => {
+                          signOut();
+                          setShowUserMenu(false);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setAuthMode('signin');
+                      setShowAuthModal(true);
+                    }}
+                    className="px-3 py-1.5 text-secondary hover:text-foreground transition-colors"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => {
+                      setAuthMode('signup');
+                      setShowAuthModal(true);
+                    }}
+                    className="px-3 py-1.5 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors"
+                  >
+                    Sign Up
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </nav>
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          initialMode={authMode}
+        />
       </div>
     </header>
   );

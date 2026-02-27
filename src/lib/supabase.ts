@@ -46,6 +46,8 @@ export interface GeneratedRecipeRow {
   view_count: number;
   created_at: string;
   updated_at: string;
+  user_id: string | null;
+  user_name: string | null;
 }
 
 export interface CommentRow {
@@ -58,6 +60,8 @@ export interface CommentRow {
   created_at: string;
   ip_address: string | null;
   user_agent: string | null;
+  user_id: string | null;
+  user_email: string | null;
 }
 
 export interface RecipePhotoRow {
@@ -96,6 +100,8 @@ export async function createRecipe(recipeData: {
   gluten_free: boolean;
   student_kitchen: boolean;
   tags: string[];
+  user_id?: string;
+  user_name?: string;
 }): Promise<{ success: boolean; data?: GeneratedRecipeRow; error?: string }> {
   try {
     const { data, error } = await supabase
@@ -126,6 +132,8 @@ export async function createRecipe(recipeData: {
           tags: recipeData.tags,
           status: 'pending',
           quality_score: null,
+          user_id: recipeData.user_id || null,
+          user_name: recipeData.user_name || null,
         },
       ])
       .select()
@@ -378,6 +386,8 @@ export async function createComment(commentData: {
   comment: string;
   ip_address?: string;
   user_agent?: string;
+  user_id?: string;
+  user_email?: string;
 }): Promise<{ success: boolean; data?: CommentRow; error?: string }> {
   try {
     const { data, error } = await supabase
@@ -389,6 +399,8 @@ export async function createComment(commentData: {
           comment: commentData.comment,
           ip_address: commentData.ip_address || null,
           user_agent: commentData.user_agent || null,
+          user_id: commentData.user_id || null,
+          user_email: commentData.user_email || null,
           status: 'pending',
         },
       ])

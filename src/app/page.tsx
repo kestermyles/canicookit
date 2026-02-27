@@ -209,49 +209,49 @@ export default async function HomePage() {
           <h2 className="text-2xl font-bold mb-8">Browse by Course</h2>
           <div className="flex flex-wrap gap-3">
             <Link
-              href="/recipes?course=breakfast"
+              href="/recipes/filter/breakfast"
               className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
             >
               🍳 Breakfast
             </Link>
             <Link
-              href="/recipes?course=lunch"
+              href="/recipes/filter/lunch"
               className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
             >
               🥗 Lunch
             </Link>
             <Link
-              href="/recipes?course=dinner"
+              href="/recipes/filter/dinner"
               className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
             >
               🍽️ Dinner
             </Link>
             <Link
-              href="/recipes?course=snacks"
+              href="/recipes/filter/snacks"
               className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
             >
               🥨 Snacks
             </Link>
             <Link
-              href="/recipes?course=baking"
+              href="/recipes/filter/baking"
               className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
             >
               🎂 Baking
             </Link>
             <Link
-              href="/recipes?course=starters"
+              href="/recipes/filter/starters"
               className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
             >
               🥟 Starters
             </Link>
             <Link
-              href="/recipes?course=desserts"
+              href="/recipes/filter/desserts"
               className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
             >
               🍮 Desserts
             </Link>
             <Link
-              href="/recipes?course=drinks"
+              href="/recipes/filter/drinks"
               className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
             >
               🍹 Drinks

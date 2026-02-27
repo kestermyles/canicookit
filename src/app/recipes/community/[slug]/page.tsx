@@ -4,6 +4,8 @@ import { getRecipeBySlug as getDbRecipeBySlug, dbRowToRecipe } from '@/lib/supab
 import CommunityBadge from '@/components/CommunityBadge';
 import PhotoUpload from '@/components/PhotoUpload';
 import CommentSection from '@/components/CommentSection';
+import StarRating from '@/components/StarRating';
+import AbilityLevel from '@/components/AbilityLevel';
 import AdUnit from '@/components/AdUnit';
 
 interface PageProps {
@@ -134,6 +136,12 @@ export default async function CommunityRecipePage({ params }: PageProps) {
         {/* Title */}
         <h1 className="text-3xl md:text-4xl font-bold mb-4 font-display">{recipe.title}</h1>
 
+        {/* Star Rating - Prominent placement */}
+        <div className="mb-6 p-4 bg-orange-50 rounded-lg inline-block">
+          <p className="text-sm text-gray-700 font-medium mb-2">Rate this recipe:</p>
+          <StarRating recipeSlug={params.slug} size="large" />
+        </div>
+
         {/* Attribution */}
         {recipe.user_ingredients && recipe.user_ingredients.length > 0 && (
           <p className="text-sm text-foreground/60 mb-4">
@@ -171,6 +179,12 @@ export default async function CommunityRecipePage({ params }: PageProps) {
             </span>
           )}
         </div>
+
+        {/* Ability Level Selector */}
+        <section className="mb-8 p-6 bg-gray-50 rounded-xl">
+          <h2 className="text-lg font-bold mb-3">Cooking Ability Level</h2>
+          <AbilityLevel currentDifficulty={recipe.difficulty} readonly />
+        </section>
 
         {/* Stats Bar */}
         <div className="flex flex-wrap gap-4 py-4 border-y border-gray-200 mb-8">
