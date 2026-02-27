@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -31,12 +30,11 @@ export default function Header() {
     >
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/">
-          <Image
-            src="/images/logo-color.png"
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/logo-color.svg"
             alt="Can I Cook It"
-            width={80}
-            height={80}
-            className="object-contain"
+            style={{ height: '60px', width: 'auto' }}
           />
         </Link>
         <nav className="flex gap-6 text-sm">

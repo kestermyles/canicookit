@@ -3,11 +3,33 @@
 import { useState, useEffect } from 'react';
 
 const PLACEHOLDERS = [
+  // Ingredient combinations
   'Try: leftover chicken, rice, half a courgette...',
   'Try: eggs, spinach, feta...',
   'Try: minced beef, tinned tomatoes, pasta...',
   'Try: salmon, lemon, capers...',
   'Try: banana, oats, peanut butter...',
+  'Try: chicken thighs, potatoes, garlic...',
+  'Try: bacon, mushrooms, cream...',
+  'Try: prawns, chilli, garlic, spaghetti...',
+  'Try: lamb mince, aubergine, cinnamon...',
+  'Try: white fish, cherry tomatoes, olives...',
+  'Try: pork belly, apples, cider...',
+  'Try: chorizo, chickpeas, spinach...',
+  'Try: tofu, soy sauce, ginger, pak choi...',
+
+  // Dish names
+  'Try: beef bourguignon',
+  'Try: shepherd\'s pie',
+  'Try: chicken tikka masala',
+  'Try: carbonara',
+  'Try: fish pie',
+  'Try: lasagne',
+  'Try: moussaka',
+  'Try: thai green curry',
+  'Try: pad thai',
+  'Try: coq au vin',
+  'Try: beef wellington',
 ];
 
 interface RotatingPlaceholderProps {

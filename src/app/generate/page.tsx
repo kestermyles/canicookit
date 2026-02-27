@@ -28,9 +28,9 @@ export default function GeneratePage() {
     fetchRecent();
   }, []);
 
-  // Pre-fill ingredients from query param
+  // Pre-fill ingredients from query params (q, dish, or ingredients)
   useEffect(() => {
-    const query = searchParams.get('q');
+    const query = searchParams.get('q') || searchParams.get('dish') || searchParams.get('ingredients');
     if (query && query.trim()) {
       const ingredients = query
         .split(/[,;\s]+/)
@@ -140,9 +140,10 @@ export default function GeneratePage() {
         <div className="text-center mb-8">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/images/logo-white.png"
-            alt="Can I Cook It?"
-            className="h-20 mx-auto mb-4"
+            src="/images/logo-black.svg"
+            alt="Can I Cook It"
+            style={{ height: '80px', width: 'auto', filter: 'invert(1)' }}
+            className="mx-auto mb-4"
           />
           <p className="text-lg text-white/80">
             Tell us what you've got. We'll build something delicious.
@@ -280,7 +281,7 @@ export default function GeneratePage() {
                 onClick={handleReset}
                 className="px-6 py-2 text-primary hover:text-orange-700 font-medium transition-colors"
               >
-                ← Generate another recipe
+                ← Create another recipe
               </button>
             </div>
           </div>

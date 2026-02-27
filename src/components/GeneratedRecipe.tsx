@@ -48,7 +48,7 @@ export default function GeneratedRecipe({
         {/* Title */}
         <div className="mb-6">
           <div className="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium mb-3">
-            AI Generated Recipe
+            AI Created Recipe
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-4">{recipe.title}</h1>
           <p className="text-secondary text-lg">{recipe.description}</p>
