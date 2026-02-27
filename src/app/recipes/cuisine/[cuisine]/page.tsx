@@ -7,7 +7,7 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const cuisines = getAllCuisines();
+  const cuisines = await getAllCuisines();
   return cuisines.map((c) => ({ cuisine: c.toLowerCase() }));
 }
 
@@ -22,8 +22,8 @@ export async function generateMetadata({
   };
 }
 
-export default function CuisinePage({ params }: PageProps) {
-  const recipes = getRecipesByCuisine(params.cuisine);
+export default async function CuisinePage({ params }: PageProps) {
+  const recipes = await getRecipesByCuisine(params.cuisine);
   const label = params.cuisine.charAt(0).toUpperCase() + params.cuisine.slice(1);
 
   return (

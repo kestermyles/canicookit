@@ -102,7 +102,7 @@ export default function PhotoUpload({
     if (droppedFile && droppedFile.type.startsWith('image/')) {
       const fakeEvent = {
         target: { files: [droppedFile] },
-      } as React.ChangeEvent<HTMLInputElement>;
+      } as unknown as React.ChangeEvent<HTMLInputElement>;
       handleFileChange(fakeEvent);
     }
   };

@@ -39,8 +39,8 @@ export async function generateMetadata({
   };
 }
 
-export default function FilterPage({ params }: PageProps) {
-  const recipes = getRecipesByFilter(params.filter);
+export default async function FilterPage({ params }: PageProps) {
+  const recipes = await getRecipesByFilter(params.filter);
   const label = FILTER_LABELS[params.filter] || params.filter;
   const description = FILTER_DESCRIPTIONS[params.filter] || '';
 

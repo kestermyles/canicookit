@@ -8,7 +8,7 @@ interface PageProps {
 
 export async function generateStaticParams() {
   try {
-    const recipes = getAllRecipes();
+    const recipes = await getAllRecipes();
     return recipes.map((recipe) => ({
       cuisine: recipe.cuisine.toLowerCase(),
       slug: recipe.slug,
@@ -70,8 +70,8 @@ function formatLabel(s: string): string {
     .join(' ');
 }
 
-export default function RecipePage({ params }: PageProps) {
-  const recipe = getRecipeBySlug(params.cuisine, params.slug);
+export default async function RecipePage({ params }: PageProps) {
+  const recipe = await getRecipeBySlug(params.cuisine, params.slug);
 
   if (!recipe) notFound();
 

@@ -7,7 +7,8 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  return getPopularIngredients().map((i) => ({ ingredient: i }));
+  const ingredients = await getPopularIngredients();
+  return ingredients.map((i) => ({ ingredient: i }));
 }
 
 export const dynamicParams = true;
@@ -23,9 +24,9 @@ export async function generateMetadata({
   };
 }
 
-export default function IngredientPage({ params }: PageProps) {
+export default async function IngredientPage({ params }: PageProps) {
   const ingredient = decodeURIComponent(params.ingredient);
-  const recipes = getRecipesByIngredient(ingredient);
+  const recipes = await getRecipesByIngredient(ingredient);
   const label = ingredient.charAt(0).toUpperCase() + ingredient.slice(1);
 
   return (

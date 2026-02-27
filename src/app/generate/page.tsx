@@ -9,6 +9,9 @@ import GeneratedRecipe from '@/components/GeneratedRecipe';
 import { GeneratedRecipeData, PANTRY_ESSENTIALS } from '@/types/generator';
 import { getAllCommunityRecipes } from '@/lib/supabase';
 
+// Force dynamic rendering for this page (uses searchParams)
+export const dynamic = 'force-dynamic';
+
 export default function GeneratePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
