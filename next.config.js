@@ -10,6 +10,7 @@ const nextConfig = {
     outputFileTracingIncludes: {
       '/recipes/**/*': ['./recipes/**/*'],
     },
+    missingSuspenseWithCSRBailout: false,
   },
 };
 

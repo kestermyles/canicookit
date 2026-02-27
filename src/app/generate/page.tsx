@@ -11,6 +11,7 @@ import { getAllCommunityRecipes } from '@/lib/supabase';
 
 // Force dynamic rendering for this page (uses searchParams)
 export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
 
 export default function GeneratePage() {
   const router = useRouter();
