@@ -11,7 +11,7 @@ const PLACEHOLDERS = [
   'Try: prawns, garlic, chilli, pasta...',
   'Try: sweet potato, coconut milk, ginger...',
   'Try: chicken thighs, chorizo, peppers...',
-  'Try: beef burgundy',
+  'Try: beef bourguignon',
   'Try: shepherd\'s pie',
   'Try: pad thai',
   'Try: Texas chili',
