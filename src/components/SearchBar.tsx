@@ -3,6 +3,8 @@
 import { useState, useMemo } from 'react';
 import Fuse from 'fuse.js';
 import RecipeCard from './RecipeCard';
+import NoResultsCTA from './NoResultsCTA';
+import RotatingPlaceholder from './RotatingPlaceholder';
 
 interface SearchItem {
   title: string;
@@ -16,6 +18,9 @@ interface SearchItem {
   cookTime: number;
   difficulty: string;
   calories: number;
+  source?: 'curated' | 'community';
+  qualityScore?: number;
+  status?: 'pending' | 'featured' | 'rejected';
 }
 
 export default function SearchBar({ recipes }: { recipes: SearchItem[] }) {
@@ -42,30 +47,17 @@ export default function SearchBar({ recipes }: { recipes: SearchItem[] }) {
 
   return (
     <div className="w-full">
-      <div className="relative">
-        <input
-          type="text"
-          placeholder="Search recipes by name, ingredient, cuisine..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="w-full px-6 py-4 text-lg rounded-full border-2 border-gray-200 focus:border-primary focus:outline-none transition-colors"
-        />
-        {query && (
-          <button
-            onClick={() => setQuery('')}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-secondary hover:text-foreground text-xl"
-            aria-label="Clear search"
-          >
-            &times;
-          </button>
-        )}
-      </div>
+      <RotatingPlaceholder
+        value={query}
+        onChange={setQuery}
+        onClear={() => setQuery('')}
+      />
 
       {results.length > 0 && (
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {results.map((recipe) => (
             <RecipeCard
-              key={`${recipe.cuisine}-${recipe.slug}`}
+              key={`${recipe.source || 'curated'}-${recipe.slug}`}
               {...recipe}
             />
           ))}
@@ -73,10 +65,7 @@ export default function SearchBar({ recipes }: { recipes: SearchItem[] }) {
       )}
 
       {query.length > 1 && results.length === 0 && (
-        <p className="mt-6 text-center text-secondary">
-          No recipes found for &ldquo;{query}&rdquo;. Try a different search
-          term.
-        </p>
+        <NoResultsCTA searchQuery={query} />
       )}
     </div>
   );

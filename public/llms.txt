@@ -1,0 +1,19 @@
+# Can I Cook It?
+> A community recipe platform where anyone can generate a custom recipe from whatever ingredients they have. Every recipe is built by real people and added to a growing community collection.
+
+## What this site does
+- Generates custom recipes from user-provided ingredients using AI
+- Hosts a growing library of community-generated and curated recipes
+- Covers all cuisines, dietary requirements, and skill levels
+- Recipes include full ingredients, method, nutritional info, and community photos
+
+## Recipe pages
+- Curated recipes: canicookit.com/recipes/[cuisine]/[slug]
+- Community recipes: canicookit.com/recipes/community/[slug]
+- All recipes include: title, description, ingredients, method, prep/cook time, serves, calories, dietary tags
+
+## Guides
+- canicookit.com/guides — How-to guides for cooking techniques and entertaining
+
+## Generate a recipe
+- canicookit.com/generate — Enter ingredients, get a custom recipe instantly

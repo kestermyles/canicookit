@@ -1,72 +1,62 @@
 import { MetadataRoute } from 'next';
-import {
-  getAllRecipes,
-  getAllCuisines,
-  getPopularIngredients,
-} from '@/lib/recipes';
+import { getAllRecipes } from '@/lib/recipes';
+import { getAllGuides } from '@/lib/guides';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://canicookit.com';
-  const recipes = getAllRecipes();
-  const cuisines = getAllCuisines();
-  const ingredients = getPopularIngredients();
 
-  const staticPages: MetadataRoute.Sitemap = [
+  // Get all recipes (curated + community)
+  const recipes = await getAllRecipes();
+  const recipeUrls = recipes.map((recipe) => {
+    const url =
+      recipe.source === 'community'
+        ? `${baseUrl}/recipes/community/${recipe.slug}`
+        : `${baseUrl}/recipes/${recipe.cuisine.toLowerCase()}/${recipe.slug}`;
+
+    return {
+      url,
+      lastModified: recipe.created_at ? new Date(recipe.created_at) : new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: recipe.source === 'community' ? 0.7 : 0.8,
+    };
+  });
+
+  // Get all guides
+  const guides = getAllGuides();
+  const guideUrls = guides.map((guide) => ({
+    url: `${baseUrl}/guides/${guide.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }));
+
+  // Static pages
+  const staticPages = [
     {
       url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 1,
+      changeFrequency: 'daily' as const,
+      priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/generate`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/guides`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/basics`,
       lastModified: new Date(),
-      changeFrequency: 'monthly',
+      changeFrequency: 'monthly' as const,
       priority: 0.6,
     },
   ];
 
-  const recipePages: MetadataRoute.Sitemap = recipes.map((recipe) => ({
-    url: `${baseUrl}/recipes/${recipe.cuisine.toLowerCase()}/${recipe.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.8,
-  }));
-
-  const cuisinePages: MetadataRoute.Sitemap = cuisines.map((cuisine) => ({
-    url: `${baseUrl}/recipes/cuisine/${cuisine.toLowerCase()}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
-
-  const ingredientPages: MetadataRoute.Sitemap = ingredients.map(
-    (ingredient) => ({
-      url: `${baseUrl}/recipes/ingredient/${ingredient}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.5,
-    })
-  );
-
-  const filterPages: MetadataRoute.Sitemap = [
-    'vegetarian',
-    'vegan',
-    'student-kitchen',
-    'dairy-free',
-    'gluten-free',
-  ].map((filter) => ({
-    url: `${baseUrl}/recipes/filter/${filter}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
-  }));
-
-  return [
-    ...staticPages,
-    ...recipePages,
-    ...cuisinePages,
-    ...ingredientPages,
-    ...filterPages,
-  ];
+  return [...staticPages, ...recipeUrls, ...guideUrls];
 }

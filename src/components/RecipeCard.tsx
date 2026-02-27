@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import CommunityBadge from './CommunityBadge';
 
 interface RecipeCardProps {
   title: string;
@@ -13,6 +14,9 @@ interface RecipeCardProps {
   cookTime: number;
   difficulty: string;
   calories: number;
+  source?: 'curated' | 'community';
+  qualityScore?: number;
+  status?: 'pending' | 'featured' | 'rejected';
 }
 
 function RecipeImage({ src, alt }: { src: string; alt: string }) {
@@ -20,19 +24,19 @@ function RecipeImage({ src, alt }: { src: string; alt: string }) {
 
   if (!src || error) {
     return (
-      <div className="aspect-[4/3] bg-light-grey flex items-center justify-center">
+      <div className="w-full h-48 bg-light-grey flex items-center justify-center">
         <span className="text-secondary text-sm">No image yet</span>
       </div>
     );
   }
 
   return (
-    <div className="aspect-[4/3] relative bg-light-grey overflow-hidden">
+    <div className="w-full bg-light-grey overflow-hidden">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={src}
         alt={alt}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="w-full h-auto object-cover"
         onError={() => setError(true)}
       />
     </div>
@@ -56,20 +60,34 @@ export default function RecipeCard({
   cookTime,
   difficulty,
   calories,
+  source = 'curated',
+  qualityScore,
+  status,
 }: RecipeCardProps) {
   const totalTime = prepTime + cookTime;
+  const isCommunity = source === 'community';
+  const recipeUrl = isCommunity
+    ? `/recipes/community/${slug}`
+    : `/recipes/${cuisine.toLowerCase()}/${slug}`;
 
   return (
     <Link
-      href={`/recipes/${cuisine.toLowerCase()}/${slug}`}
-      className="group block rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow"
+      href={recipeUrl}
+      className="group block rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-lg transition-shadow"
     >
       <RecipeImage src={heroImage} alt={title} />
       <div className="p-4">
-        <span className="inline-block px-2 py-0.5 text-xs font-medium bg-orange-50 text-primary rounded-full capitalize">
-          {cuisine}
-        </span>
-        <h3 className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="inline-block px-2 py-0.5 text-xs font-medium bg-orange-50 text-primary rounded-full capitalize">
+            {cuisine}
+          </span>
+          {isCommunity && status && (
+            <div className="scale-75 origin-left">
+              <CommunityBadge status={status} qualityScore={qualityScore} />
+            </div>
+          )}
+        </div>
+        <h3 className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors font-display">
           {title}
         </h3>
         <p className="mt-1 text-sm text-secondary line-clamp-1">

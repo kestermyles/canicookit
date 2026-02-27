@@ -1,14 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply text-foreground bg-white;
+    @apply text-foreground;
+    background-color: #FAFAF8;
   }
 }
 
 @layer components {
+  .font-display {
+    font-family: 'Playfair Display', serif;
+  }
+
   .recipe-content h2 {
     @apply text-2xl font-bold mt-8 mb-4;
   }

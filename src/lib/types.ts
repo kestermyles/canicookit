@@ -27,6 +27,15 @@ export interface RecipeFrontmatter {
 export interface Recipe extends RecipeFrontmatter {
   content: string;
   contentHtml: string;
+  // Community recipe fields
+  source?: 'curated' | 'community';
+  quality_score?: number;
+  status?: 'pending' | 'featured' | 'rejected';
+  photo_url?: string;
+  view_count?: number;
+  created_at?: string;
+  updated_at?: string;
+  user_ingredients?: string[];
 }
 
 export interface RecipeSearchItem {

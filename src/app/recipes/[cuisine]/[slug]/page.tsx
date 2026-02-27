@@ -20,20 +20,42 @@ export async function generateStaticParams() {
 }
 
 // Tell Next.js to generate these pages at build time
-export const dynamicParams = false;
+// Dynamic params enabled to allow server-side rendering of newly generated recipes
+export const dynamicParams = true;
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const recipe = getRecipeBySlug(params.cuisine, params.slug);
+  const recipe = await getRecipeBySlug(params.cuisine, params.slug);
   if (!recipe) return {};
 
   const totalTime = recipe.prepTime + recipe.cookTime;
+  const recipeUrl = `https://canicookit.com/recipes/${params.cuisine}/${params.slug}`;
+  const metaDescription = `${recipe.description} Ready in ${totalTime} minutes. Serves ${recipe.serves}. ${recipe.vegetarian ? 'Vegetarian. ' : ''}${recipe.vegan ? 'Vegan. ' : ''}${recipe.glutenFree ? 'Gluten-free. ' : ''}`;
 
   return {
-    title: recipe.title,
-    description: `${recipe.description} Ready in ${totalTime} minutes. Serves ${recipe.serves}.`,
+    title: `${recipe.title} | Can I Cook It?`,
+    description: metaDescription,
+    alternates: {
+      canonical: recipeUrl,
+    },
     openGraph: {
+      type: 'article',
+      url: recipeUrl,
+      title: recipe.title,
+      description: metaDescription,
+      images: recipe.heroImage ? [
+        {
+          url: recipe.heroImage,
+          width: 1200,
+          height: 630,
+          alt: recipe.title,
+        }
+      ] : [],
+      siteName: 'Can I Cook It?',
+    },
+    twitter: {
+      card: 'summary_large_image',
       title: recipe.title,
       description: recipe.description,
       images: recipe.heroImage ? [recipe.heroImage] : [],
@@ -111,7 +133,7 @@ export default function RecipePage({ params }: PageProps) {
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Title */}
-        <h1 className="text-3xl md:text-4xl font-bold mb-4">{recipe.title}</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-4 font-display">{recipe.title}</h1>
         <p className="text-secondary text-lg mb-6">{recipe.description}</p>
 
         {/* Dietary badges */}
@@ -171,29 +193,55 @@ export default function RecipePage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Two-column layout: Ingredients + Method */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
-          {/* Ingredients */}
-          <div>
-            <h2 className="text-xl font-bold mb-4">Ingredients</h2>
-            <ul className="space-y-2">
-              {recipe.ingredients.map((ingredient, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
-                  <span>{ingredient}</span>
-                </li>
-              ))}
-            </ul>
+        {/* Two-column layout: Ingredients + Method + Sidebar Ad */}
+        <div className="lg:grid lg:grid-cols-[1fr_2fr_300px] lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 lg:col-span-2">
+            {/* Ingredients */}
+            <div>
+              <h2 className="text-xl font-bold mb-4">Ingredients</h2>
+              <ul className="space-y-2">
+                {recipe.ingredients.map((ingredient, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
+                    <span>{ingredient}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Ad slot between ingredients and method (mobile/tablet only) */}
+            <div className="lg:hidden col-span-full">
+              <div className="flex items-center justify-center bg-stone-50 rounded-lg py-6 px-4 relative">
+                <span className="absolute top-2 right-3 text-xs text-gray-400 uppercase tracking-wide">
+                  Sponsored
+                </span>
+                <p className="text-sm text-gray-400">Advertisement</p>
+                {/* TODO: Replace with AdSense leaderboard unit (728x90 desktop / 320x50 mobile) */}
+              </div>
+            </div>
+
+            {/* Method */}
+            <div className="md:col-span-1">
+              <h2 className="text-xl font-bold mb-4">Method</h2>
+              <div
+                className="recipe-content"
+                dangerouslySetInnerHTML={{ __html: recipe.contentHtml }}
+              />
+            </div>
           </div>
 
-          {/* Method */}
-          <div>
-            <h2 className="text-xl font-bold mb-4">Method</h2>
-            <div
-              className="recipe-content"
-              dangerouslySetInnerHTML={{ __html: recipe.contentHtml }}
-            />
-          </div>
+          {/* Sidebar Ad (desktop only - sticky) */}
+          <aside className="hidden lg:block">
+            <div className="sticky top-4">
+              <div className="w-[300px] h-[250px] bg-stone-50 rounded-lg flex items-center justify-center relative">
+                <span className="absolute top-2 right-3 text-xs text-gray-400 uppercase tracking-wide">
+                  Sponsored
+                </span>
+                <p className="text-sm text-gray-400">Advertisement</p>
+                {/* TODO: Replace with AdSense medium rectangle (300x250) */}
+              </div>
+            </div>
+          </aside>
         </div>
 
         {/* Video */}
