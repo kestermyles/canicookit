@@ -18,6 +18,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { signIn, signUp, resetPassword } = useAuth();
 
   // Sync mode with initialMode when modal opens
@@ -103,36 +104,21 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
           </button>
         </div>
 
-        {/* Community message for signup from rating/comment/photo */}
-        {mode === 'signup' && context !== 'default' && (
-          <div className="mb-6 p-4 bg-orange-50 rounded-lg">
-            <p className="text-sm text-gray-700 mb-3">
-              Join our community to rate recipes, leave comments, upload photos and get new recipes straight to your inbox
-            </p>
-            <div className="space-y-2">
-              <div className="flex items-start gap-2">
+        {/* Benefits for signup */}
+        {mode === 'signup' && (
+          <div className={`mb-6 space-y-2 ${context !== 'default' ? 'p-4 bg-orange-50 rounded-lg' : ''}`}>
+            {[
+              'Your name and username displayed on every contribution',
+              'Share your photos and get featured on the homepage',
+              'Eligible for Recipe of the Week and Photo of the Week',
+              'Earn your Community Hero status',
+              'Be part of a community of real cooks',
+            ].map((benefit) => (
+              <div key={benefit} className="flex items-start gap-2">
                 <span className="text-green-600 mt-0.5">✓</span>
-                <span className="text-sm text-gray-700">Share your photos and get featured on the homepage</span>
+                <span className="text-sm text-gray-700">{benefit}</span>
               </div>
-              <div className="flex items-start gap-2">
-                <span className="text-green-600 mt-0.5">✓</span>
-                <span className="text-sm text-gray-700">Be part of a community of real cooks</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Benefits for default signup */}
-        {mode === 'signup' && context === 'default' && (
-          <div className="mb-6 space-y-2">
-            <div className="flex items-start gap-2">
-              <span className="text-green-600 mt-0.5">✓</span>
-              <span className="text-sm text-gray-700">Share your photos and get featured on the homepage</span>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="text-green-600 mt-0.5">✓</span>
-              <span className="text-sm text-gray-700">Be part of a community of real cooks</span>
-            </div>
+            ))}
           </div>
         )}
 
@@ -154,7 +140,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Username
+                  Username (shown on the site)
                 </label>
                 <input
                   type="text"
@@ -186,14 +172,27 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-              required
-              minLength={6}
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                required
+                minLength={6}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                )}
+              </button>
+            </div>
           </div>
 
           {mode === 'signin' && (
