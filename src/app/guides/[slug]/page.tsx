@@ -2,6 +2,26 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { getGuideBySlug, getFeaturedGuides } from '@/lib/supabase';
+import {
+  Clock,
+  Lightbulb,
+  BookOpen,
+  Scissors,
+  Wheat,
+  Users,
+  ChefHat,
+  Flame,
+  Timer,
+  UtensilsCrossed,
+  Thermometer,
+  Scale,
+  EggFried,
+  Fish,
+  Soup,
+  Cookie,
+  ShoppingCart,
+  ArrowLeft
+} from 'lucide-react';
 
 interface PageProps {
   params: { slug: string };
@@ -22,6 +42,30 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: guide.title,
     description: guide.description,
   };
+}
+
+// Map emoji icons to Lucide components
+function getGuideIcon(emojiIcon: string, className: string = 'w-12 h-12') {
+  const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+    '🔪': Scissors,
+    '🥘': Soup,
+    '🌡️': Thermometer,
+    '⏱️': Timer,
+    '🔥': Flame,
+    '🧑‍🍳': ChefHat,
+    '🍳': EggFried,
+    '🐟': Fish,
+    '🍪': Cookie,
+    '🛒': ShoppingCart,
+    '⚖️': Scale,
+    '🌾': Wheat,
+    '👥': Users,
+    '💡': Lightbulb,
+    '🍽️': UtensilsCrossed,
+  };
+
+  const IconComponent = iconMap[emojiIcon] || BookOpen;
+  return <IconComponent className={className} />;
 }
 
 export default async function GuidePage({ params }: PageProps) {
@@ -46,7 +90,7 @@ export default async function GuidePage({ params }: PageProps) {
           <div className="relative h-full max-w-4xl mx-auto px-4 flex items-end pb-16">
             <div className="text-white">
               <div className="flex items-center gap-3 mb-4">
-                <div className="text-5xl">{guide.icon}</div>
+                <div className="text-white">{getGuideIcon(guide.icon, 'w-14 h-14 text-white')}</div>
                 {guide.source === 'ai-generated' && (
                   <span className="px-3 py-1 text-xs bg-orange-500/90 backdrop-blur-sm text-white rounded-full">
                     AI Generated
@@ -61,9 +105,7 @@ export default async function GuidePage({ params }: PageProps) {
               </p>
               <div className="flex items-center gap-4 text-sm text-white/80">
                 <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <Clock className="w-5 h-5" />
                   {guide.read_time}
                 </div>
                 <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full">
@@ -77,7 +119,7 @@ export default async function GuidePage({ params }: PageProps) {
         <div className="relative bg-gradient-to-br from-orange-100 via-orange-50 to-amber-50 py-16">
           <div className="max-w-4xl mx-auto px-4 text-center">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="text-6xl">{guide.icon}</div>
+              <div>{getGuideIcon(guide.icon, 'w-20 h-20 text-primary')}</div>
               {guide.source === 'ai-generated' && (
                 <span className="px-3 py-1 text-xs bg-orange-500 text-white rounded-full">
                   AI Generated
@@ -92,9 +134,7 @@ export default async function GuidePage({ params }: PageProps) {
             </p>
             <div className="flex items-center justify-center gap-4 text-sm text-secondary">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <Clock className="w-5 h-5" />
                 {guide.read_time}
               </div>
               <span className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full">
@@ -136,7 +176,8 @@ export default async function GuidePage({ params }: PageProps) {
         {/* Pro Tips */}
         <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-8 mb-12 border-l-4 border-primary">
           <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
-            <span>💡</span> Pro Tips
+            <Lightbulb className="w-6 h-6 text-primary" />
+            Pro Tips
           </h2>
           <ul className="space-y-3">
             {guide.pro_tips.map((tip: string, index: number) => (
@@ -174,9 +215,7 @@ export default async function GuidePage({ params }: PageProps) {
             href="/guides"
             className="inline-flex items-center gap-2 text-primary hover:text-orange-700 font-medium transition-colors"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
+            <ArrowLeft className="w-5 h-5" />
             Back to All Guides
           </Link>
         </div>

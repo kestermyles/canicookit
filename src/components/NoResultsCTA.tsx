@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Fish, Beef, Leaf, Apple, UtensilsCrossed, Milk, Egg, Wheat, Sparkles } from 'lucide-react';
 
 interface NoResultsCTAProps {
   searchQuery: string;
@@ -120,41 +121,41 @@ function detectInputType(query: string): 'dish' | 'ingredients' {
   return 'ingredients';
 }
 
-function getIngredientEmoji(query: string): string {
+function getIngredientIcon(query: string): React.ComponentType<{ className?: string }> | null {
   const lowerQuery = query.toLowerCase();
 
   // Fish/seafood
-  if (lowerQuery.match(/fish|salmon|tuna|cod|trout|seafood|shrimp|prawn|lobster|crab/)) return '🐟';
+  if (lowerQuery.match(/fish|salmon|tuna|cod|trout|seafood|shrimp|prawn|lobster|crab/)) return Fish;
 
   // Meat
-  if (lowerQuery.match(/chicken|beef|pork|lamb|turkey|meat|steak|bacon|sausage/)) return '🍖';
+  if (lowerQuery.match(/chicken|beef|pork|lamb|turkey|meat|steak|bacon|sausage/)) return Beef;
 
   // Vegetables
-  if (lowerQuery.match(/vegetable|tomato|carrot|broccoli|spinach|lettuce|pepper|onion|potato|garlic/)) return '🥬';
+  if (lowerQuery.match(/vegetable|tomato|carrot|broccoli|spinach|lettuce|pepper|onion|potato|garlic/)) return Leaf;
 
   // Fruits
-  if (lowerQuery.match(/apple|banana|orange|berry|fruit|lemon|lime|mango/)) return '🍎';
+  if (lowerQuery.match(/apple|banana|orange|berry|fruit|lemon|lime|mango/)) return Apple;
 
   // Pasta/grains
-  if (lowerQuery.match(/pasta|rice|noodle|spaghetti|grain|wheat/)) return '🍝';
+  if (lowerQuery.match(/pasta|rice|noodle|spaghetti|grain|wheat/)) return Wheat;
 
   // Cheese/dairy
-  if (lowerQuery.match(/cheese|milk|cream|butter|dairy|yogurt/)) return '🧀';
+  if (lowerQuery.match(/cheese|milk|cream|butter|dairy|yogurt/)) return Milk;
 
   // Eggs
-  if (lowerQuery.match(/egg/)) return '🥚';
+  if (lowerQuery.match(/egg/)) return Egg;
 
   // Bread
-  if (lowerQuery.match(/bread|toast|baguette/)) return '🍞';
+  if (lowerQuery.match(/bread|toast|baguette/)) return Wheat;
 
-  // Return empty string if no match
-  return '';
+  // Return null if no match
+  return null;
 }
 
 export default function NoResultsCTA({ searchQuery }: NoResultsCTAProps) {
   const inputType = detectInputType(searchQuery);
   const isDish = inputType === 'dish';
-  const emoji = isDish ? '' : getIngredientEmoji(searchQuery);
+  const IconComponent = isDish ? null : getIngredientIcon(searchQuery);
 
   const urlParam = isDish ? 'dish' : 'ingredients';
   const heading = isDish
@@ -168,7 +169,11 @@ export default function NoResultsCTA({ searchQuery }: NoResultsCTAProps) {
   return (
     <div className="max-w-2xl mx-auto my-12 text-center">
       <div className="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200 rounded-2xl p-8 shadow-lg">
-        {emoji && <div className="text-6xl mb-4">{emoji}</div>}
+        {IconComponent && (
+          <div className="mb-4 flex justify-center">
+            <IconComponent className="w-20 h-20 text-primary" />
+          </div>
+        )}
         <h2 className="text-2xl font-bold text-gray-900 mb-3">
           {heading}
         </h2>
@@ -180,7 +185,7 @@ export default function NoResultsCTA({ searchQuery }: NoResultsCTAProps) {
           href={`/generate?${urlParam}=${encodeURIComponent(searchQuery)}`}
           className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-semibold px-8 py-4 rounded-full hover:from-orange-600 hover:to-amber-600 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
         >
-          <span className="text-xl">✨</span>
+          <Sparkles className="w-5 h-5" />
           <span>{buttonText}</span>
         </Link>
 

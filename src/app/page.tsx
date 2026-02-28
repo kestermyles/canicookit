@@ -3,6 +3,7 @@ import { getAllRecipes, getAllCuisines, getPopularIngredients } from '@/lib/reci
 import RecipeCard from '@/components/RecipeCard';
 import SearchBar from '@/components/SearchBar';
 import QuickFilterBar from '@/components/QuickFilterBar';
+import { Star, ChefHat, Coffee, Salad, UtensilsCrossed, Cookie, CakeSlice, Soup, IceCream, Wine } from 'lucide-react';
 
 // Revalidate every 60 seconds to show fresh community recipes
 export const revalidate = 60;
@@ -131,8 +132,9 @@ export default async function HomePage() {
             <div className="max-w-2xl">
               {/* Recipe of the Week Badge */}
               <div className="inline-block mb-4">
-                <span className="px-4 py-1.5 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full border border-white/30">
-                  ⭐ Recipe of the Week
+                <span className="px-4 py-1.5 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full border border-white/30 flex items-center gap-2">
+                  <Star className="w-4 h-4" />
+                  Recipe of the Week
                 </span>
               </div>
 
@@ -172,7 +174,9 @@ export default async function HomePage() {
           {/* Content Overlay */}
           <div className="relative z-10 h-full max-w-6xl mx-auto px-4 flex items-center justify-center text-center">
             <div className="max-w-2xl">
-              <div className="text-8xl mb-6">🍳</div>
+              <div className="mb-6 flex justify-center">
+                <ChefHat className="w-32 h-32 text-white" />
+              </div>
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight font-display">
                 Be the first to share a recipe!
               </h2>
@@ -247,51 +251,59 @@ export default async function HomePage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/recipes/filter/breakfast"
-              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
+              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors inline-flex items-center gap-2"
             >
-              🍳 Breakfast
+              <Coffee className="w-4 h-4" />
+              Breakfast
             </Link>
             <Link
               href="/recipes/filter/lunch"
-              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
+              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors inline-flex items-center gap-2"
             >
-              🥗 Lunch
+              <Salad className="w-4 h-4" />
+              Lunch
             </Link>
             <Link
               href="/recipes/filter/dinner"
-              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
+              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors inline-flex items-center gap-2"
             >
-              🍽️ Dinner
+              <UtensilsCrossed className="w-4 h-4" />
+              Dinner
             </Link>
             <Link
               href="/recipes/filter/snacks"
-              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
+              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors inline-flex items-center gap-2"
             >
-              🥨 Snacks
+              <Cookie className="w-4 h-4" />
+              Snacks
             </Link>
             <Link
               href="/recipes/filter/baking"
-              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
+              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors inline-flex items-center gap-2"
             >
-              🎂 Baking
+              <CakeSlice className="w-4 h-4" />
+              Baking
             </Link>
             <Link
               href="/recipes/filter/starters"
-              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
+              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors inline-flex items-center gap-2"
             >
-              🥟 Starters
+              <Soup className="w-4 h-4" />
+              Starters
             </Link>
             <Link
               href="/recipes/filter/desserts"
-              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
+              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors inline-flex items-center gap-2"
             >
-              🍮 Desserts
+              <IceCream className="w-4 h-4" />
+              Desserts
             </Link>
             <Link
               href="/recipes/filter/drinks"
-              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors"
+              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors inline-flex items-center gap-2"
             >
-              🍹 Drinks
+              <Wine className="w-4 h-4" />
+              Drinks
             </Link>
           </div>
         </section>

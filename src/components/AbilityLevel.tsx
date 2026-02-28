@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Sprout, ChefHat, Star } from 'lucide-react';
 
 interface AbilityLevelProps {
   currentDifficulty: string;
@@ -36,7 +37,7 @@ export default function AbilityLevel({
       description: 'New to cooking',
       color: 'bg-green-100 text-green-800 border-green-300',
       activeColor: 'bg-green-500 text-white border-green-600',
-      icon: '🌱',
+      Icon: Sprout,
     },
     {
       value: 'intermediate' as const,
@@ -44,7 +45,7 @@ export default function AbilityLevel({
       description: 'Some experience',
       color: 'bg-blue-100 text-blue-800 border-blue-300',
       activeColor: 'bg-blue-500 text-white border-blue-600',
-      icon: '👨‍🍳',
+      Icon: ChefHat,
     },
     {
       value: 'advanced' as const,
@@ -52,7 +53,7 @@ export default function AbilityLevel({
       description: 'Confident cook',
       color: 'bg-purple-100 text-purple-800 border-purple-300',
       activeColor: 'bg-purple-500 text-white border-purple-600',
-      icon: '⭐',
+      Icon: Star,
     },
   ];
 
@@ -69,6 +70,7 @@ export default function AbilityLevel({
           const isActive = level.value === selectedLevel;
           const colorClass = isActive ? level.activeColor : level.color;
 
+          const LevelIcon = level.Icon;
           return (
             <button
               key={level.value}
@@ -79,7 +81,7 @@ export default function AbilityLevel({
               } ${isActive ? 'shadow-lg' : 'shadow-sm'}`}
             >
               <div className="flex items-center justify-center gap-2 mb-1">
-                <span className="text-2xl">{level.icon}</span>
+                <LevelIcon className="w-6 h-6" />
                 <span className="font-bold text-lg">{level.label}</span>
               </div>
               <p className={`text-sm ${isActive ? 'opacity-90' : 'opacity-75'}`}>

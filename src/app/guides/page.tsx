@@ -4,9 +4,53 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getFeaturedGuides, searchGuides, GuideRow, supabase } from '@/lib/supabase';
+import {
+  BookOpen,
+  AlertCircle,
+  Clock,
+  Scissors,
+  Wheat,
+  Users,
+  Lightbulb,
+  ChefHat,
+  Flame,
+  Timer,
+  UtensilsCrossed,
+  Thermometer,
+  Scale,
+  EggFried,
+  Fish,
+  Soup,
+  Cookie,
+  ShoppingCart
+} from 'lucide-react';
 
 const GUIDES_PER_PAGE = 6;
 const CATEGORIES = ['All', 'Techniques', 'Ingredients', 'Hosting', 'Basics', 'Kitchen Skills'];
+
+// Map emoji icons to Lucide components
+function getGuideIcon(emojiIcon: string) {
+  const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+    '🔪': Scissors,
+    '🥘': Soup,
+    '🌡️': Thermometer,
+    '⏱️': Timer,
+    '🔥': Flame,
+    '🧑‍🍳': ChefHat,
+    '🍳': EggFried,
+    '🐟': Fish,
+    '🍪': Cookie,
+    '🛒': ShoppingCart,
+    '⚖️': Scale,
+    '🌾': Wheat,
+    '👥': Users,
+    '💡': Lightbulb,
+    '🍽️': UtensilsCrossed,
+  };
+
+  const IconComponent = iconMap[emojiIcon] || BookOpen;
+  return <IconComponent className="w-12 h-12 text-primary" />;
+}
 
 export default function GuidesPage() {
   const router = useRouter();
@@ -246,7 +290,9 @@ export default function GuidesPage() {
         {showNoResults && (
           <div className="max-w-2xl mx-auto mb-12">
             <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-8 text-center">
-              <div className="text-5xl mb-4">📚</div>
+              <div className="mb-4 flex justify-center">
+                <BookOpen className="w-16 h-16 text-primary" />
+              </div>
               <h2 className="text-2xl font-bold mb-3">
                 We don't have a guide for that yet
               </h2>
@@ -335,7 +381,9 @@ export default function GuidesPage() {
         {error && !isLoading && (
           <div className="max-w-2xl mx-auto text-center py-16">
             <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-8">
-              <div className="text-5xl mb-4">⚠️</div>
+              <div className="mb-4 flex justify-center">
+                <AlertCircle className="w-16 h-16 text-red-600" />
+              </div>
               <h2 className="text-2xl font-bold mb-3 text-red-900">Connection Error</h2>
               <p className="text-red-700 mb-4">{error}</p>
               <p className="text-sm text-red-600">
@@ -356,7 +404,7 @@ export default function GuidesPage() {
                   className="group block bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all border border-gray-100"
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <div className="text-5xl">{guide.icon}</div>
+                    <div>{getGuideIcon(guide.icon)}</div>
                     <div className="flex flex-col items-end gap-1">
                       {guide.source === 'ai-generated' && (
                         <span className="px-2 py-0.5 text-xs bg-orange-100 text-orange-700 rounded-full">
@@ -375,9 +423,7 @@ export default function GuidesPage() {
                     {guide.description}
                   </p>
                   <div className="flex items-center gap-2 text-xs text-secondary">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <Clock className="w-4 h-4" />
                     {guide.read_time}
                   </div>
                 </Link>
@@ -404,7 +450,9 @@ export default function GuidesPage() {
         {/* Empty state when no guides in category */}
         {!isLoading && displayedGuides.length === 0 && !showNoResults && !isSearching && selectedCategory !== 'All' && !error && (
           <div className="text-center py-16">
-            <div className="text-6xl mb-4">📚</div>
+            <div className="mb-4 flex justify-center">
+              <BookOpen className="w-20 h-20 text-gray-300" />
+            </div>
             <p className="text-secondary text-lg">
               No {selectedCategory.toLowerCase()} guides yet. Try another category!
             </p>
@@ -414,7 +462,9 @@ export default function GuidesPage() {
         {/* Empty state when no search */}
         {!isLoading && displayedGuides.length === 0 && !showNoResults && !isSearching && selectedCategory === 'All' && !searchQuery && !error && (
           <div className="text-center py-16">
-            <div className="text-6xl mb-4">📚</div>
+            <div className="mb-4 flex justify-center">
+              <BookOpen className="w-20 h-20 text-gray-300" />
+            </div>
             <p className="text-secondary text-lg mb-4">
               No guides in database yet.
             </p>
