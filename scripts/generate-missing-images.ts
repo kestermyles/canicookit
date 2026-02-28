@@ -29,6 +29,9 @@ if (!openaiApiKey) {
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 const openai = new OpenAI({ apiKey: openaiApiKey });
 
+const MIN_QUALITY_SCORE = 7;
+const MAX_GENERATION_ATTEMPTS = 3;
+
 interface Recipe {
   id: string;
   slug: string;
@@ -38,39 +41,125 @@ interface Recipe {
   cuisine: string;
 }
 
-async function generateImage(recipeName: string, description: string, cuisine: string): Promise<string | null> {
+async function scoreImageQuality(
+  imageUrl: string,
+  recipeName: string
+): Promise<{ score: number; reasoning: string }> {
   try {
-    const cuisineContext = cuisine && cuisine !== 'generated' ? `, ${cuisine} cuisine` : '';
-    const prompt = `A beautifully plated ${recipeName}${cuisineContext}, professionally styled food photography, shot at a 45-degree angle, natural window lighting, on a rustic ceramic plate, garnished and restaurant-quality presentation, shallow depth of field, warm appetising tones, realistic and delicious looking. The dish is fully cooked and ready to eat${description ? `, featuring ${description}` : ''}`;
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: `Score this food photo of "${recipeName}" out of 10 based on:
+1. Presentation (plating, garnish, styling)
+2. Lighting (natural, well-lit, appetizing)
+3. Correct dish representation (looks like ${recipeName})
+4. Appetizing appearance (makes you want to eat it)
 
-    console.log(`  🎨 Generating image with improved prompt`);
+Return a JSON object with:
+- score (number 0-10)
+- reasoning (brief explanation)
 
-    const response = await openai.images.generate({
-      model: 'dall-e-3',
-      prompt: prompt,
-      n: 1,
-      size: '1024x1024',
-      quality: 'standard',
-      style: 'natural',
+Example: {"score": 8.5, "reasoning": "Well-plated with good lighting, looks appetizing but could use more garnish"}`,
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: imageUrl,
+              },
+            },
+          ],
+        },
+      ],
+      max_tokens: 300,
     });
 
-    if (!response.data || response.data.length === 0) {
-      console.error('  ❌ No image data returned');
-      return null;
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      return { score: 0, reasoning: 'No response from vision API' };
     }
 
-    const imageUrl = response.data[0]?.url;
-    if (!imageUrl) {
-      console.error('  ❌ No image URL in response');
-      return null;
+    // Parse JSON response
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return { score: 0, reasoning: 'Failed to parse response' };
     }
 
-    console.log(`  ✓ Image generated successfully`);
-    return imageUrl;
+    const result = JSON.parse(jsonMatch[0]);
+    return {
+      score: result.score || 0,
+      reasoning: result.reasoning || 'No reasoning provided',
+    };
   } catch (error) {
-    console.error('  ❌ Error generating image:', error);
-    return null;
+    console.error('  ❌ Error scoring image:', error);
+    return { score: 0, reasoning: 'Error during scoring' };
   }
+}
+
+async function generateImage(recipeName: string, description: string, cuisine: string): Promise<{ imageUrl: string; score: number } | null> {
+  const cuisineContext = cuisine && cuisine !== 'generated' ? `, ${cuisine} cuisine` : '';
+  const prompt = `A beautifully plated ${recipeName}${cuisineContext}, professionally styled food photography, shot at a 45-degree angle, natural window lighting, on a rustic ceramic plate, garnished and restaurant-quality presentation, shallow depth of field, warm appetising tones, realistic and delicious looking. The dish is fully cooked and ready to eat${description ? `, featuring ${description}` : ''}`;
+
+  let bestImage: { url: string; score: number; reasoning: string } | null = null;
+
+  for (let attempt = 1; attempt <= MAX_GENERATION_ATTEMPTS; attempt++) {
+    try {
+      console.log(`  🎨 Generating image (attempt ${attempt}/${MAX_GENERATION_ATTEMPTS})...`);
+
+      const response = await openai.images.generate({
+        model: 'dall-e-3',
+        prompt: prompt,
+        n: 1,
+        size: '1024x1024',
+        quality: 'standard',
+        style: 'natural',
+      });
+
+      if (!response.data || response.data.length === 0) {
+        console.error('  ❌ No image data returned');
+        continue;
+      }
+
+      const imageUrl = response.data[0]?.url;
+      if (!imageUrl) {
+        console.error('  ❌ No image URL in response');
+        continue;
+      }
+
+      // Score the image with GPT-4 Vision
+      console.log(`  🔍 Scoring image quality...`);
+      const { score, reasoning } = await scoreImageQuality(imageUrl, recipeName);
+      console.log(`  📊 Score: ${score}/10 - ${reasoning}`);
+
+      // Track best image
+      if (!bestImage || score > bestImage.score) {
+        bestImage = { url: imageUrl, score, reasoning };
+      }
+
+      // If we got a good score, use this image
+      if (score >= MIN_QUALITY_SCORE) {
+        console.log(`  ✓ Quality threshold met (${score}/10)`);
+        return { imageUrl, score };
+      }
+
+      console.log(`  ⚠️  Score ${score}/10 below threshold (${MIN_QUALITY_SCORE}), retrying...`);
+    } catch (error) {
+      console.error(`  ❌ Attempt ${attempt} failed:`, error);
+    }
+  }
+
+  // All attempts exhausted, return best image we got
+  if (bestImage) {
+    console.log(`  ⚠️  Using best of ${MAX_GENERATION_ATTEMPTS} attempts (score: ${bestImage.score}/10)`);
+    return { imageUrl: bestImage.url, score: bestImage.score };
+  }
+
+  console.error('  ❌ Failed to generate acceptable image');
+  return null;
 }
 
 async function downloadAndUpload(imageUrl: string, fileName: string): Promise<string | null> {
@@ -96,7 +185,7 @@ async function downloadAndUpload(imageUrl: string, fileName: string): Promise<st
       .upload(fileName, buffer, {
         contentType: 'image/png',
         cacheControl: '3600',
-        upsert: false,
+        upsert: true,
       });
 
     if (error) {
@@ -167,23 +256,26 @@ async function main() {
 
   let successCount = 0;
   let failCount = 0;
+  const scores: number[] = [];
 
   for (let i = 0; i < recipes.length; i++) {
     const recipe = recipes[i] as Recipe;
     console.log(`\n[${i + 1}/${recipes.length}] Processing: "${recipe.title}"`);
     console.log(`  Slug: ${recipe.slug}`);
 
-    // Generate image with cuisine context
-    const imageUrl = await generateImage(recipe.title, recipe.description, recipe.cuisine);
-    if (!imageUrl) {
+    // Generate image with cuisine context and quality scoring
+    const imageResult = await generateImage(recipe.title, recipe.description, recipe.cuisine);
+    if (!imageResult) {
       console.log('  ⚠️  Skipping - failed to generate image');
       failCount++;
       continue;
     }
 
+    scores.push(imageResult.score);
+
     // Download and upload to Supabase Storage
     const fileName = `${recipe.slug}-ai-generated.png`;
-    const publicUrl = await downloadAndUpload(imageUrl, fileName);
+    const publicUrl = await downloadAndUpload(imageResult.imageUrl, fileName);
     if (!publicUrl) {
       console.log('  ⚠️  Skipping - failed to upload image');
       failCount++;
@@ -199,7 +291,7 @@ async function main() {
     }
 
     successCount++;
-    console.log('  ✅ Complete!');
+    console.log(`  ✅ Complete! (Final quality score: ${imageResult.score}/10)`);
 
     // Add a small delay to avoid rate limits
     if (i < recipes.length - 1) {
@@ -214,6 +306,16 @@ async function main() {
   console.log(`✅ Successfully processed: ${successCount}`);
   console.log(`❌ Failed: ${failCount}`);
   console.log(`📝 Total recipes: ${recipes.length}`);
+
+  if (scores.length > 0) {
+    const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+    const minScore = Math.min(...scores);
+    const maxScore = Math.max(...scores);
+    console.log('\n📈 Image Quality Scores:');
+    console.log(`  Average: ${avgScore.toFixed(1)}/10`);
+    console.log(`  Range: ${minScore.toFixed(1)} - ${maxScore.toFixed(1)}`);
+  }
+
   console.log('='.repeat(60) + '\n');
 }
 

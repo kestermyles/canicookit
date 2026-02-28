@@ -224,7 +224,7 @@ async function handleSaveRecipe(
     generateRecipeImage(recipe.title, recipe.description, cuisineType)
       .then(async (imageResult) => {
         if (imageResult.success && imageResult.imageUrl) {
-          console.log('[Save Recipe] Image generated, uploading to storage...');
+          console.log('[Save Recipe] Image generated with quality score:', imageResult.qualityScore, '/10');
           // Download and upload to Supabase Storage
           const uploadResult = await downloadAndUploadImage(
             imageResult.imageUrl,
@@ -235,7 +235,7 @@ async function handleSaveRecipe(
             console.log('[Save Recipe] Image uploaded, updating recipe...');
             // Update recipe with the image URL and mark as AI-generated
             await updateRecipePhoto(slug, uploadResult.publicUrl, true);
-            console.log('[Save Recipe] Recipe image updated successfully');
+            console.log('[Save Recipe] Recipe image updated successfully (quality score:', imageResult.qualityScore, '/10)');
           } else {
             console.error('[Save Recipe] Failed to upload image:', uploadResult.error);
           }
