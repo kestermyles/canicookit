@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     });
 
-    // Subscribe to newsletter after successful signup
+    // Subscribe to newsletter and send welcome email after successful signup
     if (!error && data.user) {
       await subscribeToNewsletter({
         email: email,
@@ -74,6 +74,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user_id: data.user.id,
         source: 'signup',
       });
+
+      fetch('/api/send-welcome-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name }),
+      }).catch(console.error);
     }
 
     return { error };
