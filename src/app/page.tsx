@@ -114,7 +114,7 @@ export default async function HomePage() {
           <div className="max-w-2xl mx-auto">
             <SearchBar recipes={searchIndex} />
             <p className="text-center text-sm text-secondary mt-4">
-              {recipeCount.toLocaleString()} recipes and counting — cooked by real people
+              {recipeCount.toLocaleString()} recipes and counting — made and photographed by our community
             </p>
           </div>
         </section>
