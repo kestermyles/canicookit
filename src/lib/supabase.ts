@@ -447,6 +447,46 @@ export async function getComments(recipeSlug: string): Promise<CommentRow[]> {
 }
 
 /**
+ * Subscribe user to newsletter
+ */
+export async function subscribeToNewsletter(data: {
+  email: string;
+  name?: string;
+  user_id?: string;
+  source?: string;
+}): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { error } = await supabase
+      .from('newsletter_subscribers')
+      .insert([
+        {
+          email: data.email,
+          name: data.name || null,
+          user_id: data.user_id || null,
+          source: data.source || 'signup',
+        },
+      ]);
+
+    if (error) {
+      // Ignore duplicate email errors (user already subscribed)
+      if (error.code === '23505') {
+        return { success: true };
+      }
+      console.error('Error subscribing to newsletter:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error in subscribeToNewsletter:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+/**
  * Convert database row to Recipe format
  */
 export function dbRowToRecipe(row: GeneratedRecipeRow): Recipe {

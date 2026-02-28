@@ -136,7 +136,7 @@ export default function Header() {
                     }}
                     className="px-3 py-1.5 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors"
                   >
-                    Sign Up
+                    Join the Community
                   </button>
                 </div>
               )}

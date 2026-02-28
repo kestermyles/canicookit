@@ -7,9 +7,10 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialMode?: 'signin' | 'signup';
+  context?: 'rating' | 'comment' | 'photo' | 'default';
 }
 
-export default function AuthModal({ isOpen, onClose, initialMode = 'signin' }: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, initialMode = 'signin', context = 'default' }: AuthModalProps) {
   const [mode, setMode] = useState<'signin' | 'signup'>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -78,7 +79,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin' }: A
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">
-            {mode === 'signin' ? 'Sign In' : 'Sign Up'}
+            {mode === 'signin' ? 'Sign In' : 'Join the Community'}
           </h2>
           <button
             onClick={onClose}
@@ -87,6 +88,39 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin' }: A
             ×
           </button>
         </div>
+
+        {/* Community message for signup from rating/comment/photo */}
+        {mode === 'signup' && context !== 'default' && (
+          <div className="mb-6 p-4 bg-orange-50 rounded-lg">
+            <p className="text-sm text-gray-700 mb-3">
+              Join our community to rate recipes, leave comments, upload photos and get new recipes straight to your inbox
+            </p>
+            <div className="space-y-2">
+              <div className="flex items-start gap-2">
+                <span className="text-green-600 mt-0.5">✓</span>
+                <span className="text-sm text-gray-700">See all the recipes you've created</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-green-600 mt-0.5">✓</span>
+                <span className="text-sm text-gray-700">Get new recipes by email</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Benefits for default signup */}
+        {mode === 'signup' && context === 'default' && (
+          <div className="mb-6 space-y-2">
+            <div className="flex items-start gap-2">
+              <span className="text-green-600 mt-0.5">✓</span>
+              <span className="text-sm text-gray-700">See all the recipes you've created</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-green-600 mt-0.5">✓</span>
+              <span className="text-sm text-gray-700">Get new recipes by email</span>
+            </div>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === 'signup' && (
