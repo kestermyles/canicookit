@@ -19,7 +19,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [emailOptIn, setEmailOptIn] = useState(false);
+  const [emailOptIn, setEmailOptIn] = useState(true);
   const { signIn, signUp, resetPassword } = useAuth();
 
   // Sync mode with initialMode when modal opens
