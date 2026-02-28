@@ -147,7 +147,7 @@ export default function GeneratePage() {
             src="/images/logo-color.svg"
             alt="Can I Cook It"
             style={{ height: '80px', width: 'auto' }}
-            className="mx-auto mb-4"
+            className="mx-auto mb-4 mix-blend-darken"
           />
           <p className="text-lg text-white/80">
             Tell us what you've got. We'll build something delicious.

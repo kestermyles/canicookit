@@ -155,8 +155,8 @@ export default function RecipeCard({
     ? `/recipes/community/${slug}`
     : `/recipes/${cuisine.toLowerCase()}/${slug}`;
 
-  // Display "Community" instead of "Generated" for community recipes
-  const displayCuisine = cuisine === 'generated' ? 'Community' : cuisine;
+  // Show actual cuisine, or "Custom" if set to "generated"
+  const displayCuisine = cuisine === 'generated' ? 'Custom' : cuisine;
 
   return (
     <Link

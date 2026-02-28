@@ -41,7 +41,7 @@ import {
 } from 'lucide-react';
 
 const GUIDES_PER_PAGE = 6;
-const CATEGORIES = ['All', 'Techniques', 'Ingredients', 'Hosting', 'Basics', 'Kitchen Skills'];
+const CATEGORIES = ['All', 'Techniques', 'Ingredients', 'Hosting', 'Getting Started', 'Kitchen Skills'];
 
 // Map guide slugs to specific contextual Lucide icons
 function getGuideIcon(slug: string) {
