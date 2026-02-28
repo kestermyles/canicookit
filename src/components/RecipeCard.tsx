@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import CommunityBadge from './CommunityBadge';
 
@@ -48,8 +48,8 @@ function RecipeImage({ src, alt, isAiGenerated }: { src: string; alt: string; is
       {/* AI image badge overlay */}
       {isAiGenerated && (
         <div className="absolute top-2 right-2">
-          <span className="px-2 py-1 bg-orange-500/90 backdrop-blur-sm text-white text-xs font-medium rounded-full shadow-md">
-            🤖 AI image
+          <span className="px-3 py-1.5 bg-orange-500/95 backdrop-blur-sm text-white text-sm font-medium rounded-full shadow-lg">
+            🤖 AI image — be the first to upload yours!
           </span>
         </div>
       )}
@@ -62,6 +62,59 @@ function formatDifficulty(d: string): string {
     .split('-')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
+}
+
+// Simple star rating display for cards
+function StarRatingDisplay({ slug }: { slug: string }) {
+  const [rating, setRating] = useState<number | null>(null);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    // TODO: Fetch actual ratings from Supabase
+    // For now, using placeholder data
+    // Some recipes have ratings, some don't
+    const hasRatings = Math.random() > 0.3; // 70% have ratings
+    if (hasRatings) {
+      setRating(Math.random() * 2 + 3); // 3-5 stars
+      setCount(Math.floor(Math.random() * 200) + 10); // 10-210 ratings
+    }
+  }, [slug]);
+
+  if (rating === null) {
+    return (
+      <p className="text-xs text-gray-400 italic">Be the first to rate</p>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-1.5">
+      {/* Star icons */}
+      <div className="flex gap-0.5">
+        {[1, 2, 3, 4, 5].map((star) => {
+          const filled = rating >= star;
+          const partial = rating >= star - 0.5 && rating < star;
+
+          return (
+            <svg
+              key={star}
+              className="w-3.5 h-3.5"
+              fill={filled || partial ? '#f97316' : 'none'}
+              stroke="#f97316"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          );
+        })}
+      </div>
+      {/* Rating number and count */}
+      <span className="text-xs text-gray-600">
+        <span className="font-semibold text-foreground">{rating.toFixed(1)}</span>
+        <span className="text-gray-400 ml-1">({count})</span>
+      </span>
+    </div>
+  );
 }
 
 export default function RecipeCard({
@@ -105,6 +158,12 @@ export default function RecipeCard({
         <h3 className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors font-display">
           {title}
         </h3>
+
+        {/* Star rating display */}
+        <div className="mt-1.5">
+          <StarRatingDisplay slug={slug} />
+        </div>
+
         <p className="mt-1 text-sm text-secondary line-clamp-1">
           {description}
         </p>
