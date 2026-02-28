@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { getRecipeBySlug, getAllRecipes } from '@/lib/recipes';
 import StarRating from '@/components/StarRating';
 import AbilityLevel from '@/components/AbilityLevel';
+import NoPhotoPlaceholder from '@/components/NoPhotoPlaceholder';
 
 interface PageProps {
   params: { cuisine: string; slug: string };
@@ -122,7 +123,7 @@ export default async function RecipePage({ params }: PageProps) {
       />
 
       {/* Hero Image */}
-      {recipe.heroImage && (
+      {recipe.heroImage ? (
         <div className="relative w-full h-64 md:h-96 bg-light-grey">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -131,6 +132,8 @@ export default async function RecipePage({ params }: PageProps) {
             className="absolute inset-0 w-full h-full object-cover"
           />
         </div>
+      ) : (
+        <NoPhotoPlaceholder size="large" />
       )}
 
       <div className="max-w-4xl mx-auto px-4 py-8">

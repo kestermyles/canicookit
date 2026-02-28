@@ -37,6 +37,10 @@ export interface Recipe extends RecipeFrontmatter {
   created_at?: string;
   updated_at?: string;
   user_ingredients?: string[];
+  user_metadata?: {
+    name?: string;
+    email?: string;
+  };
 }
 
 export interface RecipeSearchItem {

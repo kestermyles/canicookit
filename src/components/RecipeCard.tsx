@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Camera, Bot } from 'lucide-react';
 import CommunityBadge from './CommunityBadge';
 import ReportButton from './ReportButton';
+import NoPhotoPlaceholder from './NoPhotoPlaceholder';
 
 interface RecipeCardProps {
   title: string;
@@ -25,17 +25,9 @@ interface RecipeCardProps {
 function RecipeImage({ src, alt, isAiGenerated }: { src: string; alt: string; isAiGenerated?: boolean }) {
   const [error, setError] = useState(false);
 
-  // Show placeholder if no image or error loading
-  if (!src || error) {
-    return (
-      <div className="w-full h-48 bg-gradient-to-br from-orange-50 to-amber-50 flex flex-col items-center justify-center p-6 text-center">
-        <Camera className="w-12 h-12 text-orange-300 mb-2" />
-        <span className="text-secondary text-sm font-medium">No image yet</span>
-        <span className="text-xs text-secondary/70 mt-1">
-          Upload a photo of this dish
-        </span>
-      </div>
-    );
+  // Show placeholder if no image, error loading, OR if it's an AI-generated image
+  if (!src || error || isAiGenerated) {
+    return <NoPhotoPlaceholder size="small" />;
   }
 
   return (
@@ -47,15 +39,6 @@ function RecipeImage({ src, alt, isAiGenerated }: { src: string; alt: string; is
         className="w-full h-auto object-cover"
         onError={() => setError(true)}
       />
-      {/* AI image badge overlay */}
-      {isAiGenerated && (
-        <div className="absolute top-2 right-2">
-          <span className="px-3 py-1.5 bg-orange-500/95 backdrop-blur-sm text-white text-sm font-medium rounded-full shadow-lg flex items-center gap-1.5">
-            <Bot className="w-4 h-4" />
-            AI image — be the first to upload yours!
-          </span>
-        </div>
-      )}
     </div>
   );
 }

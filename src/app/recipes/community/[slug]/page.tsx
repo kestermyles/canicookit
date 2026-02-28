@@ -8,6 +8,7 @@ import StarRating from '@/components/StarRating';
 import AbilityLevel from '@/components/AbilityLevel';
 import AdUnit from '@/components/AdUnit';
 import ReportButton from '@/components/ReportButton';
+import NoPhotoPlaceholder from '@/components/NoPhotoPlaceholder';
 
 interface PageProps {
   params: { slug: string };
@@ -27,6 +28,9 @@ export async function generateMetadata({
   const recipeUrl = `https://canicookit.com/recipes/community/${params.slug}`;
   const metaDescription = `${recipe.description} Ready in ${totalTime} minutes. Serves ${recipe.serves}. Community recipe. ${recipe.vegetarian ? 'Vegetarian. ' : ''}${recipe.vegan ? 'Vegan. ' : ''}${recipe.glutenFree ? 'Gluten-free. ' : ''}`;
 
+  // Only use real photos in social cards (not AI-generated)
+  const socialImage = recipe.photo_url && !recipe.photo_is_ai_generated ? recipe.photo_url : null;
+
   return {
     title: `${recipe.title} | Can I Cook It?`,
     description: metaDescription,
@@ -38,9 +42,9 @@ export async function generateMetadata({
       url: recipeUrl,
       title: recipe.title,
       description: metaDescription,
-      images: recipe.photo_url ? [
+      images: socialImage ? [
         {
-          url: recipe.photo_url,
+          url: socialImage,
           width: 1200,
           height: 630,
           alt: recipe.title,
@@ -52,7 +56,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title: recipe.title,
       description: recipe.description,
-      images: recipe.photo_url ? [recipe.photo_url] : [],
+      images: socialImage ? [socialImage] : [],
     },
   };
 }
@@ -80,11 +84,14 @@ export default async function CommunityRecipePage({ params }: PageProps) {
     .map((line) => line.replace(/^\*{0,2}\d+\.?\s*/, '').replace(/\*{0,2}$/, '').trim())
     .filter(Boolean);
 
+  // Only include real photos in structured data (not AI-generated)
+  const recipeImage = recipe.photo_url && !recipe.photo_is_ai_generated ? recipe.photo_url : '';
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Recipe',
     name: recipe.title,
-    image: recipe.photo_url || '',
+    image: recipeImage,
     description: recipe.description,
     prepTime: `PT${recipe.prepTime}M`,
     cookTime: `PT${recipe.cookTime}M`,
@@ -114,37 +121,17 @@ export default async function CommunityRecipePage({ params }: PageProps) {
       />
 
       {/* Hero Image */}
-      {recipe.photo_url && (
-        <>
-          <div className="relative w-full h-64 md:h-96 bg-light-grey">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={recipe.photo_url}
-              alt={recipe.title}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          </div>
-
-          {/* AI-generated image banner - ALWAYS shown for AI images */}
-          {recipe.photo_is_ai_generated && (
-            <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-200">
-              <div className="max-w-4xl mx-auto px-4 py-3">
-                <div className="flex items-center justify-between gap-4 flex-wrap">
-                  <p className="text-sm text-gray-700 font-medium">
-                    <span className="mr-2">🤖</span>
-                    AI-generated image — made this dish? Upload your own photo and show the community the real thing!
-                  </p>
-                  <a
-                    href="#photo-upload"
-                    className="px-4 py-2 bg-primary text-white text-sm font-medium rounded-full hover:bg-orange-700 transition-colors whitespace-nowrap"
-                  >
-                    Upload Photo
-                  </a>
-                </div>
-              </div>
-            </div>
-          )}
-        </>
+      {recipe.photo_url && !recipe.photo_is_ai_generated ? (
+        <div className="relative w-full h-64 md:h-96 bg-light-grey">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={recipe.photo_url}
+            alt={recipe.title}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </div>
+      ) : (
+        <NoPhotoPlaceholder size="large" />
       )}
 
       <div className="max-w-4xl mx-auto px-4 py-8">
@@ -322,9 +309,9 @@ export default async function CommunityRecipePage({ params }: PageProps) {
 
         {/* Photo Upload Section */}
         <section id="photo-upload" className="mt-12 border-t pt-8 scroll-mt-20">
-          <h2 className="text-xl font-bold mb-4">Made This Recipe?</h2>
+          <h2 className="text-xl font-bold mb-4">Made this dish? Share your photo!</h2>
           <p className="text-gray-600 mb-4">
-            Share your photo! High-quality photos may become the recipe's featured image.
+            Upload your photo below. Great photos get featured on our homepage 📸
           </p>
           <PhotoUpload recipeSlug={params.slug} />
         </section>

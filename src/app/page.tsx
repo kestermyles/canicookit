@@ -3,6 +3,7 @@ import { getAllRecipes, getAllCuisines, getPopularIngredients } from '@/lib/reci
 import RecipeCard from '@/components/RecipeCard';
 import SearchBar from '@/components/SearchBar';
 import QuickFilterBar from '@/components/QuickFilterBar';
+import TopCooks from '@/components/TopCooks';
 import { Star, ChefHat, Coffee, Salad, UtensilsCrossed, Cookie, CakeSlice, Soup, IceCream, Wine } from 'lucide-react';
 
 // Revalidate every 60 seconds to show fresh community recipes
@@ -106,7 +107,7 @@ export default async function HomePage() {
             Type any ingredients you have — we'll build a recipe around them.
           </p>
           <p className="text-secondary text-lg mb-8 max-w-md mx-auto">
-            Find a recipe or build one from what you've got. Every dish cooked here adds to the collection.
+            Find a recipe or build one from what you've got. Every recipe here is made by real cooks like you.
           </p>
           <div className="max-w-2xl mx-auto">
             <SearchBar recipes={searchIndex} />
@@ -135,11 +136,11 @@ export default async function HomePage() {
           {/* Content Overlay */}
           <div className="relative z-10 h-full max-w-6xl mx-auto px-4 flex items-end pb-12">
             <div className="max-w-2xl">
-              {/* Recipe of the Week Badge */}
+              {/* Community Pick Badge */}
               <div className="inline-block mb-4">
                 <span className="px-4 py-1.5 bg-white/20 backdrop-blur-sm text-white text-sm font-medium rounded-full border border-white/30 flex items-center gap-2">
                   <Star className="w-4 h-4" />
-                  Recipe of the Week
+                  Community Pick
                 </span>
               </div>
 
@@ -154,6 +155,11 @@ export default async function HomePage() {
               <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight font-display">
                 {recipeOfWeek.title}
               </h2>
+
+              {/* Author Attribution */}
+              <p className="text-white/80 text-sm mb-4">
+                Shared by {recipeOfWeek.user_metadata?.name || 'the Community'}
+              </p>
 
               {/* Description */}
               <p className="text-white/90 text-lg mb-6 leading-relaxed">
@@ -348,6 +354,9 @@ export default async function HomePage() {
             </div>
           </section>
         )}
+
+        {/* Top Cooks */}
+        <TopCooks />
 
         {/* Basics CTA */}
         <section className="py-12">

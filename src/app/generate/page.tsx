@@ -152,6 +152,9 @@ export default function GeneratePage() {
           <p className="text-lg text-white/80">
             Tell us what you've got. We'll build something delicious.
           </p>
+          <p className="text-sm text-white/60 mt-2">
+            💡 Tip: Recipes with great photos get featured on the homepage 📸
+          </p>
         </div>
 
         {/* Form Card */}
