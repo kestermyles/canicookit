@@ -114,14 +114,36 @@ export default async function CommunityRecipePage({ params }: PageProps) {
 
       {/* Hero Image */}
       {recipe.photo_url && (
-        <div className="relative w-full h-64 md:h-96 bg-light-grey">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={recipe.photo_url}
-            alt={recipe.title}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </div>
+        <>
+          <div className="relative w-full h-64 md:h-96 bg-light-grey">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={recipe.photo_url}
+              alt={recipe.title}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </div>
+
+          {/* AI-generated image banner */}
+          {recipe.photo_is_ai_generated && (
+            <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-200">
+              <div className="max-w-4xl mx-auto px-4 py-3">
+                <div className="flex items-center justify-between gap-4 flex-wrap">
+                  <p className="text-sm text-gray-700">
+                    <span className="mr-2">📸</span>
+                    AI-generated image — made this dish? Upload your own photo and show the community how it turned out!
+                  </p>
+                  <a
+                    href="#photo-upload"
+                    className="px-4 py-2 bg-primary text-white text-sm font-medium rounded-full hover:bg-orange-700 transition-colors whitespace-nowrap"
+                  >
+                    Upload Photo
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       <div className="max-w-4xl mx-auto px-4 py-8">
@@ -295,7 +317,7 @@ export default async function CommunityRecipePage({ params }: PageProps) {
         </section>
 
         {/* Photo Upload Section */}
-        <section className="mt-12 border-t pt-8">
+        <section id="photo-upload" className="mt-12 border-t pt-8 scroll-mt-20">
           <h2 className="text-xl font-bold mb-4">Made This Recipe?</h2>
           <p className="text-gray-600 mb-4">
             Share your photo! High-quality photos may become the recipe's featured image.

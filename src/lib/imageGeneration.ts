@@ -15,8 +15,8 @@ export async function generateRecipeImage(
   description: string
 ): Promise<{ success: boolean; imageUrl?: string; error?: string }> {
   try {
-    // Create a detailed prompt for professional food photography
-    const prompt = `Professional food photography of ${recipeName}. ${description}. The dish is beautifully plated on a clean white ceramic plate, shot from a 45-degree angle with natural lighting. The background is a clean, minimalist white marble surface. The food looks fresh, vibrant, and appetizing. High-end restaurant quality presentation. Photorealistic, sharp focus, beautiful depth of field.`;
+    // Create prompt for professional food photography
+    const prompt = `Professional food photography of ${recipeName}, well-lit, styled on a clean neutral background, appetising, high quality`;
 
     const response = await openai.images.generate({
       model: 'dall-e-3',

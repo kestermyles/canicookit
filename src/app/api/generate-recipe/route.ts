@@ -231,8 +231,8 @@ async function handleSaveRecipe(
 
           if (uploadResult.success && uploadResult.publicUrl) {
             console.log('[Save Recipe] Image uploaded, updating recipe...');
-            // Update recipe with the image URL
-            await updateRecipePhoto(slug, uploadResult.publicUrl);
+            // Update recipe with the image URL and mark as AI-generated
+            await updateRecipePhoto(slug, uploadResult.publicUrl, true);
             console.log('[Save Recipe] Recipe image updated successfully');
           } else {
             console.error('[Save Recipe] Failed to upload image:', uploadResult.error);

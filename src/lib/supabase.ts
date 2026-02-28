@@ -41,6 +41,7 @@ export interface GeneratedRecipeRow {
   cuisine: string;
   tags: string[];
   photo_url: string | null;
+  photo_is_ai_generated: boolean;
   quality_score: number | null;
   status: 'pending' | 'featured' | 'rejected';
   view_count: number;
@@ -271,13 +272,15 @@ export async function updateRecipeScore(
  */
 export async function updateRecipePhoto(
   slug: string,
-  photoUrl: string
+  photoUrl: string,
+  isAiGenerated: boolean = false
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const { error } = await supabase
       .from('generated_recipes')
       .update({
         photo_url: photoUrl,
+        photo_is_ai_generated: isAiGenerated,
         updated_at: new Date().toISOString(),
       })
       .eq('slug', slug);
@@ -521,6 +524,7 @@ export function dbRowToRecipe(row: GeneratedRecipeRow): Recipe {
     quality_score: row.quality_score || undefined,
     status: row.status,
     photo_url: row.photo_url || undefined,
+    photo_is_ai_generated: row.photo_is_ai_generated,
     view_count: row.view_count,
     created_at: row.created_at,
     updated_at: row.updated_at,

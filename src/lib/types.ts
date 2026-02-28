@@ -32,6 +32,7 @@ export interface Recipe extends RecipeFrontmatter {
   quality_score?: number;
   status?: 'pending' | 'featured' | 'rejected';
   photo_url?: string;
+  photo_is_ai_generated?: boolean;
   view_count?: number;
   created_at?: string;
   updated_at?: string;

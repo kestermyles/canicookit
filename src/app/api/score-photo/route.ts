@@ -67,9 +67,10 @@ export async function POST(request: NextRequest) {
         result.score >= MIN_PHOTO_SCORE
       ) {
         console.log(
-          '[Score Photo] Photo scored high, updating recipe image'
+          '[Score Photo] Photo scored high, updating recipe image and replacing AI image'
         );
-        await updateRecipePhoto(recipeSlug, photoUrl);
+        // Pass false to mark this as a real photo (not AI-generated)
+        await updateRecipePhoto(recipeSlug, photoUrl, false);
       }
     }
 
