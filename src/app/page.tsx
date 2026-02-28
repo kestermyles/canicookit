@@ -3,6 +3,9 @@ import { getAllRecipes, getAllCuisines, getPopularIngredients } from '@/lib/reci
 import RecipeCard from '@/components/RecipeCard';
 import SearchBar from '@/components/SearchBar';
 
+// Revalidate every 60 seconds to show fresh community recipes
+export const revalidate = 60;
+
 function formatDifficulty(d: string): string {
   return d
     .split('-')
