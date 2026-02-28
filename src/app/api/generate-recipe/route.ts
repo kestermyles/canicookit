@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateRecipe } from '@/lib/claude';
 import { createRecipe, updateRecipePhoto } from '@/lib/supabase';
-import { validateGeneratedRecipe } from '@/lib/validation';
+import { validateGeneratedRecipe, validateUserInput } from '@/lib/validation';
 import { generateRecipeImage, downloadAndUploadImage } from '@/lib/imageGeneration';
 import {
   GenerateRecipeRequest,
@@ -73,6 +73,23 @@ async function handleGenerateRecipe(
     console.log('[Generate Recipe] Starting generation...');
     console.log('[Generate Recipe] User ingredients:', userIngredients);
     console.log('[Generate Recipe] Essentials count:', essentials.length);
+
+    // Validate user input before making expensive API calls
+    console.log('[Generate Recipe] Validating user input...');
+    const inputValidation = await validateUserInput(userIngredients, essentials);
+
+    if (!inputValidation.valid) {
+      console.log('[Generate Recipe] Input validation failed:', inputValidation.reason);
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Hmm, that doesn't look like something we can cook! Try entering real ingredients or a dish name 🍳",
+        },
+        { status: 400 }
+      );
+    }
+
+    console.log('[Generate Recipe] Input validation passed');
 
     // Call Claude API to generate recipe
     const recipe = await generateRecipe(userIngredients, essentials);
