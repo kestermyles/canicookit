@@ -8,15 +8,19 @@ const openai = new OpenAI({
  * Generate a professional food photo using DALL-E 3
  * @param recipeName - The name of the dish/recipe
  * @param description - Brief description of the dish
+ * @param cuisine - Optional cuisine type for context
  * @returns URL of the generated image
  */
 export async function generateRecipeImage(
   recipeName: string,
-  description: string
+  description: string,
+  cuisine?: string
 ): Promise<{ success: boolean; imageUrl?: string; error?: string }> {
   try {
-    // Create prompt for professional food photography
-    const prompt = `Professional food photography of ${recipeName}, well-lit, styled on a clean neutral background, appetising, high quality`;
+    // Create detailed prompt for professional food photography of the FINISHED dish
+    // Emphasize that it's a plated, cooked meal, not raw ingredients
+    const cuisineContext = cuisine && cuisine !== 'generated' ? `, ${cuisine} cuisine` : '';
+    const prompt = `A beautifully plated ${recipeName}${cuisineContext}, professionally styled food photography, shot at a 45-degree angle, natural window lighting, on a rustic ceramic plate, garnished and restaurant-quality presentation, shallow depth of field, warm appetising tones, realistic and delicious looking. The dish is fully cooked and ready to eat${description ? `, featuring ${description}` : ''}`;
 
     const response = await openai.images.generate({
       model: 'dall-e-3',

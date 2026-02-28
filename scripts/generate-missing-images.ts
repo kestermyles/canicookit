@@ -35,13 +35,15 @@ interface Recipe {
   title: string;
   description: string;
   photo_url: string | null;
+  cuisine: string;
 }
 
-async function generateImage(recipeName: string, description: string): Promise<string | null> {
+async function generateImage(recipeName: string, description: string, cuisine: string): Promise<string | null> {
   try {
-    const prompt = `Professional food photography of ${recipeName}, well-lit, styled on a clean neutral background, appetising, high quality`;
+    const cuisineContext = cuisine && cuisine !== 'generated' ? `, ${cuisine} cuisine` : '';
+    const prompt = `A beautifully plated ${recipeName}${cuisineContext}, professionally styled food photography, shot at a 45-degree angle, natural window lighting, on a rustic ceramic plate, garnished and restaurant-quality presentation, shallow depth of field, warm appetising tones, realistic and delicious looking. The dish is fully cooked and ready to eat${description ? `, featuring ${description}` : ''}`;
 
-    console.log(`  🎨 Generating image with prompt: "${prompt}"`);
+    console.log(`  🎨 Generating image with improved prompt`);
 
     const response = await openai.images.generate({
       model: 'dall-e-3',
@@ -148,7 +150,7 @@ async function main() {
   console.log('📊 Fetching recipes without images...');
   const { data: recipes, error } = await supabase
     .from('generated_recipes')
-    .select('id, slug, title, description, photo_url')
+    .select('id, slug, title, description, photo_url, cuisine')
     .is('photo_url', null);
 
   if (error) {
@@ -171,8 +173,8 @@ async function main() {
     console.log(`\n[${i + 1}/${recipes.length}] Processing: "${recipe.title}"`);
     console.log(`  Slug: ${recipe.slug}`);
 
-    // Generate image
-    const imageUrl = await generateImage(recipe.title, recipe.description);
+    // Generate image with cuisine context
+    const imageUrl = await generateImage(recipe.title, recipe.description, recipe.cuisine);
     if (!imageUrl) {
       console.log('  ⚠️  Skipping - failed to generate image');
       failCount++;

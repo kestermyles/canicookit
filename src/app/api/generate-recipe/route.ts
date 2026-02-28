@@ -219,7 +219,9 @@ async function handleSaveRecipe(
 
     // Generate AI image for the recipe (async - don't block response)
     console.log('[Save Recipe] Starting image generation for:', recipe.title);
-    generateRecipeImage(recipe.title, recipe.description)
+    // Pass cuisine as 'generated' for community recipes, use actual cuisine if available
+    const cuisineType = recipe.cuisine || 'generated';
+    generateRecipeImage(recipe.title, recipe.description, cuisineType)
       .then(async (imageResult) => {
         if (imageResult.success && imageResult.imageUrl) {
           console.log('[Save Recipe] Image generated, uploading to storage...');
