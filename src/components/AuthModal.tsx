@@ -15,9 +15,10 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
 
   // Sync mode with initialMode when modal opens
   useEffect(() => {
@@ -62,7 +63,12 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
           setLoading(false);
           return;
         }
-        const { error } = await signUp(email, password, name);
+        if (!username.trim()) {
+          setError('Please enter a username');
+          setLoading(false);
+          return;
+        }
+        const { error } = await signUp(email, password, name, username);
         if (error) {
           setError(error.message);
         } else {
@@ -132,18 +138,35 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === 'signup' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Name
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                required
-              />
-            </div>
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Name
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g., Kester Hodgson"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Username
+                </label>
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="e.g., K-Dog"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  required
+                  maxLength={30}
+                />
+              </div>
+            </>
           )}
 
           <div>
@@ -172,6 +195,29 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
               minLength={6}
             />
           </div>
+
+          {mode === 'signin' && (
+            <div className="text-right">
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!email.trim()) {
+                    setError('Enter your email above, then click forgot password');
+                    return;
+                  }
+                  const { error } = await resetPassword(email);
+                  if (error) {
+                    setError(error.message);
+                  } else {
+                    setError('Password reset link sent! Check your email.');
+                  }
+                }}
+                className="text-sm text-primary hover:underline"
+              >
+                Forgot password?
+              </button>
+            </div>
+          )}
 
           {error && (
             <div className={`text-sm ${error.includes('Check your email') ? 'text-green-600' : 'text-red-600'}`}>

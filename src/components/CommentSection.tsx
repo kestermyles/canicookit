@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Comment {
   id: string;
@@ -14,6 +15,7 @@ interface CommentSectionProps {
 }
 
 export default function CommentSection({ recipeSlug }: CommentSectionProps) {
+  const { user } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -21,6 +23,14 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
   const [comment, setComment] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  // Pre-fill name with username for logged-in users
+  useEffect(() => {
+    if (user) {
+      const username = user.user_metadata?.username || user.user_metadata?.name;
+      if (username) setName(username);
+    }
+  }, [user]);
 
   // Load comments on mount
   useEffect(() => {
@@ -128,7 +138,7 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Alex"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-              disabled={submitting}
+              disabled={submitting || !!user}
               maxLength={50}
             />
           </div>

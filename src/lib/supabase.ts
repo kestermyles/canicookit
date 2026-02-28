@@ -545,6 +545,7 @@ export function dbRowToRecipe(row: GeneratedRecipeRow): Recipe {
     created_at: row.created_at,
     updated_at: row.updated_at,
     user_ingredients: row.user_ingredients || undefined,
+    user_metadata: row.user_name ? { name: row.user_name } : undefined,
   };
 }
 

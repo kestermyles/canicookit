@@ -4,6 +4,7 @@ import RecipeCard from '@/components/RecipeCard';
 import SearchBar from '@/components/SearchBar';
 import QuickFilterBar from '@/components/QuickFilterBar';
 import TopCooks from '@/components/TopCooks';
+import WelcomeBack from '@/components/WelcomeBack';
 import { Star, ChefHat, Coffee, Salad, UtensilsCrossed, Cookie, CakeSlice, Soup, IceCream, Wine } from 'lucide-react';
 
 // Revalidate every 60 seconds to show fresh community recipes
@@ -100,6 +101,7 @@ export default async function HomePage() {
       {/* Hero / Search */}
       <div className="max-w-6xl mx-auto px-4">
         <section className="py-16 text-center">
+          <WelcomeBack />
           <h1 className="text-4xl md:text-5xl font-bold mb-4 font-display">
             What do you want to cook today<span className="text-primary">?</span>
           </h1>
