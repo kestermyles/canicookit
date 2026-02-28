@@ -19,6 +19,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [emailOptIn, setEmailOptIn] = useState(false);
   const { signIn, signUp, resetPassword } = useAuth();
 
   // Sync mode with initialMode when modal opens
@@ -69,7 +70,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
           setLoading(false);
           return;
         }
-        const { error } = await signUp(email, password, name, username);
+        const { error } = await signUp(email, password, name, username, emailOptIn);
         if (error) {
           setError(error.message);
         } else {
@@ -111,7 +112,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
               'Your name and username displayed on every contribution',
               'Share your photos and get featured on the homepage',
               'Eligible for Recipe of the Week and Photo of the Week',
-              'Earn your Community Hero status',
+              'Earn your Community Chef status',
               'Be part of a community of real cooks',
             ].map((benefit) => (
               <div key={benefit} className="flex items-start gap-2">
@@ -194,6 +195,20 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
               </button>
             </div>
           </div>
+
+          {mode === 'signup' && (
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={emailOptIn}
+                onChange={(e) => setEmailOptIn(e.target.checked)}
+                className="mt-1 rounded border-gray-300 text-primary focus:ring-primary"
+              />
+              <span className="text-sm text-gray-600">
+                Yes, send me new recipes, cooking ideas and community updates
+              </span>
+            </label>
+          )}
 
           {mode === 'signin' && (
             <div className="text-right">

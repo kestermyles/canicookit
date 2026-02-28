@@ -185,7 +185,7 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
                   onClick={() => setShowSignupPrompt(true)}
                   className="mt-2 text-sm text-primary hover:underline"
                 >
-                  Want to be recognised as a Community Hero? Join for free →
+                  Want to be recognised as a Community Chef? Join for free →
                 </button>
               )}
             </div>

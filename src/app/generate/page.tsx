@@ -280,7 +280,7 @@ export default function GeneratePage() {
                   onClick={() => setShowSignupPrompt(true)}
                   className="text-sm text-primary hover:underline"
                 >
-                  Want to be recognised as a Community Hero? Join for free →
+                  Want to be recognised as a Community Chef? Join for free →
                 </button>
                 <div className="mt-3">
                   <Link
