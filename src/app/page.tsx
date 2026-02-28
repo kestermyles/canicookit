@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getAllRecipes, getAllCuisines, getPopularIngredients } from '@/lib/recipes';
 import RecipeCard from '@/components/RecipeCard';
 import SearchBar from '@/components/SearchBar';
+import QuickFilterBar from '@/components/QuickFilterBar';
 
 // Revalidate every 60 seconds to show fresh community recipes
 export const revalidate = 60;
@@ -191,6 +192,9 @@ export default async function HomePage() {
 
       {/* Masonry/Pinterest-Style Recipe Grid */}
       <div className="max-w-6xl mx-auto px-4">
+        {/* Quick Filter Bar */}
+        <QuickFilterBar />
+
         {recipes.length > 0 && (
           <section className="pb-12">
             {/* Masonry Grid using CSS columns */}
