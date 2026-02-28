@@ -72,7 +72,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onClose}>
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50" onClick={onClose}>
       <div
         className="bg-white rounded-lg p-8 max-w-md w-full mx-4"
         onClick={(e) => e.stopPropagation()}
