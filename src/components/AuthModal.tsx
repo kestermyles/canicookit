@@ -106,11 +106,11 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
             <div className="space-y-2">
               <div className="flex items-start gap-2">
                 <span className="text-green-600 mt-0.5">✓</span>
-                <span className="text-sm text-gray-700">See all the recipes you've created</span>
+                <span className="text-sm text-gray-700">Share your photos and get featured on the homepage</span>
               </div>
               <div className="flex items-start gap-2">
                 <span className="text-green-600 mt-0.5">✓</span>
-                <span className="text-sm text-gray-700">Get new recipes by email</span>
+                <span className="text-sm text-gray-700">Be part of a community of real cooks</span>
               </div>
             </div>
           </div>
@@ -121,11 +121,11 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
           <div className="mb-6 space-y-2">
             <div className="flex items-start gap-2">
               <span className="text-green-600 mt-0.5">✓</span>
-              <span className="text-sm text-gray-700">See all the recipes you've created</span>
+              <span className="text-sm text-gray-700">Share your photos and get featured on the homepage</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="text-green-600 mt-0.5">✓</span>
-              <span className="text-sm text-gray-700">Get new recipes by email</span>
+              <span className="text-sm text-gray-700">Be part of a community of real cooks</span>
             </div>
           </div>
         )}
