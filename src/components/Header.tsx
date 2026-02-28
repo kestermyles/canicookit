@@ -104,63 +104,59 @@ export default function Header() {
               Stuff Nobody Tells You
             </Link>
 
-            {!loading && (
-              <>
-                {user ? (
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowUserMenu(!showUserMenu)}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors"
-                    >
-                      <span>{user.user_metadata?.name || 'Account'}</span>
-                      <ChevronDown className="w-4 h-4" />
-                    </button>
-                    {showUserMenu && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-40"
-                          onClick={() => setShowUserMenu(false)}
-                        />
-                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                          <div className="px-4 py-2 text-sm text-gray-700 border-b">
-                            {user.email}
-                          </div>
-                          <button
-                            onClick={() => {
-                              signOut();
-                              setShowUserMenu(false);
-                            }}
-                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            Sign Out
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setAuthMode('signin');
-                        setShowAuthModal(true);
-                      }}
-                      className="px-3 py-1.5 text-secondary hover:text-foreground transition-colors"
-                    >
-                      Sign In
-                    </button>
-                    <button
-                      onClick={() => {
-                        setAuthMode('signup');
-                        setShowAuthModal(true);
-                      }}
-                      className="px-3 py-1.5 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors"
-                    >
-                      Join the Community
-                    </button>
-                  </div>
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors"
+                >
+                  <span>{user.user_metadata?.name || 'Account'}</span>
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+                {showUserMenu && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setShowUserMenu(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                      <div className="px-4 py-2 text-sm text-gray-700 border-b">
+                        {user.email}
+                      </div>
+                      <button
+                        onClick={() => {
+                          signOut();
+                          setShowUserMenu(false);
+                        }}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  </>
                 )}
-              </>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    setAuthMode('signin');
+                    setShowAuthModal(true);
+                  }}
+                  className="px-3 py-1.5 text-secondary hover:text-foreground transition-colors"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => {
+                    setAuthMode('signup');
+                    setShowAuthModal(true);
+                  }}
+                  className="px-3 py-1.5 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors"
+                >
+                  Join the Community
+                </button>
+              </div>
             )}
           </nav>
 
@@ -241,49 +237,47 @@ export default function Header() {
           </Link>
 
           {/* Auth Buttons */}
-          {!loading && (
-            <div className="mt-6 pt-6 border-t space-y-3">
-              {user ? (
-                <>
-                  <div className="px-4 py-2 text-sm text-gray-600">
-                    {user.email}
-                  </div>
-                  <button
-                    onClick={() => {
-                      signOut();
-                      setMobileMenuOpen(false);
-                    }}
-                    className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                  >
-                    Sign Out
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => {
-                      setAuthMode('signin');
-                      setShowAuthModal(true);
-                      setMobileMenuOpen(false);
-                    }}
-                    className="w-full px-4 py-3 text-center text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    Sign In
-                  </button>
-                  <button
-                    onClick={() => {
-                      setAuthMode('signup');
-                      setShowAuthModal(true);
-                      setMobileMenuOpen(false);
-                    }}
-                    className="w-full px-4 py-3 text-center bg-primary text-white rounded-lg hover:bg-orange-700 transition-colors font-medium"
-                  >
-                    Join the Community
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+          <div className="mt-6 pt-6 border-t space-y-3">
+            {user ? (
+              <>
+                <div className="px-4 py-2 text-sm text-gray-600">
+                  {user.email}
+                </div>
+                <button
+                  onClick={() => {
+                    signOut();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    setAuthMode('signin');
+                    setShowAuthModal(true);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full px-4 py-3 text-center text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => {
+                    setAuthMode('signup');
+                    setShowAuthModal(true);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full px-4 py-3 text-center bg-primary text-white rounded-lg hover:bg-orange-700 transition-colors font-medium"
+                >
+                  Join the Community
+                </button>
+              </>
+            )}
+          </div>
         </nav>
       </div>
 
