@@ -31,47 +31,43 @@ import {
   Pizza,
   CakeSlice,
   Wine,
-  Coffee
+  Coffee,
+  Sparkles,
+  FlaskConical,
+  Croissant,
+  Package,
+  AlertTriangle,
+  Utensils
 } from 'lucide-react';
 
 const GUIDES_PER_PAGE = 6;
 const CATEGORIES = ['All', 'Techniques', 'Ingredients', 'Hosting', 'Basics', 'Kitchen Skills'];
 
-// Map emoji icons to Lucide components
-function getGuideIcon(emojiIcon: string) {
-  const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-    // Cooking tools & techniques
-    '🔪': Scissors,
-    '🥘': Soup,
-    '🌡️': Thermometer,
-    '⏱️': Timer,
-    '🔥': Flame,
-    '🧑‍🍳': ChefHat,
-    '🍳': EggFried,
-    '⚖️': Scale,
-    '🍽️': UtensilsCrossed,
-
-    // Ingredients
-    '🐟': Fish,
-    '🍪': Cookie,
-    '🌾': Wheat,
-    '🧀': Milk, // Cheese -> Milk icon
-    '🍎': Apple,
-    '🥕': Carrot,
-    '🥬': Leaf,
-    '🍕': Pizza,
-    '🎂': CakeSlice,
-    '🍷': Wine,
-    '☕': Coffee,
-
-    // Other
-    '🛒': ShoppingCart,
-    '👥': Users,
-    '💡': Lightbulb,
-    '🎉': PartyPopper,
+// Map guide slugs to specific contextual Lucide icons
+function getGuideIcon(slug: string) {
+  // Slug-based mapping (most specific)
+  const slugIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+    'caramelise-onions': Flame,
+    'perfect-rice': Utensils,
+    'season-food-properly': Sparkles,
+    'rest-meat-properly': Timer,
+    'cook-fish-without-ruining': Fish,
+    'build-flavour-in-sauce': FlaskConical,
+    'cook-pasta-perfectly': UtensilsCrossed,
+    'make-good-stock': Soup,
+    'store-fresh-herbs': Leaf,
+    'make-pastry-without-fear': Croissant,
+    'sharpen-and-care-for-knives': Scissors,
+    'meal-prep-for-week': Package,
+    'read-recipe-properly': BookOpen,
+    'save-dish-gone-wrong': AlertTriangle,
+    'grazing-table': ChefHat,
+    'set-dinner-table': UtensilsCrossed,
+    'dinner-party-budget': PartyPopper,
+    'cook-for-crowd-without-stress': Users,
   };
 
-  const IconComponent = iconMap[emojiIcon] || BookOpen;
+  const IconComponent = slugIconMap[slug] || BookOpen;
   return <IconComponent className="w-12 h-12 text-primary" />;
 }
 
@@ -427,7 +423,7 @@ export default function GuidesPage() {
                   className="group block bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all border border-gray-100"
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <div>{getGuideIcon(guide.icon)}</div>
+                    <div>{getGuideIcon(guide.slug)}</div>
                     <div className="flex flex-col items-end gap-1">
                       {guide.source === 'ai-generated' && (
                         <span className="px-2 py-0.5 text-xs bg-orange-100 text-orange-700 rounded-full">
