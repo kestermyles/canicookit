@@ -21,68 +21,45 @@ export default async function HomePage() {
   const popularIngredients = await getPopularIngredients();
   const recipeCount = allRecipes.length;
 
-  // Get recipe of the week - auto-rotates based on quality scores
-  // Priority: highest-scored community recipe from last 7 days with REAL photos
-  // Fallback: highest-scored curated recipe if no recent community recipes
-  // NEVER show AI-generated images in hero
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  // Get recipe of the week - ONLY curated recipes, NEVER generated/community
+  // Priority: highest-scored curated recipe with real photo
+  // CRITICAL: Hero must ONLY show curated recipes (source === 'curated')
 
-  // Helper function: Check if recipe has a real (non-AI) photo
-  const hasRealPhoto = (recipe: any) => {
+  // Get ONLY curated recipes (no generated, no community)
+  const curatedRecipes = allRecipes.filter((r) => {
+    // Primary filter: MUST be curated (not generated, not community)
+    if (r.source !== 'curated') return false;
+
     // Must have a hero image
-    if (!recipe.heroImage) return false;
+    if (!r.heroImage) return false;
 
-    // Explicitly reject AI-generated images
-    if (recipe.photo_is_ai_generated === true) return false;
+    // Never show AI-generated images (though curated shouldn't have these)
+    if (r.photo_is_ai_generated === true) return false;
 
-    // Reject recipes with "generated" source (legacy AI recipes)
-    if (recipe.source === 'generated') return false;
+    return true;
+  });
 
-    // Only allow if photo_is_ai_generated is explicitly false, null, or undefined
-    return recipe.photo_is_ai_generated === false ||
-           recipe.photo_is_ai_generated === null ||
-           recipe.photo_is_ai_generated === undefined;
-  };
+  // Sort curated recipes by quality score
+  const sortedCuratedRecipes = curatedRecipes.sort((a, b) => {
+    const scoreA = a.quality_score || 10;
+    const scoreB = b.quality_score || 10;
+    return scoreB - scoreA;
+  });
 
-  // Try to get recent community recipes first (ONLY with real photos)
-  const recentCommunityRecipes = allRecipes
-    .filter((r) => {
-      if (!hasRealPhoto(r) || r.source !== 'community') return false;
-      if (r.created_at) {
-        const createdDate = new Date(r.created_at);
-        return createdDate >= sevenDaysAgo;
-      }
-      return false;
-    })
-    .sort((a, b) => {
-      const scoreA = a.quality_score || 0;
-      const scoreB = b.quality_score || 0;
-      return scoreB - scoreA;
-    });
-
-  // Fallback to highest-rated curated recipe (ONLY with real photos)
-  const curatedWithRealPhotos = [...allRecipes]
-    .filter((r) => hasRealPhoto(r) && r.source === 'curated')
-    .sort((a, b) => {
-      const scoreA = a.quality_score || 10; // Curated recipes default to 10
-      const scoreB = b.quality_score || 10;
-      return scoreB - scoreA;
-    });
-
-  // Final fallback: any recipe with REAL photo (explicitly not AI-generated)
-  const anyRecipeWithRealPhoto = allRecipes.find((r) => hasRealPhoto(r));
-
-  const recipeOfWeek = recentCommunityRecipes[0] || curatedWithRealPhotos[0] || anyRecipeWithRealPhoto;
+  // Select the highest-scored curated recipe
+  const recipeOfWeek = sortedCuratedRecipes[0] || null;
 
   // Debug logging for hero recipe selection
-  console.log('[Homepage Hero] Selected recipe:', {
-    title: recipeOfWeek?.title,
-    source: recipeOfWeek?.source,
-    photo_is_ai_generated: recipeOfWeek?.photo_is_ai_generated,
-    hasHeroImage: !!recipeOfWeek?.heroImage,
-    recentCommunityCount: recentCommunityRecipes.length,
-    curatedWithRealPhotosCount: curatedWithRealPhotos.length,
+  console.log('[Homepage Hero] Recipe selection:', {
+    totalRecipes: allRecipes.length,
+    curatedRecipesFound: curatedRecipes.length,
+    selectedRecipe: recipeOfWeek ? {
+      title: recipeOfWeek.title,
+      source: recipeOfWeek.source,
+      cuisine: recipeOfWeek.cuisine,
+      photo_is_ai_generated: recipeOfWeek.photo_is_ai_generated,
+      hasHeroImage: !!recipeOfWeek.heroImage,
+    } : 'NONE',
   });
 
   // Sort remaining recipes by photo quality
