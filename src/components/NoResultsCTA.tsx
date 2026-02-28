@@ -152,10 +152,53 @@ function getIngredientIcon(query: string): React.ComponentType<{ className?: str
   return null;
 }
 
+// Basic client-side validation to filter out obviously non-food inputs
+function isValidFoodInput(query: string): boolean {
+  const trimmed = query.trim().toLowerCase();
+
+  // Too short
+  if (trimmed.length < 2) return false;
+
+  // Known non-food terms and inappropriate content
+  const blocklist = [
+    // Non-food items
+    'car', 'bike', 'phone', 'laptop', 'computer', 'shoe', 'shoes', 'shirt', 'pants',
+    'table', 'chair', 'desk', 'sofa', 'couch', 'bed', 'pillow', 'blanket',
+    // Inappropriate/bodily
+    'poop', 'pee', 'fart', 'vomit', 'snot', 'booger', 'urine', 'feces', 'shit',
+    'crap', 'piss', 'ass', 'dick', 'penis', 'vagina', 'testicle', 'butt',
+    // Animals (not food context)
+    'dog', 'cat', 'hamster', 'gerbil', 'mouse', 'rat', 'snake', 'lizard',
+    // Household chemicals
+    'bleach', 'soap', 'detergent', 'cleaner', 'poison', 'chemical',
+    // Body parts
+    'hair', 'nail', 'finger', 'toe', 'nose', 'ear', 'eye',
+    // Random objects
+    'rock', 'stone', 'dirt', 'mud', 'sand', 'paper', 'plastic', 'metal',
+  ];
+
+  // Check if query contains any blocked terms
+  const containsBlockedTerm = blocklist.some(term => {
+    const regex = new RegExp(`\\b${term}\\b`, 'i');
+    return regex.test(trimmed);
+  });
+
+  if (containsBlockedTerm) return false;
+
+  // Gibberish check: if more than 50% consonants in a row
+  const hasExcessiveConsonants = /[bcdfghjklmnpqrstvwxyz]{6,}/i.test(trimmed);
+  if (hasExcessiveConsonants) return false;
+
+  return true;
+}
+
 export default function NoResultsCTA({ searchQuery }: NoResultsCTAProps) {
   const inputType = detectInputType(searchQuery);
   const isDish = inputType === 'dish';
   const IconComponent = isDish ? null : getIngredientIcon(searchQuery);
+
+  // Validate input before showing CTA
+  const isValid = isValidFoodInput(searchQuery);
 
   const urlParam = isDish ? 'dish' : 'ingredients';
   const heading = isDish
@@ -165,6 +208,19 @@ export default function NoResultsCTA({ searchQuery }: NoResultsCTAProps) {
     ? "We'll build you a proper recipe in seconds"
     : "Tell us what else you've got and we'll build something great";
   const buttonText = isDish ? "Create This Recipe" : "Build This Recipe";
+
+  // Show gentle message for invalid inputs
+  if (!isValid) {
+    return (
+      <div className="max-w-2xl mx-auto my-12 text-center">
+        <div className="bg-gray-50 border-2 border-gray-200 rounded-2xl p-8">
+          <p className="text-gray-700 text-lg">
+            Please enter real food ingredients or dish names to generate a recipe.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto my-12 text-center">

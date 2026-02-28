@@ -30,15 +30,25 @@ export default async function HomePage() {
 
   // Helper function: Check if recipe has a real (non-AI) photo
   const hasRealPhoto = (recipe: any) => {
-    return recipe.heroImage && (recipe.photo_is_ai_generated === false || recipe.photo_is_ai_generated === null || recipe.photo_is_ai_generated === undefined);
+    // Must have a hero image
+    if (!recipe.heroImage) return false;
+
+    // Explicitly reject AI-generated images
+    if (recipe.photo_is_ai_generated === true) return false;
+
+    // Reject recipes with "generated" source (legacy AI recipes)
+    if (recipe.source === 'generated') return false;
+
+    // Only allow if photo_is_ai_generated is explicitly false, null, or undefined
+    return recipe.photo_is_ai_generated === false ||
+           recipe.photo_is_ai_generated === null ||
+           recipe.photo_is_ai_generated === undefined;
   };
 
   // Try to get recent community recipes first (ONLY with real photos)
   const recentCommunityRecipes = allRecipes
     .filter((r) => {
       if (!hasRealPhoto(r) || r.source !== 'community') return false;
-      // CRITICAL: Explicitly filter out AI-generated images
-      if (r.photo_is_ai_generated === true) return false;
       if (r.created_at) {
         const createdDate = new Date(r.created_at);
         return createdDate >= sevenDaysAgo;
@@ -64,6 +74,16 @@ export default async function HomePage() {
   const anyRecipeWithRealPhoto = allRecipes.find((r) => hasRealPhoto(r));
 
   const recipeOfWeek = recentCommunityRecipes[0] || curatedWithRealPhotos[0] || anyRecipeWithRealPhoto;
+
+  // Debug logging for hero recipe selection
+  console.log('[Homepage Hero] Selected recipe:', {
+    title: recipeOfWeek?.title,
+    source: recipeOfWeek?.source,
+    photo_is_ai_generated: recipeOfWeek?.photo_is_ai_generated,
+    hasHeroImage: !!recipeOfWeek?.heroImage,
+    recentCommunityCount: recentCommunityRecipes.length,
+    curatedWithRealPhotosCount: curatedWithRealPhotos.length,
+  });
 
   // Sort remaining recipes by photo quality
   const recipes = [...allRecipes]
