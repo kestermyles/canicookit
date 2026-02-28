@@ -147,7 +147,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g., Kester Hodgson"
+                  placeholder="e.g., John Smith"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   required
                 />
@@ -160,7 +160,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="e.g., K-Dog"
+                  placeholder="e.g., Smithy"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   required
                   maxLength={30}
