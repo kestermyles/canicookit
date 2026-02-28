@@ -316,7 +316,7 @@ export default function GuidesPage() {
                 We don't have a guide for that yet
               </h2>
               <p className="text-secondary mb-6">
-                Want us to create one? We'll use AI to generate a comprehensive guide
+                Want us to create one? We'll build a comprehensive guide
                 about "{searchQuery}" just for you.
               </p>
 
@@ -425,11 +425,6 @@ export default function GuidesPage() {
                   <div className="flex items-start justify-between mb-3">
                     <div>{getGuideIcon(guide.slug)}</div>
                     <div className="flex flex-col items-end gap-1">
-                      {guide.source === 'ai-generated' && (
-                        <span className="px-2 py-0.5 text-xs bg-orange-100 text-orange-700 rounded-full">
-                          AI
-                        </span>
-                      )}
                       <span className="px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded-full">
                         {guide.category}
                       </span>

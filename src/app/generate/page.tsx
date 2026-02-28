@@ -150,10 +150,10 @@ export default function GeneratePage() {
             className="mx-auto mb-4 mix-blend-darken"
           />
           <p className="text-lg text-white/80">
-            Tell us what you've got. We'll build something delicious.
+            Tell us what's in your fridge. We'll do the rest.
           </p>
           <p className="text-sm text-white/60 mt-2">
-            💡 Tip: Recipes with great photos get featured on the homepage 📸
+            💡 Share a photo of your finished dish — the best ones get featured!
           </p>
         </div>
 

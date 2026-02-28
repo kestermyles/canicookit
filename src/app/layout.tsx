@@ -10,11 +10,11 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Can I Cook It? — Tell us what you\'ve got. We\'ll build something delicious.',
+    default: 'Can I Cook It? — Real recipes, real cooks, real results.',
     template: '%s | Can I Cook It?',
   },
   description:
-    'Tell us what you\'ve got. We\'ll build something delicious. Generate custom recipes from your ingredients or browse our community recipe collection.',
+    'Tell us what you\'ve got. We\'ll build something delicious. Real recipes from real cooks, shared by people who love to cook.',
   metadataBase: new URL('https://canicookit.com'),
   icons: {
     icon: '/images/logo-color.png',

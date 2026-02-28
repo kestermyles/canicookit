@@ -104,15 +104,15 @@ export default async function HomePage() {
             What do you want to cook today<span className="text-primary">?</span>
           </h1>
           <p className="text-foreground/70 text-xl mb-4 max-w-2xl mx-auto">
-            Type any ingredients you have — we'll build a recipe around them.
+            Tell us what you've got — we'll build something delicious.
           </p>
           <p className="text-secondary text-lg mb-8 max-w-md mx-auto">
-            Find a recipe or build one from what you've got. Every recipe here is made by real cooks like you.
+            Real recipes, real cooks, real results.
           </p>
           <div className="max-w-2xl mx-auto">
             <SearchBar recipes={searchIndex} />
             <p className="text-center text-sm text-secondary mt-4">
-              {recipeCount.toLocaleString()} recipes and counting — built by the community
+              {recipeCount.toLocaleString()} recipes and counting — cooked by real people
             </p>
           </div>
         </section>
@@ -192,13 +192,13 @@ export default async function HomePage() {
                 Be the first to share a recipe!
               </h2>
               <p className="text-white/90 text-lg mb-6 leading-relaxed">
-                Community recipes with real photos will be featured here. Upload your dish photo to get featured!
+                Your recipes with real photos will be featured here. Share your cooking with the community!
               </p>
               <Link
                 href="/generate"
                 className="inline-block px-8 py-4 text-lg font-semibold bg-white text-orange-600 rounded-full transition-colors shadow-lg hover:bg-gray-100"
               >
-                Generate a Recipe →
+                Build a Recipe →
               </Link>
             </div>
           </div>

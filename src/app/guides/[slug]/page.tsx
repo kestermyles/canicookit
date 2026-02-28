@@ -110,11 +110,6 @@ export default async function GuidePage({ params }: PageProps) {
             <div className="text-white">
               <div className="flex items-center gap-3 mb-4">
                 <div className="text-white">{getGuideIcon(guide.slug, 'w-14 h-14 text-white')}</div>
-                {guide.source === 'ai-generated' && (
-                  <span className="px-3 py-1 text-xs bg-orange-500/90 backdrop-blur-sm text-white rounded-full">
-                    AI Generated
-                  </span>
-                )}
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-4 font-display">
                 {guide.title}
@@ -139,11 +134,6 @@ export default async function GuidePage({ params }: PageProps) {
           <div className="max-w-4xl mx-auto px-4 text-center">
             <div className="flex items-center justify-center gap-3 mb-6">
               <div>{getGuideIcon(guide.slug, 'w-20 h-20 text-primary')}</div>
-              {guide.source === 'ai-generated' && (
-                <span className="px-3 py-1 text-xs bg-orange-500 text-white rounded-full">
-                  AI Generated
-                </span>
-              )}
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4 font-display">
               {guide.title}
