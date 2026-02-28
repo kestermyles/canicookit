@@ -22,7 +22,16 @@ import {
   Fish,
   Soup,
   Cookie,
-  ShoppingCart
+  ShoppingCart,
+  Milk,
+  PartyPopper,
+  Apple,
+  Carrot,
+  Leaf,
+  Pizza,
+  CakeSlice,
+  Wine,
+  Coffee
 } from 'lucide-react';
 
 const GUIDES_PER_PAGE = 6;
@@ -31,6 +40,7 @@ const CATEGORIES = ['All', 'Techniques', 'Ingredients', 'Hosting', 'Basics', 'Ki
 // Map emoji icons to Lucide components
 function getGuideIcon(emojiIcon: string) {
   const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+    // Cooking tools & techniques
     '🔪': Scissors,
     '🥘': Soup,
     '🌡️': Thermometer,
@@ -38,14 +48,27 @@ function getGuideIcon(emojiIcon: string) {
     '🔥': Flame,
     '🧑‍🍳': ChefHat,
     '🍳': EggFried,
+    '⚖️': Scale,
+    '🍽️': UtensilsCrossed,
+
+    // Ingredients
     '🐟': Fish,
     '🍪': Cookie,
-    '🛒': ShoppingCart,
-    '⚖️': Scale,
     '🌾': Wheat,
+    '🧀': Milk, // Cheese -> Milk icon
+    '🍎': Apple,
+    '🥕': Carrot,
+    '🥬': Leaf,
+    '🍕': Pizza,
+    '🎂': CakeSlice,
+    '🍷': Wine,
+    '☕': Coffee,
+
+    // Other
+    '🛒': ShoppingCart,
     '👥': Users,
     '💡': Lightbulb,
-    '🍽️': UtensilsCrossed,
+    '🎉': PartyPopper,
   };
 
   const IconComponent = iconMap[emojiIcon] || BookOpen;
