@@ -28,12 +28,17 @@ export default async function HomePage() {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
+  // Helper function: Check if recipe has a real (non-AI) photo
+  const hasRealPhoto = (recipe: any) => {
+    return recipe.heroImage && (recipe.photo_is_ai_generated === false || recipe.photo_is_ai_generated === null || recipe.photo_is_ai_generated === undefined);
+  };
+
   // Try to get recent community recipes first (ONLY with real photos)
   const recentCommunityRecipes = allRecipes
     .filter((r) => {
-      if (!r.heroImage || r.source !== 'community') return false;
-      // CRITICAL: Never show AI-generated images in hero
-      if (r.photo_is_ai_generated) return false;
+      if (!hasRealPhoto(r) || r.source !== 'community') return false;
+      // CRITICAL: Explicitly filter out AI-generated images
+      if (r.photo_is_ai_generated === true) return false;
       if (r.created_at) {
         const createdDate = new Date(r.created_at);
         return createdDate >= sevenDaysAgo;
@@ -46,17 +51,19 @@ export default async function HomePage() {
       return scoreB - scoreA;
     });
 
-  // Fallback to highest-rated curated recipe if no recent community recipes
-  const recipeOfWeek = recentCommunityRecipes[0] ||
-    [...allRecipes]
-      .filter((r) => r.heroImage && r.source === 'curated')
-      .sort((a, b) => {
-        const scoreA = a.quality_score || 10; // Curated recipes default to 10
-        const scoreB = b.quality_score || 10;
-        return scoreB - scoreA;
-      })[0] ||
-    // Final fallback: any recipe with REAL photo (not AI)
-    allRecipes.find((r) => r.heroImage && !r.photo_is_ai_generated);
+  // Fallback to highest-rated curated recipe (ONLY with real photos)
+  const curatedWithRealPhotos = [...allRecipes]
+    .filter((r) => hasRealPhoto(r) && r.source === 'curated')
+    .sort((a, b) => {
+      const scoreA = a.quality_score || 10; // Curated recipes default to 10
+      const scoreB = b.quality_score || 10;
+      return scoreB - scoreA;
+    });
+
+  // Final fallback: any recipe with REAL photo (explicitly not AI-generated)
+  const anyRecipeWithRealPhoto = allRecipes.find((r) => hasRealPhoto(r));
+
+  const recipeOfWeek = recentCommunityRecipes[0] || curatedWithRealPhotos[0] || anyRecipeWithRealPhoto;
 
   // Sort remaining recipes by photo quality
   const recipes = [...allRecipes]
