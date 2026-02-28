@@ -27,6 +27,10 @@ export async function generateRecipeImage(
       style: 'natural',
     });
 
+    if (!response.data || response.data.length === 0) {
+      return { success: false, error: 'No image data returned from DALL-E' };
+    }
+
     const imageUrl = response.data[0]?.url;
 
     if (!imageUrl) {
