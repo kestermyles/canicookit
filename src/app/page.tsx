@@ -20,16 +20,18 @@ export default async function HomePage() {
   const recipeCount = allRecipes.length;
 
   // Get recipe of the week - auto-rotates based on quality scores
-  // Priority: highest-scored community recipe from last 7 days (real photos preferred)
-  // Fallback: highest-scored curated recipe or any recipe with image
-  // AI images allowed but clearly labeled with badge
+  // Priority: highest-scored community recipe from last 7 days with REAL photos
+  // Fallback: highest-scored curated recipe if no recent community recipes
+  // NEVER show AI-generated images in hero
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  // Try to get recent community recipes first (prefer real photos, but allow AI)
+  // Try to get recent community recipes first (ONLY with real photos)
   const recentCommunityRecipes = allRecipes
     .filter((r) => {
       if (!r.heroImage || r.source !== 'community') return false;
+      // CRITICAL: Never show AI-generated images in hero
+      if (r.photo_is_ai_generated) return false;
       if (r.created_at) {
         const createdDate = new Date(r.created_at);
         return createdDate >= sevenDaysAgo;
@@ -37,10 +39,8 @@ export default async function HomePage() {
       return false;
     })
     .sort((a, b) => {
-      // Prefer real photos over AI (bonus points for real photos)
-      const realPhotoBonus = 2;
-      const scoreA = (a.quality_score || 0) + (a.photo_is_ai_generated ? 0 : realPhotoBonus);
-      const scoreB = (b.quality_score || 0) + (b.photo_is_ai_generated ? 0 : realPhotoBonus);
+      const scoreA = a.quality_score || 0;
+      const scoreB = b.quality_score || 0;
       return scoreB - scoreA;
     });
 
@@ -53,8 +53,8 @@ export default async function HomePage() {
         const scoreB = b.quality_score || 10;
         return scoreB - scoreA;
       })[0] ||
-    // Final fallback: any recipe with image (AI or real)
-    allRecipes.find((r) => r.heroImage);
+    // Final fallback: any recipe with REAL photo (not AI)
+    allRecipes.find((r) => r.heroImage && !r.photo_is_ai_generated);
 
   // Sort remaining recipes by photo quality
   const recipes = [...allRecipes]
@@ -111,7 +111,7 @@ export default async function HomePage() {
       </div>
 
       {/* Recipe of the Week - Full Width Hero */}
-      {recipeOfWeek && (
+      {recipeOfWeek ? (
         <section className="relative w-full h-[500px] mb-12 overflow-hidden">
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
@@ -124,15 +124,6 @@ export default async function HomePage() {
             {/* Dark gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
           </div>
-
-          {/* AI Image Badge (top-right) */}
-          {recipeOfWeek.photo_is_ai_generated && (
-            <div className="absolute top-4 right-4 z-20">
-              <span className="px-3 py-1.5 bg-orange-500/90 backdrop-blur-sm text-white text-xs font-medium rounded-full border border-white/30 shadow-lg">
-                🤖 AI-generated image
-              </span>
-            </div>
-          )}
 
           {/* Content Overlay */}
           <div className="relative z-10 h-full max-w-6xl mx-auto px-4 flex items-end pb-12">
@@ -167,6 +158,31 @@ export default async function HomePage() {
                 className="inline-block px-8 py-4 text-lg font-semibold bg-orange-500 hover:bg-orange-600 text-white rounded-full transition-colors shadow-lg"
               >
                 Cook This →
+              </Link>
+            </div>
+          </div>
+        </section>
+      ) : (
+        // Placeholder when no recipes with real photos are available
+        <section className="relative w-full h-[500px] mb-12 overflow-hidden">
+          {/* Gradient Background */}
+          <div className="absolute inset-0 z-0 bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600" />
+
+          {/* Content Overlay */}
+          <div className="relative z-10 h-full max-w-6xl mx-auto px-4 flex items-center justify-center text-center">
+            <div className="max-w-2xl">
+              <div className="text-8xl mb-6">🍳</div>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight font-display">
+                Be the first to share a recipe!
+              </h2>
+              <p className="text-white/90 text-lg mb-6 leading-relaxed">
+                Community recipes with real photos will be featured here. Upload your dish photo to get featured!
+              </p>
+              <Link
+                href="/generate"
+                className="inline-block px-8 py-4 text-lg font-semibold bg-white text-orange-600 rounded-full transition-colors shadow-lg hover:bg-gray-100"
+              >
+                Generate a Recipe →
               </Link>
             </div>
           </div>

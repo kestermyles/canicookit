@@ -144,9 +144,9 @@ export default function GeneratePage() {
         <div className="text-center mb-8">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/images/logo-black.svg"
+            src="/images/logo-color.svg"
             alt="Can I Cook It"
-            style={{ height: '80px', width: 'auto', filter: 'invert(1)' }}
+            style={{ height: '80px', width: 'auto' }}
             className="mx-auto mb-4"
           />
           <p className="text-lg text-white/80">

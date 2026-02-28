@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Fuse from 'fuse.js';
 import RecipeCard from './RecipeCard';
 import NoResultsCTA from './NoResultsCTA';
@@ -25,6 +25,16 @@ interface SearchItem {
 
 export default function SearchBar({ recipes }: { recipes: SearchItem[] }) {
   const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+
+  // Debounce the query for showing no-results CTA (500ms delay)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [query]);
 
   const fuse = useMemo(
     () =>
@@ -64,8 +74,8 @@ export default function SearchBar({ recipes }: { recipes: SearchItem[] }) {
         </div>
       )}
 
-      {query.length > 1 && results.length === 0 && (
-        <NoResultsCTA searchQuery={query} />
+      {debouncedQuery.length > 1 && results.length === 0 && (
+        <NoResultsCTA searchQuery={debouncedQuery} />
       )}
     </div>
   );
