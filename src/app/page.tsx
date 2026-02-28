@@ -20,18 +20,16 @@ export default async function HomePage() {
   const recipeCount = allRecipes.length;
 
   // Get recipe of the week - auto-rotates based on quality scores
-  // Priority: highest-scored community recipe from last 7 days with REAL photos
-  // Fallback: highest-scored curated recipe if no recent community recipes
-  // NEVER show AI-generated images as hero
+  // Priority: highest-scored community recipe from last 7 days (real photos preferred)
+  // Fallback: highest-scored curated recipe or any recipe with image
+  // AI images allowed but clearly labeled with badge
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  // Try to get recent community recipes first (ONLY with real photos)
+  // Try to get recent community recipes first (prefer real photos, but allow AI)
   const recentCommunityRecipes = allRecipes
     .filter((r) => {
       if (!r.heroImage || r.source !== 'community') return false;
-      // CRITICAL: Never show AI-generated images as hero
-      if (r.photo_is_ai_generated) return false;
       if (r.created_at) {
         const createdDate = new Date(r.created_at);
         return createdDate >= sevenDaysAgo;
@@ -39,8 +37,10 @@ export default async function HomePage() {
       return false;
     })
     .sort((a, b) => {
-      const scoreA = a.quality_score || 0;
-      const scoreB = b.quality_score || 0;
+      // Prefer real photos over AI (bonus points for real photos)
+      const realPhotoBonus = 2;
+      const scoreA = (a.quality_score || 0) + (a.photo_is_ai_generated ? 0 : realPhotoBonus);
+      const scoreB = (b.quality_score || 0) + (b.photo_is_ai_generated ? 0 : realPhotoBonus);
       return scoreB - scoreA;
     });
 
@@ -53,8 +53,8 @@ export default async function HomePage() {
         const scoreB = b.quality_score || 10;
         return scoreB - scoreA;
       })[0] ||
-    // Final fallback: any recipe with NON-AI image
-    allRecipes.find((r) => r.heroImage && !r.photo_is_ai_generated);
+    // Final fallback: any recipe with image (AI or real)
+    allRecipes.find((r) => r.heroImage);
 
   // Sort remaining recipes by photo quality
   const recipes = [...allRecipes]
@@ -112,9 +112,9 @@ export default async function HomePage() {
 
       {/* Recipe of the Week - Full Width Hero */}
       {recipeOfWeek && (
-        <section className="relative w-full h-[500px] mb-12">
+        <section className="relative w-full h-[500px] mb-12 overflow-hidden">
           {/* Background Image */}
-          <div className="absolute inset-0">
+          <div className="absolute inset-0 z-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={recipeOfWeek.heroImage}
@@ -125,8 +125,17 @@ export default async function HomePage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
           </div>
 
+          {/* AI Image Badge (top-right) */}
+          {recipeOfWeek.photo_is_ai_generated && (
+            <div className="absolute top-4 right-4 z-20">
+              <span className="px-3 py-1.5 bg-orange-500/90 backdrop-blur-sm text-white text-xs font-medium rounded-full border border-white/30 shadow-lg">
+                🤖 AI-generated image
+              </span>
+            </div>
+          )}
+
           {/* Content Overlay */}
-          <div className="relative h-full max-w-6xl mx-auto px-4 flex items-end pb-12">
+          <div className="relative z-10 h-full max-w-6xl mx-auto px-4 flex items-end pb-12">
             <div className="max-w-2xl">
               {/* Recipe of the Week Badge */}
               <div className="inline-block mb-4">

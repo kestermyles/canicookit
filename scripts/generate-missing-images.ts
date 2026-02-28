@@ -102,7 +102,7 @@ Example: {"score": 8.5, "reasoning": "Well-plated with good lighting, looks appe
 
 async function generateImage(recipeName: string, description: string, cuisine: string): Promise<{ imageUrl: string; score: number } | null> {
   const cuisineContext = cuisine && cuisine !== 'generated' ? `, ${cuisine} cuisine` : '';
-  const prompt = `A beautifully plated ${recipeName}${cuisineContext}, professionally styled food photography, shot at a 45-degree angle, natural window lighting, on a rustic ceramic plate, garnished and restaurant-quality presentation, shallow depth of field, warm appetising tones, realistic and delicious looking. The dish is fully cooked and ready to eat${description ? `, featuring ${description}` : ''}`;
+  const prompt = `Close-up of a finished, plated ${recipeName}${cuisineContext}, food photography, clean background, no props, no cameras, no people, just the dish. The food is cooked and ready to eat, professionally styled, natural lighting, shallow depth of field${description ? `, featuring ${description}` : ''}`;
 
   let bestImage: { url: string; score: number; reasoning: string } | null = null;
 

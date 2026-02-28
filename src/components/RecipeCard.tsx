@@ -23,25 +23,21 @@ interface RecipeCardProps {
 function RecipeImage({ src, alt, isAiGenerated }: { src: string; alt: string; isAiGenerated?: boolean }) {
   const [error, setError] = useState(false);
 
-  // Never show AI-generated images in cards - show placeholder instead
-  if (!src || error || isAiGenerated) {
+  // Show placeholder if no image or error loading
+  if (!src || error) {
     return (
       <div className="w-full h-48 bg-gradient-to-br from-orange-50 to-amber-50 flex flex-col items-center justify-center p-6 text-center">
         <div className="text-4xl mb-2">📸</div>
-        <span className="text-secondary text-sm font-medium">
-          {isAiGenerated ? 'Community photo needed!' : 'No image yet'}
+        <span className="text-secondary text-sm font-medium">No image yet</span>
+        <span className="text-xs text-secondary/70 mt-1">
+          Upload a photo of this dish
         </span>
-        {isAiGenerated && (
-          <span className="text-xs text-secondary/70 mt-1">
-            Be the first to upload a real photo
-          </span>
-        )}
       </div>
     );
   }
 
   return (
-    <div className="w-full bg-light-grey overflow-hidden">
+    <div className="relative w-full bg-light-grey overflow-hidden">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={src}
@@ -49,6 +45,14 @@ function RecipeImage({ src, alt, isAiGenerated }: { src: string; alt: string; is
         className="w-full h-auto object-cover"
         onError={() => setError(true)}
       />
+      {/* AI image badge overlay */}
+      {isAiGenerated && (
+        <div className="absolute top-2 right-2">
+          <span className="px-2 py-1 bg-orange-500/90 backdrop-blur-sm text-white text-xs font-medium rounded-full shadow-md">
+            🤖 AI image
+          </span>
+        </div>
+      )}
     </div>
   );
 }
