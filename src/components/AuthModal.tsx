@@ -19,6 +19,14 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'signin', con
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
 
+  // Sync mode with initialMode when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setMode(initialMode);
+      setError('');
+    }
+  }, [isOpen, initialMode]);
+
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
