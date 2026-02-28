@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 import { getAllRecipes } from '@/lib/recipes';
-import { getAllGuides } from '@/lib/guides';
+import { getFeaturedGuides } from '@/lib/supabase';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://canicookit.com';
@@ -21,11 +21,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     };
   });
 
-  // Get all guides
-  const guides = getAllGuides();
+  // Get all guides from Supabase
+  const guides = await getFeaturedGuides();
   const guideUrls = guides.map((guide) => ({
     url: `${baseUrl}/guides/${guide.slug}`,
-    lastModified: new Date(),
+    lastModified: guide.updated_at ? new Date(guide.updated_at) : new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.6,
   }));

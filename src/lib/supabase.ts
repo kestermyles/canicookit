@@ -655,3 +655,187 @@ export async function getUserRating(
     return 0;
   }
 }
+
+/**
+ * Database types for guides
+ */
+export interface GuideRow {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  icon: string;
+  read_time: string;
+  intro: string;
+  cover_image: string | null;
+  steps: { number: number; title: string; content: string }[];
+  pro_tips: string[];
+  related_recipes: string[];
+  source: 'curated' | 'ai-generated';
+  status: 'pending' | 'featured' | 'rejected';
+  quality_score: number | null;
+  view_count: number;
+  category: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Get all featured guides
+ */
+export async function getFeaturedGuides(): Promise<GuideRow[]> {
+  try {
+    const { data, error } = await supabase
+      .from('guides')
+      .select('*')
+      .eq('status', 'featured')
+      .order('source', { ascending: true }) // curated first
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching featured guides:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in getFeaturedGuides:', error);
+    return [];
+  }
+}
+
+/**
+ * Get a guide by slug
+ */
+export async function getGuideBySlug(slug: string): Promise<GuideRow | null> {
+  try {
+    const { data, error } = await supabase
+      .from('guides')
+      .select('*')
+      .eq('slug', slug)
+      .eq('status', 'featured')
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null;
+      }
+      console.error('Error fetching guide:', error);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error in getGuideBySlug:', error);
+    return null;
+  }
+}
+
+/**
+ * Search guides by keyword
+ */
+export async function searchGuides(query: string): Promise<GuideRow[]> {
+  try {
+    const { data, error } = await supabase.rpc('search_guides', {
+      search_query: query,
+    });
+
+    if (error) {
+      console.error('Error searching guides:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in searchGuides:', error);
+    return [];
+  }
+}
+
+/**
+ * Create a new AI-generated guide
+ */
+export async function createGuide(guideData: {
+  slug: string;
+  title: string;
+  description: string;
+  icon: string;
+  read_time: string;
+  intro: string;
+  steps: { number: number; title: string; content: string }[];
+  pro_tips: string[];
+  related_recipes: string[];
+  source?: 'curated' | 'ai-generated';
+  status?: 'pending' | 'featured' | 'rejected';
+  category?: string;
+}): Promise<{ success: boolean; data?: GuideRow; error?: string }> {
+  try {
+    const { data, error } = await supabase
+      .from('guides')
+      .insert([
+        {
+          slug: guideData.slug,
+          title: guideData.title,
+          description: guideData.description,
+          icon: guideData.icon,
+          read_time: guideData.read_time,
+          intro: guideData.intro,
+          steps: guideData.steps,
+          pro_tips: guideData.pro_tips,
+          related_recipes: guideData.related_recipes,
+          source: guideData.source || 'ai-generated',
+          status: guideData.status || 'pending',
+          category: guideData.category || 'Basics',
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating guide:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Error in createGuide:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+/**
+ * Update a guide's quality score and status
+ */
+export async function updateGuideScore(
+  guideId: string,
+  score: number
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const status = score >= 7 ? 'featured' : 'pending';
+
+    const { error } = await supabase
+      .from('guides')
+      .update({
+        quality_score: score,
+        status: status,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', guideId);
+
+    if (error) {
+      console.error('Error updating guide score:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error in updateGuideScore:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
