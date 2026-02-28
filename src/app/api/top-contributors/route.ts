@@ -12,9 +12,9 @@ export async function GET(request: NextRequest) {
     // Only count featured/approved recipes (status = 'featured')
     const { data, error } = await supabase
       .from('generated_recipes')
-      .select('user_metadata')
+      .select('user_id, user_name')
       .eq('status', 'featured')
-      .not('user_metadata', 'is', null);
+      .not('user_id', 'is', null);
 
     if (error) {
       console.error('Supabase error:', error);
@@ -22,23 +22,19 @@ export async function GET(request: NextRequest) {
     }
 
     // Count recipes per user
-    const contributorCounts = new Map<string, { name: string; email: string; count: number }>();
+    const contributorCounts = new Map<string, { name: string; count: number }>();
 
     data?.forEach((recipe) => {
-      const metadata = recipe.user_metadata as any;
-      if (metadata?.email) {
-        const email = metadata.email;
-        const existing = contributorCounts.get(email);
+      const userId = recipe.user_id as string;
+      const existing = contributorCounts.get(userId);
 
-        if (existing) {
-          existing.count++;
-        } else {
-          contributorCounts.set(email, {
-            name: metadata.name || metadata.email,
-            email: email,
-            count: 1,
-          });
-        }
+      if (existing) {
+        existing.count++;
+      } else {
+        contributorCounts.set(userId, {
+          name: recipe.user_name || 'Anonymous',
+          count: 1,
+        });
       }
     });
 

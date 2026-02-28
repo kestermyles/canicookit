@@ -324,7 +324,7 @@ export default async function HomePage() {
           <section className="py-12">
             <h2 className="text-2xl font-bold mb-8">Browse by Cuisine</h2>
             <div className="flex flex-wrap gap-3">
-              {cuisines.map((cuisine) => (
+              {cuisines.filter((c) => c !== 'generated').map((cuisine) => (
                 <Link
                   key={cuisine}
                   href={`/recipes/cuisine/${cuisine}`}
@@ -370,7 +370,7 @@ export default async function HomePage() {
               href="/basics"
               className="inline-block px-6 py-3 bg-primary text-white rounded-full font-medium hover:bg-orange-700 transition-colors"
             >
-              Read the Basics
+              Stuff Nobody Tells You
             </Link>
           </div>
         </section>

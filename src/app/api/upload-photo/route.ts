@@ -92,7 +92,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Trigger async photo scoring (don't await)
-    fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/score-photo`, {
+    const origin = new URL(request.url).origin;
+    fetch(`${origin}/api/score-photo`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

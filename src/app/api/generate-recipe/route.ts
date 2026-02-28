@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateRecipe } from '@/lib/claude';
 import { createRecipe, updateRecipePhoto } from '@/lib/supabase';
 import { validateGeneratedRecipe, validateUserInput } from '@/lib/validation';
+import { scoreRecipe } from '@/lib/scoring';
 import { generateRecipeImage, downloadAndUploadImage } from '@/lib/imageGeneration';
 import {
   GenerateRecipeRequest,
@@ -226,11 +227,7 @@ async function handleSaveRecipe(
     }
 
     // Trigger async scoring (don't await - fire and forget)
-    fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/score-recipe`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ recipeId: result.data.id }),
-    }).catch((err) => {
+    scoreRecipe(result.data.id).catch((err) => {
       console.error('Failed to trigger scoring:', err);
     });
 
