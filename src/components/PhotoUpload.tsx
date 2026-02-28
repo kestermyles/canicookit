@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import AuthModal from './AuthModal';
 
 interface PhotoUploadProps {
   recipeSlug: string;
@@ -17,6 +19,8 @@ export default function PhotoUpload({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [uploaderName, setUploaderName] = useState('');
+  const { user } = useAuth();
+  const [showSignupPrompt, setShowSignupPrompt] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -185,6 +189,14 @@ export default function PhotoUpload({
               ✓ Photo uploaded successfully! It will be reviewed and may become
               the recipe's main image.
             </p>
+            {!user && (
+              <button
+                onClick={() => setShowSignupPrompt(true)}
+                className="mt-2 text-sm text-primary hover:underline"
+              >
+                Want to be recognised as a Community Hero? Join for free →
+              </button>
+            )}
           </div>
         )}
 
@@ -202,6 +214,13 @@ export default function PhotoUpload({
           become the recipe's featured image!
         </p>
       </div>
+
+      <AuthModal
+        isOpen={showSignupPrompt}
+        onClose={() => setShowSignupPrompt(false)}
+        initialMode="signup"
+        context="photo"
+      />
     </div>
   );
 }

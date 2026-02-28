@@ -6,6 +6,8 @@ import Link from 'next/link';
 import IngredientInput from '@/components/IngredientInput';
 import EssentialsPanel from '@/components/EssentialsPanel';
 import GeneratedRecipe from '@/components/GeneratedRecipe';
+import AuthModal from '@/components/AuthModal';
+import { useAuth } from '@/contexts/AuthContext';
 import { GeneratedRecipeData, PANTRY_ESSENTIALS } from '@/types/generator';
 import { getAllCommunityRecipes } from '@/lib/supabase';
 
@@ -51,6 +53,9 @@ export default function GeneratePage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [savedSlug, setSavedSlug] = useState<string | null>(null);
+  const [showSignupPrompt, setShowSignupPrompt] = useState(false);
+  const { user } = useAuth();
 
   const handleGenerate = async () => {
     if (userIngredients.length === 0) {
@@ -113,7 +118,12 @@ export default function GeneratePage() {
         throw new Error(data.error || 'Failed to save recipe');
       }
 
-      router.push(`/recipes/community/${data.slug}`);
+      if (user) {
+        router.push(`/recipes/community/${data.slug}`);
+      } else {
+        setSavedSlug(data.slug);
+        setIsSaving(false);
+      }
     } catch (err) {
       console.error('Save error:', err);
       setError(err instanceof Error ? err.message : 'Failed to save recipe. Please try again.');
@@ -261,6 +271,28 @@ export default function GeneratePage() {
               isSaving={isSaving}
             />
 
+            {savedSlug && (
+              <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+                <p className="text-sm text-green-700 mb-2">
+                  ✓ Recipe saved successfully!
+                </p>
+                <button
+                  onClick={() => setShowSignupPrompt(true)}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Want to be recognised as a Community Hero? Join for free →
+                </button>
+                <div className="mt-3">
+                  <Link
+                    href={`/recipes/community/${savedSlug}`}
+                    className="text-sm font-medium text-primary hover:text-orange-700"
+                  >
+                    View your recipe →
+                  </Link>
+                </div>
+              </div>
+            )}
+
             {error && (
               <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                 <div className="flex items-start gap-3">
@@ -319,6 +351,12 @@ export default function GeneratePage() {
           </div>
         )}
       </div>
+
+      <AuthModal
+        isOpen={showSignupPrompt}
+        onClose={() => setShowSignupPrompt(false)}
+        initialMode="signup"
+      />
     </div>
   );
 }

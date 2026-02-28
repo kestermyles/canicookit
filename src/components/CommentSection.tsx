@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import AuthModal from './AuthModal';
 
 interface Comment {
   id: string;
@@ -23,6 +24,7 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
   const [comment, setComment] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [showSignupPrompt, setShowSignupPrompt] = useState(false);
 
   // Pre-fill name with username for logged-in users
   useEffect(() => {
@@ -85,8 +87,9 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
 
       // Success!
       setSuccess(true);
-      setName('');
+      if (!user) setShowSignupPrompt(true);
       setComment('');
+      if (!user) setName('');
 
       // Reset success message after 5 seconds
       setTimeout(() => setSuccess(false), 5000);
@@ -176,6 +179,15 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
               <p className="text-sm text-green-700">
                 ✓ Comment submitted! It will appear after moderation.
               </p>
+              {!user && (
+                <button
+                  type="button"
+                  onClick={() => setShowSignupPrompt(true)}
+                  className="mt-2 text-sm text-primary hover:underline"
+                >
+                  Want to be recognised as a Community Hero? Join for free →
+                </button>
+              )}
             </div>
           )}
 
@@ -224,6 +236,13 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
           </div>
         )}
       </div>
+
+      <AuthModal
+        isOpen={showSignupPrompt}
+        onClose={() => setShowSignupPrompt(false)}
+        initialMode="signup"
+        context="comment"
+      />
     </div>
   );
 }
