@@ -589,11 +589,17 @@ export async function submitRating(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     if (!userId) {
-      // Store in localStorage for anonymous users
-      if (typeof window !== 'undefined') {
+      // Save anonymous rating to DB via API route and track in localStorage
+      const res = await fetch('/api/rate-recipe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ recipeSlug, rating }),
+      });
+      const result = await res.json();
+      if (result.success && typeof window !== 'undefined') {
         localStorage.setItem(`rating-${recipeSlug}`, rating.toString());
       }
-      return { success: true };
+      return { success: result.success, error: result.error };
     }
 
     // Upsert rating for authenticated users
