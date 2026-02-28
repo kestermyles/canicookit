@@ -124,14 +124,14 @@ export default async function CommunityRecipePage({ params }: PageProps) {
             />
           </div>
 
-          {/* AI-generated image banner */}
+          {/* AI-generated image banner - ALWAYS shown for AI images */}
           {recipe.photo_is_ai_generated && (
             <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-200">
               <div className="max-w-4xl mx-auto px-4 py-3">
                 <div className="flex items-center justify-between gap-4 flex-wrap">
-                  <p className="text-sm text-gray-700">
-                    <span className="mr-2">📸</span>
-                    AI-generated image — made this dish? Upload your own photo and show the community how it turned out!
+                  <p className="text-sm text-gray-700 font-medium">
+                    <span className="mr-2">🤖</span>
+                    AI-generated image — made this dish? Upload your own photo and show the community the real thing!
                   </p>
                   <a
                     href="#photo-upload"

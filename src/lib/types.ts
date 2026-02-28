@@ -52,4 +52,8 @@ export interface RecipeSearchItem {
   difficulty: string;
   calories: number;
   budget: string;
+  source?: 'curated' | 'community';
+  qualityScore?: number;
+  status?: 'pending' | 'featured' | 'rejected';
+  photoIsAiGenerated?: boolean;
 }

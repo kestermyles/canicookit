@@ -17,15 +17,25 @@ interface RecipeCardProps {
   source?: 'curated' | 'community';
   qualityScore?: number;
   status?: 'pending' | 'featured' | 'rejected';
+  photoIsAiGenerated?: boolean;
 }
 
-function RecipeImage({ src, alt }: { src: string; alt: string }) {
+function RecipeImage({ src, alt, isAiGenerated }: { src: string; alt: string; isAiGenerated?: boolean }) {
   const [error, setError] = useState(false);
 
-  if (!src || error) {
+  // Never show AI-generated images in cards - show placeholder instead
+  if (!src || error || isAiGenerated) {
     return (
-      <div className="w-full h-48 bg-light-grey flex items-center justify-center">
-        <span className="text-secondary text-sm">No image yet</span>
+      <div className="w-full h-48 bg-gradient-to-br from-orange-50 to-amber-50 flex flex-col items-center justify-center p-6 text-center">
+        <div className="text-4xl mb-2">📸</div>
+        <span className="text-secondary text-sm font-medium">
+          {isAiGenerated ? 'Community photo needed!' : 'No image yet'}
+        </span>
+        {isAiGenerated && (
+          <span className="text-xs text-secondary/70 mt-1">
+            Be the first to upload a real photo
+          </span>
+        )}
       </div>
     );
   }
@@ -63,6 +73,7 @@ export default function RecipeCard({
   source = 'curated',
   qualityScore,
   status,
+  photoIsAiGenerated = false,
 }: RecipeCardProps) {
   const totalTime = prepTime + cookTime;
   const isCommunity = source === 'community';
@@ -75,7 +86,7 @@ export default function RecipeCard({
       href={recipeUrl}
       className="group block rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-lg transition-shadow"
     >
-      <RecipeImage src={heroImage} alt={title} />
+      <RecipeImage src={heroImage} alt={title} isAiGenerated={photoIsAiGenerated} />
       <div className="p-4">
         <div className="flex items-center gap-2 mb-2">
           <span className="inline-block px-2 py-0.5 text-xs font-medium bg-orange-50 text-primary rounded-full capitalize">

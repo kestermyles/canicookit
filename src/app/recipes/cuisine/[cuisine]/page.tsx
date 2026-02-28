@@ -47,6 +47,10 @@ export default async function CuisinePage({ params }: PageProps) {
               cookTime={recipe.cookTime}
               difficulty={recipe.difficulty}
               calories={recipe.calories}
+              source={recipe.source}
+              qualityScore={recipe.quality_score}
+              status={recipe.status}
+              photoIsAiGenerated={recipe.photo_is_ai_generated}
             />
           ))}
         </div>

@@ -20,15 +20,18 @@ export default async function HomePage() {
   const recipeCount = allRecipes.length;
 
   // Get recipe of the week - auto-rotates based on quality scores
-  // Priority: highest-scored community recipe from last 7 days
+  // Priority: highest-scored community recipe from last 7 days with REAL photos
   // Fallback: highest-scored curated recipe if no recent community recipes
+  // NEVER show AI-generated images as hero
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  // Try to get recent community recipes first
+  // Try to get recent community recipes first (ONLY with real photos)
   const recentCommunityRecipes = allRecipes
     .filter((r) => {
       if (!r.heroImage || r.source !== 'community') return false;
+      // CRITICAL: Never show AI-generated images as hero
+      if (r.photo_is_ai_generated) return false;
       if (r.created_at) {
         const createdDate = new Date(r.created_at);
         return createdDate >= sevenDaysAgo;
@@ -50,7 +53,8 @@ export default async function HomePage() {
         const scoreB = b.quality_score || 10;
         return scoreB - scoreA;
       })[0] ||
-    allRecipes.find((r) => r.heroImage); // Final fallback: any recipe with image
+    // Final fallback: any recipe with NON-AI image
+    allRecipes.find((r) => r.heroImage && !r.photo_is_ai_generated);
 
   // Sort remaining recipes by photo quality
   const recipes = [...allRecipes]
@@ -76,6 +80,7 @@ export default async function HomePage() {
     source: r.source,
     qualityScore: r.quality_score,
     status: r.status,
+    photoIsAiGenerated: r.photo_is_ai_generated,
   }));
 
   const heroUrl = recipeOfWeek?.source === 'community'
@@ -167,7 +172,7 @@ export default async function HomePage() {
             <div className="columns-1 md:columns-2 lg:columns-3 gap-4">
               {recipes.slice(0, 3).map((recipe, index) => (
                 <div key={`${recipe.source || 'curated'}-${recipe.slug}`} className="break-inside-avoid mb-4">
-                  <RecipeCard {...recipe} />
+                  <RecipeCard {...recipe} photoIsAiGenerated={recipe.photo_is_ai_generated} />
                 </div>
               ))}
 
@@ -200,7 +205,7 @@ export default async function HomePage() {
               {/* Remaining recipes */}
               {recipes.slice(3).map((recipe) => (
                 <div key={`${recipe.source || 'curated'}-${recipe.slug}`} className="break-inside-avoid mb-4">
-                  <RecipeCard {...recipe} />
+                  <RecipeCard {...recipe} photoIsAiGenerated={recipe.photo_is_ai_generated} />
                 </div>
               ))}
             </div>
