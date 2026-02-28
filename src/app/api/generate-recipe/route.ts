@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateRecipe } from '@/lib/claude';
-import { createRecipe } from '@/lib/supabase';
+import { createRecipe, updateRecipePhoto } from '@/lib/supabase';
 import { validateGeneratedRecipe } from '@/lib/validation';
+import { generateRecipeImage, downloadAndUploadImage } from '@/lib/imageGeneration';
 import {
   GenerateRecipeRequest,
   GenerateRecipeResponse,
@@ -215,6 +216,34 @@ async function handleSaveRecipe(
     }).catch((err) => {
       console.error('Failed to trigger scoring:', err);
     });
+
+    // Generate AI image for the recipe (async - don't block response)
+    console.log('[Save Recipe] Starting image generation for:', recipe.title);
+    generateRecipeImage(recipe.title, recipe.description)
+      .then(async (imageResult) => {
+        if (imageResult.success && imageResult.imageUrl) {
+          console.log('[Save Recipe] Image generated, uploading to storage...');
+          // Download and upload to Supabase Storage
+          const uploadResult = await downloadAndUploadImage(
+            imageResult.imageUrl,
+            `${slug}-hero.png`
+          );
+
+          if (uploadResult.success && uploadResult.publicUrl) {
+            console.log('[Save Recipe] Image uploaded, updating recipe...');
+            // Update recipe with the image URL
+            await updateRecipePhoto(slug, uploadResult.publicUrl);
+            console.log('[Save Recipe] Recipe image updated successfully');
+          } else {
+            console.error('[Save Recipe] Failed to upload image:', uploadResult.error);
+          }
+        } else {
+          console.error('[Save Recipe] Failed to generate image:', imageResult.error);
+        }
+      })
+      .catch((err) => {
+        console.error('[Save Recipe] Image generation error:', err);
+      });
 
     return NextResponse.json({
       success: true,
