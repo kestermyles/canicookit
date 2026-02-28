@@ -109,7 +109,7 @@ export default async function HomePage() {
             Tell us what you've got — we'll build something delicious.
           </p>
           <p className="text-secondary text-lg mb-8 max-w-md mx-auto">
-            Real recipes, real cooks, real results.
+            Real recipes, real cooks, real delicious.
           </p>
           <div className="max-w-2xl mx-auto">
             <SearchBar recipes={searchIndex} />

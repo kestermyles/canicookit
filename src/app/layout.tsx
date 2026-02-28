@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: {
-    default: 'Can I Cook It? — Real recipes, real cooks, real results.',
+    default: 'Can I Cook It? — Real recipes, real cooks, real delicious.',
     template: '%s | Can I Cook It?',
   },
   description:
