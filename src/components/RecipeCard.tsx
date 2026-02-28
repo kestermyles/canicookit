@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Camera, Bot } from 'lucide-react';
 import CommunityBadge from './CommunityBadge';
+import ReportButton from './ReportButton';
 
 interface RecipeCardProps {
   title: string;
@@ -159,12 +160,13 @@ export default function RecipeCard({
   const displayCuisine = cuisine === 'generated' ? 'Custom' : cuisine;
 
   return (
-    <Link
-      href={recipeUrl}
-      className="group block rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-lg transition-shadow"
-    >
-      <RecipeImage src={heroImage} alt={title} isAiGenerated={photoIsAiGenerated} />
-      <div className="p-4">
+    <div className="relative">
+      <Link
+        href={recipeUrl}
+        className="group block rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-lg transition-shadow"
+      >
+        <RecipeImage src={heroImage} alt={title} isAiGenerated={photoIsAiGenerated} />
+        <div className="p-4">
         <div className="flex items-center gap-2 mb-2">
           <span className="inline-block px-2 py-0.5 text-xs font-medium bg-orange-50 text-primary rounded-full capitalize">
             {displayCuisine}
@@ -199,6 +201,13 @@ export default function RecipeCard({
           </span>
         </div>
       </div>
-    </Link>
+      </Link>
+      {/* Report button (only for community recipes) */}
+      {isCommunity && (
+        <div className="absolute top-2 right-2 z-10" onClick={(e) => e.stopPropagation()}>
+          <ReportButton recipeSlug={slug} variant="icon" />
+        </div>
+      )}
+    </div>
   );
 }

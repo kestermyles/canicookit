@@ -7,6 +7,7 @@ import CommentSection from '@/components/CommentSection';
 import StarRating from '@/components/StarRating';
 import AbilityLevel from '@/components/AbilityLevel';
 import AdUnit from '@/components/AdUnit';
+import ReportButton from '@/components/ReportButton';
 
 interface PageProps {
   params: { slug: string };
@@ -155,8 +156,11 @@ export default async function CommunityRecipePage({ params }: PageProps) {
           />
         </div>
 
-        {/* Title */}
-        <h1 className="text-3xl md:text-4xl font-bold mb-4 font-display">{recipe.title}</h1>
+        {/* Title and Report Button */}
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold font-display">{recipe.title}</h1>
+          <ReportButton recipeSlug={params.slug} variant="text" />
+        </div>
 
         {/* Star Rating - Prominent placement */}
         <div className="mb-6 p-4 bg-orange-50 rounded-lg inline-block">
