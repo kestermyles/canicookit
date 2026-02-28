@@ -68,17 +68,32 @@ function formatDifficulty(d: string): string {
 function StarRatingDisplay({ slug }: { slug: string }) {
   const [rating, setRating] = useState<number | null>(null);
   const [count, setCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Fetch actual ratings from Supabase
-    // For now, using placeholder data
-    // Some recipes have ratings, some don't
-    const hasRatings = Math.random() > 0.3; // 70% have ratings
-    if (hasRatings) {
-      setRating(Math.random() * 2 + 3); // 3-5 stars
-      setCount(Math.floor(Math.random() * 200) + 10); // 10-210 ratings
+    async function fetchRating() {
+      try {
+        // Dynamically import to avoid SSR issues
+        const { getRecipeRating } = await import('@/lib/supabase');
+        const ratingData = await getRecipeRating(slug);
+
+        if (ratingData.ratingCount > 0) {
+          setRating(ratingData.averageRating);
+          setCount(ratingData.ratingCount);
+        }
+      } catch (error) {
+        console.error('Error fetching rating:', error);
+      } finally {
+        setLoading(false);
+      }
     }
+
+    fetchRating();
   }, [slug]);
+
+  if (loading) {
+    return null; // Don't show anything while loading
+  }
 
   if (rating === null) {
     return (
@@ -138,6 +153,9 @@ export default function RecipeCard({
     ? `/recipes/community/${slug}`
     : `/recipes/${cuisine.toLowerCase()}/${slug}`;
 
+  // Display "Community" instead of "Generated" for community recipes
+  const displayCuisine = cuisine === 'generated' ? 'Community' : cuisine;
+
   return (
     <Link
       href={recipeUrl}
@@ -147,7 +165,7 @@ export default function RecipeCard({
       <div className="p-4">
         <div className="flex items-center gap-2 mb-2">
           <span className="inline-block px-2 py-0.5 text-xs font-medium bg-orange-50 text-primary rounded-full capitalize">
-            {cuisine}
+            {displayCuisine}
           </span>
           {isCommunity && status && (
             <div className="scale-75 origin-left">

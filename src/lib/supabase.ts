@@ -76,6 +76,20 @@ export interface RecipePhotoRow {
   ip_address: string | null;
 }
 
+export interface RecipeRatingRow {
+  id: string;
+  recipe_slug: string;
+  user_id: string;
+  rating: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RecipeRating {
+  averageRating: number;
+  ratingCount: number;
+}
+
 /**
  * Create a new generated recipe in the database
  */
@@ -530,4 +544,114 @@ export function dbRowToRecipe(row: GeneratedRecipeRow): Recipe {
     updated_at: row.updated_at,
     user_ingredients: row.user_ingredients || undefined,
   };
+}
+
+/**
+ * Get rating for a recipe
+ */
+export async function getRecipeRating(
+  recipeSlug: string
+): Promise<RecipeRating> {
+  try {
+    const { data, error } = await supabase.rpc('get_recipe_rating', {
+      recipe_slug_param: recipeSlug,
+    });
+
+    if (error) {
+      console.error('Error fetching recipe rating:', error);
+      return { averageRating: 0, ratingCount: 0 };
+    }
+
+    if (!data || data.length === 0) {
+      return { averageRating: 0, ratingCount: 0 };
+    }
+
+    return {
+      averageRating: parseFloat(data[0].average_rating) || 0,
+      ratingCount: parseInt(data[0].rating_count) || 0,
+    };
+  } catch (error) {
+    console.error('Error in getRecipeRating:', error);
+    return { averageRating: 0, ratingCount: 0 };
+  }
+}
+
+/**
+ * Submit or update a rating for a recipe
+ */
+export async function submitRating(
+  recipeSlug: string,
+  rating: number,
+  userId?: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    if (!userId) {
+      // Store in localStorage for anonymous users
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(`rating-${recipeSlug}`, rating.toString());
+      }
+      return { success: true };
+    }
+
+    // Upsert rating for authenticated users
+    const { error } = await supabase.from('recipe_ratings').upsert(
+      {
+        recipe_slug: recipeSlug,
+        user_id: userId,
+        rating: rating,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        onConflict: 'recipe_slug,user_id',
+      }
+    );
+
+    if (error) {
+      console.error('Error submitting rating:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error in submitRating:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+/**
+ * Get user's rating for a recipe
+ */
+export async function getUserRating(
+  recipeSlug: string,
+  userId?: string
+): Promise<number> {
+  try {
+    if (!userId) {
+      // Check localStorage for anonymous users
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem(`rating-${recipeSlug}`);
+        return stored ? parseInt(stored) : 0;
+      }
+      return 0;
+    }
+
+    const { data, error } = await supabase
+      .from('recipe_ratings')
+      .select('rating')
+      .eq('recipe_slug', recipeSlug)
+      .eq('user_id', userId)
+      .single();
+
+    if (error || !data) {
+      return 0;
+    }
+
+    return data.rating;
+  } catch (error) {
+    console.error('Error in getUserRating:', error);
+    return 0;
+  }
 }

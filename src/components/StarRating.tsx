@@ -32,25 +32,46 @@ export default function StarRating({
   };
 
   useEffect(() => {
-    // Load rating from localStorage and API
-    const storedRating = localStorage.getItem(`rating-${recipeSlug}`);
-    if (storedRating) {
-      setUserRating(parseInt(storedRating));
+    async function loadRatings() {
+      try {
+        // Load user's rating from localStorage for anonymous users
+        const storedRating = localStorage.getItem(`rating-${recipeSlug}`);
+        if (storedRating) {
+          setUserRating(parseInt(storedRating));
+        }
+
+        // Fetch actual ratings from Supabase
+        const { getRecipeRating } = await import('@/lib/supabase');
+        const ratingData = await getRecipeRating(recipeSlug);
+
+        setRating(ratingData.averageRating);
+        setTotalRatings(ratingData.ratingCount);
+      } catch (error) {
+        console.error('Error loading ratings:', error);
+      } finally {
+        setLoading(false);
+      }
     }
 
-    // TODO: Fetch actual ratings from Supabase
-    // For now, using placeholder data
-    setRating(4.5);
-    setTotalRatings(128);
-    setLoading(false);
+    loadRatings();
   }, [recipeSlug]);
 
-  const handleRate = (stars: number) => {
+  const handleRate = async (stars: number) => {
     setUserRating(stars);
-    localStorage.setItem(`rating-${recipeSlug}`, stars.toString());
 
-    // TODO: Send rating to API
-    // For now, just update local state
+    // Submit rating to Supabase
+    try {
+      const { submitRating } = await import('@/lib/supabase');
+      await submitRating(recipeSlug, stars);
+
+      // Refresh ratings to show updated average
+      const { getRecipeRating } = await import('@/lib/supabase');
+      const ratingData = await getRecipeRating(recipeSlug);
+      setRating(ratingData.averageRating);
+      setTotalRatings(ratingData.ratingCount);
+    } catch (error) {
+      console.error('Error submitting rating:', error);
+    }
   };
 
   if (loading) {
