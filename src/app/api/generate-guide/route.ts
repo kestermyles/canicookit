@@ -47,7 +47,7 @@ async function validateCookingTopic(topic: string): Promise<{ valid: boolean; re
       throw new Error('No response from OpenAI');
     }
 
-    const result = JSON.parse(content);
+    const result = JSON.parse(stripCodeFences(content));
     return {
       valid: result.valid === true,
       reason: result.reason,
@@ -87,7 +87,7 @@ async function assignCategory(topic: string): Promise<string> {
       return 'Basics';
     }
 
-    const result = JSON.parse(content);
+    const result = JSON.parse(stripCodeFences(content));
     const category = result.category;
 
     // Validate the category is one of our valid options
@@ -165,7 +165,7 @@ Requirements:
     throw new Error('Unexpected response type from Claude');
   }
 
-  return JSON.parse(content.text);
+  return JSON.parse(stripCodeFences(content.text));
 }
 
 /**
@@ -204,8 +204,15 @@ Return ONLY a JSON object: {"score": 7.5, "reasoning": "brief explanation"}`;
     throw new Error('Unexpected response type from Claude');
   }
 
-  const result = JSON.parse(content.text);
+  const result = JSON.parse(stripCodeFences(content.text));
   return parseFloat(result.score);
+}
+
+/**
+ * Strip markdown code fences from LLM responses
+ */
+function stripCodeFences(text: string): string {
+  return text.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
 }
 
 /**
