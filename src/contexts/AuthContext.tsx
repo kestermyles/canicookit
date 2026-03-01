@@ -66,6 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           username: username,
           email_opt_in: emailOptIn,
         },
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/welcome`,
       },
     });
 
