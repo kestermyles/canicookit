@@ -36,10 +36,14 @@ export default function WelcomePage() {
           ) : (
             <>
               <h2 className="text-2xl font-bold text-foreground mb-2">
-                Welcome to the community, {username}!
+                {user
+                  ? `Welcome to the community, ${username}!`
+                  : 'Welcome to the community!'}
               </h2>
               <p className="text-secondary mb-6">
-                Your email is confirmed. Here's what you can do now:
+                {user
+                  ? "Your email is confirmed. Here's what you can do now:"
+                  : "Here's what our community members can do:"}
               </p>
 
               <div className="text-left space-y-3 mb-8">
