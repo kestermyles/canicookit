@@ -724,7 +724,7 @@ export async function getGuideBySlug(slug: string): Promise<GuideRow | null> {
       .from('guides')
       .select('*')
       .eq('slug', slug)
-      .eq('status', 'featured')
+      .in('status', ['featured', 'pending'])
       .single();
 
     if (error) {
