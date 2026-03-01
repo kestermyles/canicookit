@@ -32,7 +32,7 @@ export async function generateMetadata({
   const socialImage = recipe.photo_url && !recipe.photo_is_ai_generated ? recipe.photo_url : null;
 
   return {
-    title: `${recipe.title} | Can I Cook It?`,
+    title: recipe.title,
     description: metaDescription,
     alternates: {
       canonical: recipeUrl,

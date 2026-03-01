@@ -37,7 +37,7 @@ export async function generateMetadata({
   const metaDescription = `${recipe.description} Ready in ${totalTime} minutes. Serves ${recipe.serves}. ${recipe.vegetarian ? 'Vegetarian. ' : ''}${recipe.vegan ? 'Vegan. ' : ''}${recipe.glutenFree ? 'Gluten-free. ' : ''}`;
 
   return {
-    title: `${recipe.title} | Can I Cook It?`,
+    title: recipe.title,
     description: metaDescription,
     alternates: {
       canonical: recipeUrl,
