@@ -55,6 +55,10 @@ export default function GeneratePage() {
   const [error, setError] = useState<string | null>(null);
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [cookingMethod, setCookingMethod] = useState<string | null>(null);
+  const [cuisinePreference, setCuisinePreference] = useState<string | null>(null);
+  const [mealVibe, setMealVibe] = useState<string | null>(null);
   const { user } = useAuth();
 
   const handleGenerate = async () => {
@@ -76,6 +80,9 @@ export default function GeneratePage() {
         body: JSON.stringify({
           userIngredients,
           essentials: Array.from(PANTRY_ESSENTIALS),
+          ...(cookingMethod && { cookingMethod }),
+          ...(cuisinePreference && { cuisinePreference }),
+          ...(mealVibe && { mealVibe }),
         }),
       });
 
@@ -180,6 +187,84 @@ export default function GeneratePage() {
               </div>
 
               <EssentialsPanel />
+
+              {/* Refine Filters */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="text-sm text-secondary hover:text-primary transition-colors"
+                >
+                  Refine your recipe {showFilters ? '↑' : '↓'}
+                </button>
+
+                {showFilters && (
+                  <div className="mt-3 space-y-4">
+                    {/* Cooking Method */}
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-2">Cooking method</p>
+                      <div className="flex flex-wrap gap-2">
+                        {['Fried', 'Baked', 'Poached', 'Steamed', 'Grilled', 'Raw'].map((method) => (
+                          <button
+                            key={method}
+                            type="button"
+                            onClick={() => setCookingMethod(cookingMethod === method ? null : method)}
+                            className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                              cookingMethod === method
+                                ? 'bg-primary text-white border-primary'
+                                : 'bg-white text-gray-700 border-orange-300 hover:border-primary'
+                            }`}
+                          >
+                            {method}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Cuisine Style */}
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-2">Cuisine style</p>
+                      <div className="flex flex-wrap gap-2">
+                        {['Italian', 'Asian', 'Mexican', 'British', 'American', 'Indian', 'French'].map((cuisine) => (
+                          <button
+                            key={cuisine}
+                            type="button"
+                            onClick={() => setCuisinePreference(cuisinePreference === cuisine ? null : cuisine)}
+                            className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                              cuisinePreference === cuisine
+                                ? 'bg-primary text-white border-primary'
+                                : 'bg-white text-gray-700 border-orange-300 hover:border-primary'
+                            }`}
+                          >
+                            {cuisine}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Meal Vibe */}
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-2">Meal vibe</p>
+                      <div className="flex flex-wrap gap-2">
+                        {['Light', 'Hearty', 'Quick', 'Comfort food', 'Healthy'].map((vibe) => (
+                          <button
+                            key={vibe}
+                            type="button"
+                            onClick={() => setMealVibe(mealVibe === vibe ? null : vibe)}
+                            className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                              mealVibe === vibe
+                                ? 'bg-primary text-white border-primary'
+                                : 'bg-white text-gray-700 border-orange-300 hover:border-primary'
+                            }`}
+                          >
+                            {vibe}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Error Display */}

@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 async function handleGenerateRecipe(
   body: GenerateRecipeRequest
 ): Promise<NextResponse<GenerateRecipeResponse>> {
-  const { userIngredients, essentials } = body;
+  const { userIngredients, essentials, cookingMethod, cuisinePreference, mealVibe } = body;
 
   // Validate input
   if (!Array.isArray(userIngredients) || userIngredients.length === 0) {
@@ -93,7 +93,11 @@ async function handleGenerateRecipe(
     console.log('[Generate Recipe] Input validation passed');
 
     // Call Claude API to generate recipe
-    const recipe = await generateRecipe(userIngredients, essentials);
+    const recipe = await generateRecipe(userIngredients, essentials, {
+      cookingMethod,
+      cuisinePreference,
+      mealVibe,
+    });
 
     console.log('[Generate Recipe] Recipe generated successfully:', recipe.title);
 

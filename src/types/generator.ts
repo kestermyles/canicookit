@@ -15,6 +15,9 @@ export interface GeneratedRecipeData extends RecipeFrontmatter {
 export interface GenerateRecipeRequest {
   userIngredients: string[];
   essentials: string[];
+  cookingMethod?: string;
+  cuisinePreference?: string;
+  mealVibe?: string;
 }
 
 /**

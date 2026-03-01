@@ -28,7 +28,8 @@ interface ClaudeResponse {
  */
 export async function generateRecipe(
   userIngredients: string[],
-  essentials: string[]
+  essentials: string[],
+  preferences?: { cookingMethod?: string; cuisinePreference?: string; mealVibe?: string }
 ): Promise<GeneratedRecipeData> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
 
@@ -55,7 +56,7 @@ Assume they also have these pantry basics:
 ${essentials.map(e => `- ${e}`).join('\n')}
 
 Generate a realistic, delicious recipe using primarily the user's ingredients.
-
+${preferences?.cookingMethod ? `\nPreferred cooking method: ${preferences.cookingMethod}` : ''}${preferences?.cuisinePreference ? `\nPreferred cuisine style: ${preferences.cuisinePreference}` : ''}${preferences?.mealVibe ? `\nMeal vibe: ${preferences.mealVibe}` : ''}
 Requirements:
 - Title should be descriptive and appetizing
 - Prep time: 5-30 minutes (realistic)
