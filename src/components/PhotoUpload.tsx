@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from './AuthModal';
+import NoPhotoPlaceholder from './NoPhotoPlaceholder';
 
 interface PhotoUploadProps {
   recipeSlug: string;
@@ -156,7 +157,7 @@ export default function PhotoUpload({
             </div>
           ) : (
             <div className="space-y-2">
-              <div className="text-4xl">📸</div>
+              <NoPhotoPlaceholder size="small" className="bg-transparent h-auto" />
               <p className="text-gray-700">
                 Click to select or drag & drop your photo
               </p>
