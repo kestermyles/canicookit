@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Resend } from 'resend';
 import { scorePhoto, checkPhotoAuthenticity } from '@/lib/scoring';
 import { updateRecipePhoto, getServiceClient } from '@/lib/supabase';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const MIN_PHOTO_SCORE = 6.0; // Minimum score to become recipe hero image
 
@@ -77,6 +80,33 @@ export async function POST(request: NextRequest) {
           }),
         })
         .eq('id', photoId);
+
+      // Send alert email for flagged photos
+      if (isFlaggedAi) {
+        // Fetch recipe title
+        const { data: recipe } = await supabase
+          .from('generated_recipes')
+          .select('title')
+          .eq('slug', recipeSlug)
+          .single();
+
+        resend.emails.send({
+          from: 'Can I Cook It <hello@canicookit.com>',
+          to: 'hello@canicookit.com',
+          subject: `Flagged photo: likely AI-generated (${authResult.confidence}% confidence)`,
+          html: `<div style="font-family: sans-serif; max-width: 600px;">
+            <h2 style="color: #ea580c;">Flagged Photo Alert</h2>
+            <p>A photo has been flagged as likely AI-generated.</p>
+            <table style="border-collapse: collapse; width: 100%; margin: 16px 0;">
+              <tr><td style="padding: 8px; font-weight: bold;">Recipe</td><td style="padding: 8px;">${recipe?.title || recipeSlug}</td></tr>
+              <tr><td style="padding: 8px; font-weight: bold;">Confidence</td><td style="padding: 8px;">${authResult.confidence}%</td></tr>
+              <tr><td style="padding: 8px; font-weight: bold;">Reason</td><td style="padding: 8px;">${authResult.reason}</td></tr>
+            </table>
+            <p><a href="${photoUrl}" style="color: #ea580c;">View photo</a></p>
+            <p><a href="https://canicookit.com/admin/flagged-photos" style="color: #ea580c;">Review flagged photos</a></p>
+          </div>`,
+        }).catch((err) => console.error('[Score Photo] Failed to send flag email:', err));
+      }
 
       // If photo scored high and not flagged, update recipe hero image
       if (
