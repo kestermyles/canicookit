@@ -72,10 +72,12 @@ export interface RecipePhotoRow {
   recipe_slug: string;
   photo_url: string;
   quality_score: number | null;
-  status: 'pending' | 'approved' | 'rejected';
+  status: 'pending' | 'approved' | 'rejected' | 'flagged';
   created_at: string;
   uploaded_by_name: string | null;
   ip_address: string | null;
+  authenticity_score: number | null;
+  authenticity_flag: string | null;
 }
 
 export interface RecipeRatingRow {

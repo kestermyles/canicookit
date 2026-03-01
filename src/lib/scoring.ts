@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import { getRecipeBySlug as getDbRecipeBySlug, updateRecipeScore } from './supabase';
 
 const anthropic = new Anthropic({
@@ -261,6 +262,83 @@ If it's not food, set score to 0.`,
     };
   } catch (error) {
     console.error('Error scoring photo:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+// Lazy-load OpenAI client
+let openaiClient: OpenAI | null = null;
+function getOpenAIClient(): OpenAI {
+  if (!openaiClient) {
+    openaiClient = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY!,
+    });
+  }
+  return openaiClient;
+}
+
+/**
+ * Check photo authenticity using GPT-4o vision
+ * Detects AI-generated images, stock photos, etc.
+ */
+export async function checkPhotoAuthenticity(photoUrl: string): Promise<{
+  success: boolean;
+  authenticity?: 'genuine' | 'suspicious' | 'likely_ai';
+  confidence?: number;
+  reason?: string;
+  error?: string;
+}> {
+  try {
+    const openai = getOpenAIClient();
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'image_url',
+              image_url: { url: photoUrl },
+            },
+            {
+              type: 'text',
+              text: `Is this photo likely to be AI-generated, a stock photo, or a genuine home-cooked meal photo taken by an amateur? Look for signs like perfect studio lighting, watermarks, stock photo composition, or AI artifacts. Respond with ONLY a JSON object: {"authenticity": "genuine" | "suspicious" | "likely_ai", "confidence": 0-100, "reason": "brief explanation"}`,
+            },
+          ],
+        },
+      ],
+      temperature: 0.3,
+      max_tokens: 300,
+    });
+
+    const content = response.choices[0].message.content;
+    if (!content) {
+      throw new Error('No response from GPT-4o');
+    }
+
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('No JSON found in response');
+    }
+
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    const validFlags = ['genuine', 'suspicious', 'likely_ai'];
+    const authenticity = validFlags.includes(parsed.authenticity) ? parsed.authenticity : 'suspicious';
+    const confidence = Math.max(0, Math.min(100, Math.round(parsed.confidence || 0)));
+
+    return {
+      success: true,
+      authenticity,
+      confidence,
+      reason: parsed.reason || 'No reason provided',
+    };
+  } catch (error) {
+    console.error('Error checking photo authenticity:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
