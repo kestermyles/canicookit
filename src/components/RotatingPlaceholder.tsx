@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
 const PLACEHOLDERS = [
@@ -39,6 +39,8 @@ export default function RotatingPlaceholder({
 }: RotatingPlaceholderProps) {
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -51,6 +53,18 @@ export default function RotatingPlaceholder({
 
     return () => clearInterval(interval);
   }, []);
+
+  // Close menu on click outside
+  useEffect(() => {
+    if (!showMenu) return;
+    const handleClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [showMenu]);
 
   return (
     <div className="relative">
@@ -74,17 +88,39 @@ export default function RotatingPlaceholder({
             &times;
           </button>
         )}
-        <Link
-          href="/generate"
-          className="p-1.5 text-primary hover:text-orange-700 transition-colors"
-          aria-label="Scan ingredients"
-        >
-          <svg width="22" height="22" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 22C12 19.79 13.79 18 16 18H48C50.21 18 52 19.79 52 22V46C52 48.21 50.21 50 48 50H16C13.79 50 12 48.21 12 46V22Z" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx="32" cy="34" r="9" stroke="currentColor" strokeWidth="3" />
-            <path d="M24 18C24 18 26 14 28 14H36C38 14 40 18 40 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </Link>
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setShowMenu(!showMenu)}
+            className="p-1.5 text-primary hover:text-orange-700 transition-colors"
+            aria-label="Recipe options"
+          >
+            <svg width="24" height="24" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 22C12 19.79 13.79 18 16 18H48C50.21 18 52 19.79 52 22V46C52 48.21 50.21 50 48 50H16C13.79 50 12 48.21 12 46V22Z" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="32" cy="34" r="9" stroke="currentColor" strokeWidth="3" />
+              <path d="M24 18C24 18 26 14 28 14H36C38 14 40 18 40 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          {showMenu && (
+            <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
+              <Link
+                href="/generate?scan=true"
+                className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 transition-colors"
+                onClick={() => setShowMenu(false)}
+              >
+                <span>📷</span>
+                <span>Scan your ingredients</span>
+              </Link>
+              <Link
+                href="/generate"
+                className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 transition-colors"
+                onClick={() => setShowMenu(false)}
+              >
+                <span>✨</span>
+                <span>Build a recipe</span>
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

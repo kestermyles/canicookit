@@ -174,6 +174,13 @@ export default function GeneratePage() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-open file picker if navigated with ?scan=true
+  useEffect(() => {
+    if (searchParams.get('scan') === 'true') {
+      setTimeout(() => fileInputRef.current?.click(), 300);
+    }
+  }, [searchParams]);
   const ingredientInputRef = useRef<IngredientInputHandle>(null);
   const [pendingInputText, setPendingInputText] = useState('');
   const [recentGenerated, setRecentGenerated] = useState<GeneratedRecipeData[]>([]);
