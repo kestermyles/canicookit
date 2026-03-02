@@ -4,7 +4,7 @@ interface NoPhotoPlaceholderProps {
 }
 
 // Hand-drawn style camera SVG component
-function StylizedCamera({ size = 48 }: { size?: number }) {
+export function StylizedCamera({ size = 48 }: { size?: number }) {
   return (
     <svg
       width={size}

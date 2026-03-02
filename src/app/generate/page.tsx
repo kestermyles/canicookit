@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useRef } from 'react';
 import IngredientInput from '@/components/IngredientInput';
 import EssentialsPanel from '@/components/EssentialsPanel';
 import GeneratedRecipe from '@/components/GeneratedRecipe';
 import AuthModal from '@/components/AuthModal';
+import { StylizedCamera } from '@/components/NoPhotoPlaceholder';
 import { useAuth } from '@/contexts/AuthContext';
 import { GeneratedRecipeData, PANTRY_ESSENTIALS } from '@/types/generator';
 import { getAllCommunityRecipes } from '@/lib/supabase';
@@ -48,6 +50,10 @@ export default function GeneratePage() {
       }
     }
   }, [searchParams]);
+
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [generatedRecipe, setGeneratedRecipe] = useState<GeneratedRecipeData | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -142,6 +148,50 @@ export default function GeneratePage() {
     setError(null);
   };
 
+  const handleScan = async (file: File) => {
+    setIsScanning(true);
+    setScanError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/scan-ingredients', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to scan ingredients');
+      }
+
+      if (data.ingredients.length === 0) {
+        setScanError("Couldn't spot any ingredients — try a clearer photo");
+        return;
+      }
+
+      // Merge with existing ingredients, deduplicating
+      setUserIngredients((prev) => {
+        const existing = new Set(prev.map((i) => i.toLowerCase()));
+        const newIngredients = data.ingredients.filter(
+          (i: string) => !existing.has(i.toLowerCase())
+        );
+        return [...prev, ...newIngredients];
+      });
+    } catch (err) {
+      console.error('Scan error:', err);
+      setScanError(err instanceof Error ? err.message : 'Failed to scan ingredients');
+    } finally {
+      setIsScanning(false);
+      // Reset file input so the same file can be re-selected
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen relative">
       {/* Background Image with Dark Overlay */}
@@ -183,6 +233,60 @@ export default function GeneratePage() {
                   ingredients={userIngredients}
                   onChange={setUserIngredients}
                 />
+
+                {/* Scan ingredients upload zone */}
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isScanning}
+                  className="mt-3 w-full border-2 border-dashed border-orange-300 rounded-xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:border-primary hover:bg-orange-50/50 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isScanning ? (
+                    <>
+                      <svg
+                        className="animate-spin h-8 w-8 text-primary"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      <span className="text-sm font-medium text-primary">Identifying ingredients...</span>
+                    </>
+                  ) : (
+                    <>
+                      <StylizedCamera size={36} />
+                      <span className="text-sm font-medium text-gray-700">Scan your ingredients</span>
+                      <span className="text-xs text-gray-500">Photo your fridge, counter, or whatever you&apos;re working with</span>
+                    </>
+                  )}
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleScan(file);
+                  }}
+                />
+                {scanError && (
+                  <p className="mt-2 text-sm text-red-600">{scanError}</p>
+                )}
               </div>
 
               <EssentialsPanel />
