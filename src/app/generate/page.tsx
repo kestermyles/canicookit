@@ -426,8 +426,8 @@ export default function GeneratePage() {
                     <>
                       <StylizedCamera size={28} />
                       <div className="sm:text-center">
-                        <span className="text-sm sm:text-base font-semibold text-gray-800">Scan your ingredients</span>
-                        <span className="text-sm text-gray-500 hidden sm:block mt-1">Photo your fridge, counter, or whatever you&apos;re working with</span>
+                        <span className="text-sm sm:text-base font-semibold text-gray-800">Show us what you&apos;ve got</span>
+                        <span className="text-sm text-gray-500 hidden sm:block mt-1">Take a photo of your fridge or ingredients</span>
                       </div>
                     </>
                   )}
