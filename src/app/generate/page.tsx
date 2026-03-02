@@ -175,6 +175,7 @@ export default function GeneratePage() {
   const [scanError, setScanError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const ingredientInputRef = useRef<IngredientInputHandle>(null);
+  const [hasPendingInput, setHasPendingInput] = useState(false);
   const [recentGenerated, setRecentGenerated] = useState<GeneratedRecipeData[]>([]);
 
   // Load recent generated recipes from localStorage
@@ -447,6 +448,7 @@ export default function GeneratePage() {
                   ref={ingredientInputRef}
                   ingredients={userIngredients}
                   onChange={setUserIngredients}
+                  onPendingChange={setHasPendingInput}
                 />
               </div>
 
@@ -487,7 +489,7 @@ export default function GeneratePage() {
               <div className="flex justify-center pt-1 sm:pt-2">
                 <button
                   onClick={handleGenerate}
-                  disabled={isGenerating || userIngredients.length === 0}
+                  disabled={isGenerating || (userIngredients.length === 0 && !hasPendingInput)}
                   className="w-full sm:w-auto px-8 py-3 sm:py-4 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed font-semibold text-base sm:text-lg shadow-md hover:shadow-lg"
                 >
                   {isGenerating ? (

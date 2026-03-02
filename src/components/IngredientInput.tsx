@@ -5,6 +5,7 @@ import { useState, KeyboardEvent, useImperativeHandle, forwardRef } from 'react'
 interface IngredientInputProps {
   ingredients: string[];
   onChange: (ingredients: string[]) => void;
+  onPendingChange?: (hasPending: boolean) => void;
 }
 
 // Common multi-word ingredients that should NOT be treated as dish names
@@ -35,7 +36,7 @@ export interface IngredientInputHandle {
 }
 
 const IngredientInput = forwardRef<IngredientInputHandle, IngredientInputProps>(
-  function IngredientInput({ ingredients, onChange }, ref) {
+  function IngredientInput({ ingredients, onChange, onPendingChange }, ref) {
   const [inputValue, setInputValue] = useState('');
 
   const addIngredient = (value: string) => {
@@ -47,6 +48,7 @@ const IngredientInput = forwardRef<IngredientInputHandle, IngredientInputProps>(
     }
 
     setInputValue('');
+    onPendingChange?.(false);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -117,7 +119,10 @@ const IngredientInput = forwardRef<IngredientInputHandle, IngredientInputProps>(
         <input
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+            onPendingChange?.(e.target.value.trim().length > 0);
+          }}
           onKeyDown={handleKeyDown}
           placeholder={ingredients.length === 0 ? "e.g. chicken, lemon, pad thai..." : ""}
           className="flex-1 min-w-0 w-20 outline-none text-sm"
