@@ -251,24 +251,19 @@ export default function GeneratePage() {
         {!generatedRecipe ? (
           <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-5 sm:p-8 max-w-2xl mx-auto mb-12">
             <div className="space-y-4 sm:space-y-6 mb-6 sm:mb-8">
+              {/* Scan ingredients — primary option */}
               <div>
                 <h2 className="text-xl font-semibold mb-3">What ingredients do you have?</h2>
-                <IngredientInput
-                  ingredients={userIngredients}
-                  onChange={setUserIngredients}
-                />
-
-                {/* Scan ingredients upload zone */}
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isScanning}
-                  className="mt-3 w-full border-2 border-dashed border-orange-300 rounded-xl p-3 sm:p-4 flex flex-row sm:flex-col items-center gap-2 sm:gap-2 cursor-pointer hover:border-primary hover:bg-orange-50/50 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                  className="w-full bg-orange-50 border-2 border-orange-300 rounded-xl p-5 sm:p-6 flex flex-col items-center gap-2 cursor-pointer hover:border-primary hover:bg-orange-100/70 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {isScanning ? (
                     <>
                       <svg
-                        className="animate-spin h-5 w-5 sm:h-8 sm:w-8 text-primary flex-shrink-0"
+                        className="animate-spin h-8 w-8 text-primary"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -291,11 +286,9 @@ export default function GeneratePage() {
                     </>
                   ) : (
                     <>
-                      <StylizedCamera size={28} />
-                      <div className="text-left sm:text-center">
-                        <span className="text-sm font-medium text-gray-700">Scan your ingredients</span>
-                        <span className="text-xs text-gray-500 hidden sm:block">Photo your fridge, counter, or whatever you&apos;re working with</span>
-                      </div>
+                      <StylizedCamera size={44} />
+                      <span className="text-base font-semibold text-gray-800">Scan your ingredients</span>
+                      <span className="text-sm text-gray-500">Photo your fridge, counter, or whatever you&apos;re working with</span>
                     </>
                   )}
                 </button>
@@ -312,6 +305,21 @@ export default function GeneratePage() {
                 {scanError && (
                   <p className="mt-2 text-sm text-red-600">{scanError}</p>
                 )}
+              </div>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3">
+                <div className="flex-1 border-t border-gray-200" />
+                <span className="text-xs text-gray-400 uppercase tracking-wide">or type them in</span>
+                <div className="flex-1 border-t border-gray-200" />
+              </div>
+
+              {/* Text ingredient input — secondary option */}
+              <div>
+                <IngredientInput
+                  ingredients={userIngredients}
+                  onChange={setUserIngredients}
+                />
               </div>
 
               <EssentialsPanel />
