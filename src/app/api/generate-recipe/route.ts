@@ -44,7 +44,7 @@ async function handleGenerateRecipe(
     return NextResponse.json(
       {
         success: false,
-        error: 'At least one ingredient is required',
+        error: 'Please add at least one ingredient or dish name',
       },
       { status: 400 }
     );

@@ -44,24 +44,8 @@ export async function validateUserInput(
       };
     }
 
-    // Quick check: single word that's clearly not food
-    if (allInputs.length === 1 && allInputs[0].split(/\s+/).length === 1) {
-      const singleWord = allInputs[0].toLowerCase().trim();
-      // Allow common single-word ingredients
-      const commonIngredients = [
-        'chicken', 'beef', 'pork', 'fish', 'salmon', 'tuna', 'cod',
-        'eggs', 'rice', 'pasta', 'bread', 'cheese', 'milk', 'butter',
-        'flour', 'sugar', 'salt', 'pepper', 'garlic', 'onion', 'tomato',
-        'potato', 'carrot', 'broccoli', 'spinach', 'mushroom', 'bacon',
-        'sausage', 'shrimp', 'tofu', 'beans', 'lentils', 'quinoa',
-      ];
-
-      if (!commonIngredients.includes(singleWord)) {
-        // Let GPT-4 decide if it's food-related
-      } else {
-        return { valid: true };
-      }
-    }
+    // Skip expensive GPT validation for short lists — let GPT-4 decide
+    // during generation if the input is food-related
 
     // Use GPT-4o-mini for cost-effective validation
     const openai = getOpenAIClient();
