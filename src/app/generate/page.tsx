@@ -17,6 +17,126 @@ import { getAllCommunityRecipes } from '@/lib/supabase';
 export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 
+function PreferencesPanel({
+  cookingMethod,
+  setCookingMethod,
+  cuisinePreference,
+  setCuisinePreference,
+  mealVibe,
+  setMealVibe,
+}: {
+  cookingMethod: string | null;
+  setCookingMethod: (v: string | null) => void;
+  cuisinePreference: string | null;
+  setCuisinePreference: (v: string | null) => void;
+  mealVibe: string | null;
+  setMealVibe: (v: string | null) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Auto-open on desktop
+  useEffect(() => {
+    if (window.innerWidth >= 640) {
+      setIsOpen(true);
+    }
+  }, []);
+
+  const hasSelection = cookingMethod || cuisinePreference || mealVibe;
+
+  return (
+    <div className="border-t border-gray-100 pt-3 sm:pt-5">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between"
+      >
+        <p className="text-sm text-secondary">
+          Any preferences?{' '}
+          {hasSelection ? (
+            <span className="text-primary font-medium">
+              {[cookingMethod, cuisinePreference, mealVibe].filter(Boolean).join(', ')}
+            </span>
+          ) : (
+            <span className="text-gray-400">(optional)</span>
+          )}
+        </p>
+        <svg
+          className={`w-4 h-4 text-secondary transition-transform sm:hidden ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {isOpen && (
+        <div className="space-y-4 mt-3">
+          <div>
+            <p className="text-sm font-medium text-gray-600 mb-2">Cooking method</p>
+            <div className="flex flex-wrap gap-2">
+              {['Fried', 'Baked', 'Poached', 'Steamed', 'Grilled', 'Raw'].map((method) => (
+                <button
+                  key={method}
+                  type="button"
+                  onClick={() => setCookingMethod(cookingMethod === method ? null : method)}
+                  className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                    cookingMethod === method
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-white text-gray-700 border-orange-300 hover:border-primary'
+                  }`}
+                >
+                  {method}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-sm font-medium text-gray-600 mb-2">Cuisine style</p>
+            <div className="flex flex-wrap gap-2">
+              {['Italian', 'Asian', 'Mexican', 'British', 'American', 'Indian', 'French'].map((cuisine) => (
+                <button
+                  key={cuisine}
+                  type="button"
+                  onClick={() => setCuisinePreference(cuisinePreference === cuisine ? null : cuisine)}
+                  className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                    cuisinePreference === cuisine
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-white text-gray-700 border-orange-300 hover:border-primary'
+                  }`}
+                >
+                  {cuisine}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-sm font-medium text-gray-600 mb-2">Meal vibe</p>
+            <div className="flex flex-wrap gap-2">
+              {['Light', 'Hearty', 'Quick', 'Comfort food', 'Healthy'].map((vibe) => (
+                <button
+                  key={vibe}
+                  type="button"
+                  onClick={() => setMealVibe(mealVibe === vibe ? null : vibe)}
+                  className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                    mealVibe === vibe
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-white text-gray-700 border-orange-300 hover:border-primary'
+                  }`}
+                >
+                  {vibe}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function GeneratePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -229,9 +349,9 @@ export default function GeneratePage() {
         <div className="absolute inset-0 bg-black/70" />
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6 sm:py-12">
+      <div className="max-w-4xl mx-auto px-4 py-4 sm:py-12">
         {/* Logo and Tagline */}
-        <div className="text-center mb-6 sm:mb-8">
+        <div className="text-center mb-4 sm:mb-8">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/logo-color.svg"
@@ -239,7 +359,7 @@ export default function GeneratePage() {
             style={{ height: '80px', width: 'auto' }}
             className="mx-auto mb-4 mix-blend-darken hidden sm:block"
           />
-          <p className="text-lg text-white/80">
+          <p className="text-base sm:text-lg text-white/80">
             Tell us what&apos;s in your fridge. We&apos;ll do the rest.
           </p>
           <p className="text-sm text-white/60 mt-2 hidden sm:block">
@@ -250,20 +370,20 @@ export default function GeneratePage() {
         {/* Form Card */}
         {!generatedRecipe ? (
           <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-4 sm:p-8 max-w-2xl mx-auto mb-12 overflow-hidden">
-            <div className="space-y-4 sm:space-y-6 mb-6 sm:mb-8">
-              {/* Scan ingredients — primary option */}
+            <div className="space-y-3 sm:space-y-6">
+              {/* Scan ingredients — compact on mobile, prominent on desktop */}
               <div>
-                <h2 className="text-xl font-semibold mb-3">What ingredients do you have?</h2>
+                <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">What ingredients do you have?</h2>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isScanning}
-                  className="w-full bg-orange-50 border-2 border-orange-300 rounded-xl p-5 sm:p-6 flex flex-col items-center gap-2 cursor-pointer hover:border-primary hover:bg-orange-100/70 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                  className="w-full bg-orange-50 border-2 border-orange-300 rounded-xl p-3 sm:p-6 flex flex-row sm:flex-col items-center gap-2 sm:gap-2 cursor-pointer hover:border-primary hover:bg-orange-100/70 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {isScanning ? (
                     <>
                       <svg
-                        className="animate-spin h-8 w-8 text-primary"
+                        className="animate-spin h-5 w-5 sm:h-8 sm:w-8 text-primary flex-shrink-0"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -286,9 +406,11 @@ export default function GeneratePage() {
                     </>
                   ) : (
                     <>
-                      <StylizedCamera size={44} />
-                      <span className="text-base font-semibold text-gray-800">Scan your ingredients</span>
-                      <span className="text-sm text-gray-500">Photo your fridge, counter, or whatever you&apos;re working with</span>
+                      <StylizedCamera size={28} />
+                      <div className="sm:text-center">
+                        <span className="text-sm sm:text-base font-semibold text-gray-800">Scan your ingredients</span>
+                        <span className="text-sm text-gray-500 hidden sm:block mt-1">Photo your fridge, counter, or whatever you&apos;re working with</span>
+                      </div>
                     </>
                   )}
                 </button>
@@ -314,7 +436,7 @@ export default function GeneratePage() {
                 <div className="flex-1 border-t border-gray-200" />
               </div>
 
-              {/* Text ingredient input — secondary option */}
+              {/* Text ingredient input */}
               <div>
                 <IngredientInput
                   ingredients={userIngredients}
@@ -322,161 +444,97 @@ export default function GeneratePage() {
                 />
               </div>
 
-              <EssentialsPanel />
-
-              {/* Refine Filters — visible once ingredients are added */}
-              {userIngredients.length > 0 && (
-                <div className="border-t border-gray-100 pt-5 space-y-4">
-                  <p className="text-sm text-secondary">
-                    Any preferences? <span className="text-gray-400">(totally optional)</span>
-                  </p>
-
-                  {/* Cooking Method */}
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 mb-2">Cooking method</p>
-                    <div className="flex flex-wrap gap-2">
-                      {['Fried', 'Baked', 'Poached', 'Steamed', 'Grilled', 'Raw'].map((method) => (
-                        <button
-                          key={method}
-                          type="button"
-                          onClick={() => setCookingMethod(cookingMethod === method ? null : method)}
-                          className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
-                            cookingMethod === method
-                              ? 'bg-primary text-white border-primary'
-                              : 'bg-white text-gray-700 border-orange-300 hover:border-primary'
-                          }`}
-                        >
-                          {method}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Cuisine Style */}
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 mb-2">Cuisine style</p>
-                    <div className="flex flex-wrap gap-2">
-                      {['Italian', 'Asian', 'Mexican', 'British', 'American', 'Indian', 'French'].map((cuisine) => (
-                        <button
-                          key={cuisine}
-                          type="button"
-                          onClick={() => setCuisinePreference(cuisinePreference === cuisine ? null : cuisine)}
-                          className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
-                            cuisinePreference === cuisine
-                              ? 'bg-primary text-white border-primary'
-                              : 'bg-white text-gray-700 border-orange-300 hover:border-primary'
-                          }`}
-                        >
-                          {cuisine}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Meal Vibe */}
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 mb-2">Meal vibe</p>
-                    <div className="flex flex-wrap gap-2">
-                      {['Light', 'Hearty', 'Quick', 'Comfort food', 'Healthy'].map((vibe) => (
-                        <button
-                          key={vibe}
-                          type="button"
-                          onClick={() => setMealVibe(mealVibe === vibe ? null : vibe)}
-                          className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
-                            mealVibe === vibe
-                              ? 'bg-primary text-white border-primary'
-                              : 'bg-white text-gray-700 border-orange-300 hover:border-primary'
-                          }`}
-                        >
-                          {vibe}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Error Display */}
-            {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <div className="flex items-start gap-3">
-                  <svg
-                    className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <div className="flex-1">
-                    <p className="font-medium text-red-900">Error</p>
-                    <p className="text-sm text-red-700 mt-1">{error}</p>
-                  </div>
-                  <button
-                    onClick={() => setError(null)}
-                    className="text-red-600 hover:text-red-800"
-                    aria-label="Dismiss error"
-                  >
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              {/* Error Display */}
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <svg
+                      className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
                       <path
                         fillRule="evenodd"
-                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                         clipRule="evenodd"
                       />
                     </svg>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Generate Button */}
-            <div className="flex justify-center">
-              <button
-                onClick={handleGenerate}
-                disabled={isGenerating || userIngredients.length === 0}
-                className="px-8 py-4 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed font-semibold text-lg shadow-md hover:shadow-lg"
-              >
-                {isGenerating ? (
-                  <span className="flex items-center gap-3">
-                    <svg
-                      className="animate-spin h-6 w-6"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
+                    <p className="text-sm text-red-700 flex-1">{error}</p>
+                    <button
+                      onClick={() => setError(null)}
+                      className="text-red-400 hover:text-red-600"
+                      aria-label="Dismiss error"
                     >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                    Cooking up something delicious...
-                  </span>
-                ) : (
-                  'Can I Cook It?'
-                )}
-              </button>
-            </div>
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
 
-            {isGenerating && (
-              <div className="mt-6">
+              {/* Generate Button — immediately after input so it's visible without scrolling */}
+              <div className="flex justify-center pt-1 sm:pt-2">
+                <button
+                  onClick={handleGenerate}
+                  disabled={isGenerating || userIngredients.length === 0}
+                  className="w-full sm:w-auto px-8 py-3 sm:py-4 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed font-semibold text-base sm:text-lg shadow-md hover:shadow-lg"
+                >
+                  {isGenerating ? (
+                    <span className="flex items-center justify-center gap-3">
+                      <svg
+                        className="animate-spin h-5 w-5 sm:h-6 sm:w-6"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Cooking up something delicious...
+                    </span>
+                  ) : (
+                    'Can I Cook It?'
+                  )}
+                </button>
+              </div>
+
+              {isGenerating && (
                 <p className="text-center text-secondary text-sm">
                   This usually takes 10-20 seconds...
                 </p>
-              </div>
-            )}
+              )}
+
+              {/* Collapsible extras below the CTA */}
+              <EssentialsPanel />
+
+              {/* Refine Filters — collapsed on mobile by default */}
+              {userIngredients.length > 0 && (
+                <PreferencesPanel
+                  cookingMethod={cookingMethod}
+                  setCookingMethod={setCookingMethod}
+                  cuisinePreference={cuisinePreference}
+                  setCuisinePreference={setCuisinePreference}
+                  mealVibe={mealVibe}
+                  setMealVibe={setMealVibe}
+                />
+              )}
+            </div>
           </div>
         ) : (
           <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8 max-w-2xl mx-auto mb-12">
