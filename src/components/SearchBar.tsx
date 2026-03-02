@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Fuse from 'fuse.js';
+import Link from 'next/link';
+import { Sparkles } from 'lucide-react';
 import RecipeCard from './RecipeCard';
-import NoResultsCTA from './NoResultsCTA';
 import RotatingPlaceholder from './RotatingPlaceholder';
 
 interface SearchItem {
@@ -25,16 +26,6 @@ interface SearchItem {
 
 export default function SearchBar({ recipes }: { recipes: SearchItem[] }) {
   const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
-
-  // Debounce the query for showing no-results CTA (500ms delay)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [query]);
 
   const fuse = useMemo(
     () =>
@@ -74,8 +65,17 @@ export default function SearchBar({ recipes }: { recipes: SearchItem[] }) {
         </div>
       )}
 
-      {debouncedQuery.length > 1 && results.length === 0 && (
-        <NoResultsCTA searchQuery={debouncedQuery} />
+      {query.length > 1 && results.length === 0 && (
+        <div className="mt-8 text-center">
+          <p className="text-gray-600 mb-3">No recipes found — want to create one?</p>
+          <Link
+            href={`/generate?q=${encodeURIComponent(query)}`}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors font-medium text-sm"
+          >
+            <Sparkles className="w-4 h-4" />
+            Build a recipe
+          </Link>
+        </div>
       )}
     </div>
   );
