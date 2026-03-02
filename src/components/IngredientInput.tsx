@@ -74,7 +74,7 @@ export default function IngredientInput({ ingredients, onChange }: IngredientInp
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={ingredients.length === 0 ? "Type an ingredient and press Enter..." : ""}
-          className="flex-1 min-w-[200px] outline-none text-sm"
+          className="flex-1 min-w-[120px] outline-none text-sm"
         />
       </div>
       <p className="text-sm text-secondary">

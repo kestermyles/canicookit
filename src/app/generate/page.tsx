@@ -217,7 +217,7 @@ export default function GeneratePage() {
   };
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative overflow-x-hidden">
       {/* Background Image with Dark Overlay */}
       <div className="fixed inset-0 -z-10">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -249,7 +249,7 @@ export default function GeneratePage() {
 
         {/* Form Card */}
         {!generatedRecipe ? (
-          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-5 sm:p-8 max-w-2xl mx-auto mb-12">
+          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-4 sm:p-8 max-w-2xl mx-auto mb-12 overflow-hidden">
             <div className="space-y-4 sm:space-y-6 mb-6 sm:mb-8">
               {/* Scan ingredients — primary option */}
               <div>
