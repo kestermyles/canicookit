@@ -41,6 +41,13 @@ export default function RotatingPlaceholder({
   const [fadeOut, setFadeOut] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const hoverTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [canHover, setCanHover] = useState(false);
+
+  // Detect hover capability
+  useEffect(() => {
+    setCanHover(window.matchMedia('(hover: hover)').matches);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -88,9 +95,23 @@ export default function RotatingPlaceholder({
             &times;
           </button>
         )}
-        <div className="relative" ref={menuRef}>
+        <div
+          className="relative"
+          ref={menuRef}
+          onMouseEnter={() => {
+            if (canHover) {
+              if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+              setShowMenu(true);
+            }
+          }}
+          onMouseLeave={() => {
+            if (canHover) {
+              hoverTimeout.current = setTimeout(() => setShowMenu(false), 200);
+            }
+          }}
+        >
           <button
-            onClick={() => setShowMenu(!showMenu)}
+            onClick={() => { if (!canHover) setShowMenu(!showMenu); }}
             className="p-1.5 text-primary hover:text-orange-700 transition-colors"
             aria-label="Recipe options"
           >
