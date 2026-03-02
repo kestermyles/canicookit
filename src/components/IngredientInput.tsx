@@ -7,6 +7,28 @@ interface IngredientInputProps {
   onChange: (ingredients: string[]) => void;
 }
 
+// Common multi-word ingredients that should NOT be treated as dish names
+const MULTI_WORD_INGREDIENTS = new Set([
+  'olive oil', 'sesame oil', 'coconut oil', 'vegetable oil', 'sunflower oil',
+  'soy sauce', 'fish sauce', 'hot sauce', 'tomato sauce', 'worcestershire sauce',
+  'baking powder', 'baking soda', 'brown sugar', 'caster sugar', 'icing sugar',
+  'black pepper', 'white pepper', 'cayenne pepper', 'bell pepper', 'chilli flakes',
+  'cream cheese', 'sour cream', 'double cream', 'coconut milk', 'coconut cream',
+  'spring onion', 'red onion', 'white onion', 'green beans', 'kidney beans',
+  'tinned tomatoes', 'cherry tomatoes', 'sun dried tomatoes', 'tomato paste', 'tomato puree',
+  'chicken breast', 'chicken thigh', 'minced beef', 'ground beef', 'pork belly',
+  'plain flour', 'self raising flour', 'bread flour', 'rice flour', 'corn flour',
+  'stock cubes', 'chicken stock', 'beef stock', 'vegetable stock',
+  'dried herbs', 'mixed herbs', 'bay leaf', 'fresh basil', 'fresh mint',
+  'lemon juice', 'lime juice', 'apple cider vinegar', 'red wine vinegar',
+  'peanut butter', 'maple syrup', 'vanilla extract',
+]);
+
+function isDishName(value: string): boolean {
+  if (!value.includes(' ')) return false;
+  return !MULTI_WORD_INGREDIENTS.has(value.toLowerCase());
+}
+
 export interface IngredientInputHandle {
   /** Adds any pending input text as an ingredient. Returns the value if one was added, null otherwise. */
   flush: () => string | null;
@@ -58,15 +80,21 @@ const IngredientInput = forwardRef<IngredientInputHandle, IngredientInputProps>(
   return (
     <div className="space-y-2 max-w-full overflow-hidden">
       <div className="flex flex-wrap gap-2 min-h-[3rem] p-3 sm:p-4 bg-white border-2 border-gray-200 rounded-lg focus-within:border-primary transition-colors max-w-full">
-        {ingredients.map((ingredient, index) => (
+        {ingredients.map((ingredient, index) => {
+          const dish = isDishName(ingredient);
+          return (
           <span
             key={index}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary text-white rounded-full text-sm max-w-full"
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm max-w-full text-white ${
+              dish ? 'bg-violet-500' : 'bg-primary'
+            }`}
           >
             <span className="truncate">{ingredient}</span>
             <button
               onClick={() => removeIngredient(index)}
-              className="hover:bg-orange-700 rounded-full p-0.5 transition-colors"
+              className={`rounded-full p-0.5 transition-colors ${
+                dish ? 'hover:bg-violet-700' : 'hover:bg-orange-700'
+              }`}
               aria-label={`Remove ${ingredient}`}
             >
               <svg
@@ -84,7 +112,8 @@ const IngredientInput = forwardRef<IngredientInputHandle, IngredientInputProps>(
               </svg>
             </button>
           </span>
-        ))}
+          );
+        })}
         <input
           type="text"
           value={inputValue}

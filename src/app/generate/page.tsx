@@ -161,7 +161,7 @@ export default function GeneratePage() {
     const query = searchParams.get('q') || searchParams.get('dish') || searchParams.get('ingredients');
     if (query && query.trim()) {
       const ingredients = query
-        .split(/[,;\s]+/)
+        .split(/[,;]+/)
         .map((i) => i.trim())
         .filter((i) => i.length > 0);
 
