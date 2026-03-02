@@ -62,6 +62,7 @@ Invalid inputs include:
 - Nonsense or gibberish (e.g., "asdfgh", "xyz123")
 
 When in doubt, assume it IS food-related. Many dishes have unusual names.
+If a word looks like a misspelling of a food item or dish (e.g. "gazpaco", "spageti", "caeser salad"), treat it as valid.
 
 Respond with JSON only:
 {"valid": true} or {"valid": false, "reason": "brief explanation"}`,

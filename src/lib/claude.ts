@@ -54,6 +54,8 @@ ${userIngredients.map(i => `- ${i}`).join('\n')}
 
 Some of these may be ingredient names (e.g. "chicken", "lemon") and some may be dish names (e.g. "pad thai", "tarte tatin", "carbonara"). If you recognise a dish name, generate a recipe for that dish using its traditional ingredients. If they are all raw ingredients, create a recipe that uses them. If it's a mix, use the ingredients and draw inspiration from any dish names.
 
+If any ingredient or dish name appears to be misspelled, interpret it as the most likely intended ingredient or dish and generate the recipe for that — do not reject it or ask for clarification.
+
 Assume they also have these pantry basics:
 ${essentials.map(e => `- ${e}`).join('\n')}
 
