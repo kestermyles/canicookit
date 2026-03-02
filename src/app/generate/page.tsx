@@ -205,8 +205,13 @@ export default function GeneratePage() {
     // Flush any pending text in the input before generating
     const flushed = ingredientInputRef.current?.flush();
 
-    // Check if we have ingredients (including anything just flushed)
-    if (userIngredients.length === 0 && !flushed) {
+    // Build the full ingredients list including any just-flushed value
+    // (React state update from flush is async, so userIngredients may not include it yet)
+    const ingredientsToSend = flushed && !userIngredients.includes(flushed)
+      ? [...userIngredients, flushed]
+      : [...userIngredients];
+
+    if (ingredientsToSend.length === 0) {
       setError('Please add at least one ingredient or dish name');
       return;
     }
@@ -222,7 +227,7 @@ export default function GeneratePage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userIngredients,
+          userIngredients: ingredientsToSend,
           essentials: Array.from(PANTRY_ESSENTIALS),
           ...(cookingMethod && { cookingMethod }),
           ...(cuisinePreference && { cuisinePreference }),

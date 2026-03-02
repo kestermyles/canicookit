@@ -39,6 +39,8 @@ async function handleGenerateRecipe(
 ): Promise<NextResponse<GenerateRecipeResponse>> {
   const { userIngredients, essentials, cookingMethod, cuisinePreference, mealVibe } = body;
 
+  console.log('[Generate Recipe] Request body:', JSON.stringify({ userIngredients, essentials: essentials?.length, cookingMethod, cuisinePreference, mealVibe }));
+
   // Validate input
   if (!Array.isArray(userIngredients) || userIngredients.length === 0) {
     return NextResponse.json(
