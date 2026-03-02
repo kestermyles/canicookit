@@ -1,13 +1,19 @@
 'use client';
 
-import { useState, KeyboardEvent } from 'react';
+import { useState, KeyboardEvent, useImperativeHandle, forwardRef } from 'react';
 
 interface IngredientInputProps {
   ingredients: string[];
   onChange: (ingredients: string[]) => void;
 }
 
-export default function IngredientInput({ ingredients, onChange }: IngredientInputProps) {
+export interface IngredientInputHandle {
+  /** Adds any pending input text as an ingredient. Returns the value if one was added, null otherwise. */
+  flush: () => string | null;
+}
+
+const IngredientInput = forwardRef<IngredientInputHandle, IngredientInputProps>(
+  function IngredientInput({ ingredients, onChange }, ref) {
   const [inputValue, setInputValue] = useState('');
 
   const addIngredient = (value: string) => {
@@ -33,6 +39,17 @@ export default function IngredientInput({ ingredients, onChange }: IngredientInp
       onChange(ingredients.slice(0, -1));
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    flush: (): string | null => {
+      const trimmed = inputValue.trim().toLowerCase();
+      if (trimmed) {
+        addIngredient(inputValue);
+        return trimmed;
+      }
+      return null;
+    },
+  }));
 
   const removeIngredient = (index: number) => {
     onChange(ingredients.filter((_, i) => i !== index));
@@ -82,4 +99,6 @@ export default function IngredientInput({ ingredients, onChange }: IngredientInp
       </p>
     </div>
   );
-}
+});
+
+export default IngredientInput;

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useRef } from 'react';
-import IngredientInput from '@/components/IngredientInput';
+import IngredientInput, { IngredientInputHandle } from '@/components/IngredientInput';
 import EssentialsPanel from '@/components/EssentialsPanel';
 import GeneratedRecipe from '@/components/GeneratedRecipe';
 import AuthModal from '@/components/AuthModal';
@@ -174,6 +174,7 @@ export default function GeneratePage() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const ingredientInputRef = useRef<IngredientInputHandle>(null);
   const [recentGenerated, setRecentGenerated] = useState<GeneratedRecipeData[]>([]);
 
   // Load recent generated recipes from localStorage
@@ -200,8 +201,12 @@ export default function GeneratePage() {
   const { user } = useAuth();
 
   const handleGenerate = async () => {
-    if (userIngredients.length === 0) {
-      setError('Please add at least one ingredient');
+    // Flush any pending text in the input before generating
+    const flushed = ingredientInputRef.current?.flush();
+
+    // Check if we have ingredients (including anything just flushed)
+    if (userIngredients.length === 0 && !flushed) {
+      setError('Please add at least one ingredient or dish name');
       return;
     }
 
@@ -439,6 +444,7 @@ export default function GeneratePage() {
               {/* Text ingredient input */}
               <div>
                 <IngredientInput
+                  ref={ingredientInputRef}
                   ingredients={userIngredients}
                   onChange={setUserIngredients}
                 />
