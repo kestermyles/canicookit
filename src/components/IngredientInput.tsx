@@ -125,6 +125,7 @@ const IngredientInput = forwardRef<IngredientInputHandle, IngredientInputProps>(
           }}
           onKeyDown={handleKeyDown}
           placeholder={ingredients.length === 0 ? "e.g. chicken, lemon, pad thai..." : ""}
+          autoComplete="off"
           className="flex-1 min-w-0 w-20 outline-none text-sm"
         />
       </div>

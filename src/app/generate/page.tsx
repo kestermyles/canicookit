@@ -343,9 +343,9 @@ export default function GeneratePage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden">
+    <div className="min-h-screen relative overflow-x-hidden max-w-[100vw]">
       {/* Background Image with Dark Overlay */}
-      <div className="fixed inset-0 -z-10">
+      <div className="fixed inset-0 -z-10 w-screen h-screen overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/images/recipes/texas-chili-hero.jpg"

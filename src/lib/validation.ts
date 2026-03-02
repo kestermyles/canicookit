@@ -30,22 +30,16 @@ export interface InputValidationResult {
  */
 export async function validateUserInput(
   userIngredients: string[],
-  essentials: string[]
+  _essentials: string[]
 ): Promise<InputValidationResult> {
   try {
-    // Combine all inputs
-    const allInputs = [...userIngredients, ...essentials];
-
-    // Quick check: reject if no inputs
-    if (allInputs.length === 0) {
+    // Quick check: reject if no user inputs
+    if (userIngredients.length === 0) {
       return {
         valid: false,
         reason: 'Please enter at least one ingredient or dish name',
       };
     }
-
-    // Skip expensive GPT validation for short lists — let GPT-4 decide
-    // during generation if the input is food-related
 
     // Use GPT-4o-mini for cost-effective validation
     const openai = getOpenAIClient();
@@ -58,21 +52,23 @@ export async function validateUserInput(
 
 Valid inputs include:
 - Real food ingredients (e.g., "chicken", "tomatoes", "pasta")
-- Real dish names (e.g., "carbonara", "curry", "stir fry")
-- Combinations of ingredients or dishes
+- Dish names from any cuisine (e.g., "carbonara", "gazpacho", "pad thai", "ratatouille", "bibimbap")
+- Single-word dish names (e.g., "risotto", "paella", "goulash", "tagine")
+- Combinations of ingredients and/or dishes
 
 Invalid inputs include:
 - Non-food items (e.g., "car", "laptop", "shoes")
 - Offensive or inappropriate content
 - Nonsense or gibberish (e.g., "asdfgh", "xyz123")
-- Single generic words that aren't food (e.g., "thing", "stuff")
+
+When in doubt, assume it IS food-related. Many dishes have unusual names.
 
 Respond with JSON only:
 {"valid": true} or {"valid": false, "reason": "brief explanation"}`,
         },
         {
           role: 'user',
-          content: `Validate this cooking input: ${allInputs.join(', ')}`,
+          content: `Validate this cooking input: ${userIngredients.join(', ')}`,
         },
       ],
       temperature: 0.3,
