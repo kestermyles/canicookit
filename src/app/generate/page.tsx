@@ -175,7 +175,7 @@ export default function GeneratePage() {
   const [scanError, setScanError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const ingredientInputRef = useRef<IngredientInputHandle>(null);
-  const [hasPendingInput, setHasPendingInput] = useState(false);
+  const [pendingInputText, setPendingInputText] = useState('');
   const [recentGenerated, setRecentGenerated] = useState<GeneratedRecipeData[]>([]);
 
   // Load recent generated recipes from localStorage
@@ -375,7 +375,7 @@ export default function GeneratePage() {
 
         {/* Form Card */}
         {!generatedRecipe ? (
-          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-4 sm:p-8 max-w-2xl mx-auto mb-12 overflow-hidden">
+          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl px-5 py-4 sm:p-8 max-w-2xl mx-1 sm:mx-auto mb-12 overflow-hidden">
             <div className="space-y-3 sm:space-y-6">
               {/* Scan ingredients — compact on mobile, prominent on desktop */}
               <div>
@@ -448,7 +448,7 @@ export default function GeneratePage() {
                   ref={ingredientInputRef}
                   ingredients={userIngredients}
                   onChange={setUserIngredients}
-                  onPendingChange={setHasPendingInput}
+                  onInputChange={setPendingInputText}
                 />
               </div>
 
@@ -489,7 +489,7 @@ export default function GeneratePage() {
               <div className="flex justify-center pt-1 sm:pt-2">
                 <button
                   onClick={handleGenerate}
-                  disabled={isGenerating || (userIngredients.length === 0 && !hasPendingInput)}
+                  disabled={isGenerating || (userIngredients.length === 0 && pendingInputText.trim() === '')}
                   className="w-full sm:w-auto px-8 py-3 sm:py-4 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed font-semibold text-base sm:text-lg shadow-md hover:shadow-lg"
                 >
                   {isGenerating ? (
