@@ -69,6 +69,7 @@ Requirements:
 - Student kitchen: true if doable with basic equipment (pot, pan, knife, spoon)
 - Method: Clear numbered steps
 - Cuisine should be "generated" for generated recipes
+- Include 3-4 optional "flavour boosters" — spices, seasonings, or condiments that would elevate the dish based on the cuisine and ingredients (e.g. for Asian: sesame oil, chilli flakes, ginger). These are suggestions the user might add, not required.
 
 Return ONLY valid JSON (no markdown, no preamble, no code blocks):
 {
@@ -76,6 +77,7 @@ Return ONLY valid JSON (no markdown, no preamble, no code blocks):
   "description": "Brief description",
   "ingredients": ["precise measurements"],
   "method": ["Step 1", "Step 2"],
+  "flavourBoosters": ["smoked paprika", "fresh thyme", "chilli flakes"],
   "prepTime": 15,
   "cookTime": 20,
   "serves": 4,

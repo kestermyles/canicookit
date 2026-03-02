@@ -54,6 +54,19 @@ export default function GeneratePage() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [recentGenerated, setRecentGenerated] = useState<GeneratedRecipeData[]>([]);
+
+  // Load recent generated recipes from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('recentGeneratedRecipes');
+      if (stored) {
+        setRecentGenerated(JSON.parse(stored));
+      }
+    } catch {
+      // ignore localStorage errors
+    }
+  }, []);
 
   const [generatedRecipe, setGeneratedRecipe] = useState<GeneratedRecipeData | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -98,6 +111,17 @@ export default function GeneratePage() {
       }
 
       setGeneratedRecipe(data.recipe);
+
+      // Save to recent recipes in localStorage (keep last 5)
+      try {
+        const stored = localStorage.getItem('recentGeneratedRecipes');
+        const existing: GeneratedRecipeData[] = stored ? JSON.parse(stored) : [];
+        const updated = [data.recipe, ...existing].slice(0, 5);
+        localStorage.setItem('recentGeneratedRecipes', JSON.stringify(updated));
+        setRecentGenerated(updated);
+      } catch {
+        // ignore localStorage errors
+      }
     } catch (err) {
       console.error('Generation error:', err);
       setError(err instanceof Error ? err.message : 'Failed to generate recipe. Please try again.');
@@ -205,28 +229,28 @@ export default function GeneratePage() {
         <div className="absolute inset-0 bg-black/70" />
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-12">
+      <div className="max-w-4xl mx-auto px-4 py-6 sm:py-12">
         {/* Logo and Tagline */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 sm:mb-8">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/logo-color.svg"
             alt="Can I Cook It"
             style={{ height: '80px', width: 'auto' }}
-            className="mx-auto mb-4 mix-blend-darken"
+            className="mx-auto mb-4 mix-blend-darken hidden sm:block"
           />
           <p className="text-lg text-white/80">
-            Tell us what's in your fridge. We'll do the rest.
+            Tell us what&apos;s in your fridge. We&apos;ll do the rest.
           </p>
-          <p className="text-sm text-white/60 mt-2">
-            💡 Share a photo of your finished dish — the best ones get featured!
+          <p className="text-sm text-white/60 mt-2 hidden sm:block">
+            Share a photo of your finished dish — the best ones get featured!
           </p>
         </div>
 
         {/* Form Card */}
         {!generatedRecipe ? (
-          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8 max-w-2xl mx-auto mb-12">
-            <div className="space-y-6 mb-8">
+          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-5 sm:p-8 max-w-2xl mx-auto mb-12">
+            <div className="space-y-4 sm:space-y-6 mb-6 sm:mb-8">
               <div>
                 <h2 className="text-xl font-semibold mb-3">What ingredients do you have?</h2>
                 <IngredientInput
@@ -239,12 +263,12 @@ export default function GeneratePage() {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isScanning}
-                  className="mt-3 w-full border-2 border-dashed border-orange-300 rounded-xl p-4 flex flex-col items-center gap-2 cursor-pointer hover:border-primary hover:bg-orange-50/50 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                  className="mt-3 w-full border-2 border-dashed border-orange-300 rounded-xl p-3 sm:p-4 flex flex-row sm:flex-col items-center gap-2 sm:gap-2 cursor-pointer hover:border-primary hover:bg-orange-50/50 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {isScanning ? (
                     <>
                       <svg
-                        className="animate-spin h-8 w-8 text-primary"
+                        className="animate-spin h-5 w-5 sm:h-8 sm:w-8 text-primary flex-shrink-0"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -267,9 +291,11 @@ export default function GeneratePage() {
                     </>
                   ) : (
                     <>
-                      <StylizedCamera size={36} />
-                      <span className="text-sm font-medium text-gray-700">Scan your ingredients</span>
-                      <span className="text-xs text-gray-500">Photo your fridge, counter, or whatever you&apos;re working with</span>
+                      <StylizedCamera size={28} />
+                      <div className="text-left sm:text-center">
+                        <span className="text-sm font-medium text-gray-700">Scan your ingredients</span>
+                        <span className="text-xs text-gray-500 hidden sm:block">Photo your fridge, counter, or whatever you&apos;re working with</span>
+                      </div>
                     </>
                   )}
                 </button>
@@ -277,7 +303,6 @@ export default function GeneratePage() {
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
-                  capture="environment"
                   className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
@@ -451,6 +476,7 @@ export default function GeneratePage() {
               recipe={generatedRecipe}
               onSave={handleSave}
               isSaving={isSaving}
+              isLoggedIn={!!user}
             />
 
             {savedSlug && (
@@ -504,6 +530,29 @@ export default function GeneratePage() {
               >
                 ← Create another recipe
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Recent Generated Recipes */}
+        {!generatedRecipe && recentGenerated.length > 0 && (
+          <div className="max-w-2xl mx-auto mb-8">
+            <h2 className="text-2xl font-bold text-white text-center mb-6">
+              Your recent recipes
+            </h2>
+            <div className="grid md:grid-cols-3 gap-4">
+              {recentGenerated.map((recipe, i) => (
+                <button
+                  key={i}
+                  onClick={() => setGeneratedRecipe(recipe)}
+                  className="group block bg-black/40 backdrop-blur rounded-lg p-4 hover:bg-black/50 transition-all border border-white/10 text-left"
+                >
+                  <h3 className="font-semibold text-white mb-1 line-clamp-2 group-hover:text-orange-200 transition-colors">
+                    {recipe.title}
+                  </h3>
+                  <p className="text-xs text-white/60 line-clamp-2">{recipe.description}</p>
+                </button>
+              ))}
             </div>
           </div>
         )}

@@ -7,6 +7,7 @@ import { RecipeFrontmatter } from '@/lib/types';
 export interface GeneratedRecipeData extends RecipeFrontmatter {
   userIngredients: string[];
   method: string[];
+  flavourBoosters?: string[];
 }
 
 /**

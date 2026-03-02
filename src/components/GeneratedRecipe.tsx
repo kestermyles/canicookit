@@ -5,6 +5,7 @@ interface GeneratedRecipeProps {
   recipe: GeneratedRecipeData;
   onSave: () => void;
   isSaving: boolean;
+  isLoggedIn?: boolean;
 }
 
 function formatLabel(s: string): string {
@@ -39,6 +40,7 @@ export default function GeneratedRecipe({
   recipe,
   onSave,
   isSaving,
+  isLoggedIn = false,
 }: GeneratedRecipeProps) {
   const totalTime = recipe.prepTime + recipe.cookTime;
 
@@ -52,6 +54,17 @@ export default function GeneratedRecipe({
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-4">{recipe.title}</h1>
           <p className="text-secondary text-lg">{recipe.description}</p>
+        </div>
+
+        {/* Top save prompt — visible especially for mobile users */}
+        <div className="mb-6">
+          <button
+            onClick={onSave}
+            disabled={isSaving}
+            className="w-full sm:w-auto px-6 py-3 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold text-sm"
+          >
+            {isSaving ? 'Saving...' : isLoggedIn ? 'Save this recipe' : 'Join free to save this recipe'}
+          </button>
         </div>
 
         {/* Dietary badges */}
@@ -163,6 +176,23 @@ export default function GeneratedRecipe({
             </ol>
           </div>
         </div>
+
+        {/* Flavour Boosters */}
+        {recipe.flavourBoosters && recipe.flavourBoosters.length > 0 && (
+          <section className="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <h3 className="text-sm font-semibold text-amber-800 mb-2">Flavour boosters (optional)</h3>
+            <div className="flex flex-wrap gap-2">
+              {recipe.flavourBoosters.map((booster, i) => (
+                <span
+                  key={i}
+                  className="px-3 py-1 bg-white border border-amber-300 text-amber-800 rounded-full text-sm"
+                >
+                  {booster}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Nutrition */}
         <section className="mb-8">
