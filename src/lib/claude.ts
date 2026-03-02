@@ -49,13 +49,15 @@ export async function generateRecipe(
   // Build the prompt
   const prompt = `You are a creative chef helping someone cook with what they have.
 
-The user has these ingredients:
+The user has entered:
 ${userIngredients.map(i => `- ${i}`).join('\n')}
+
+Some of these may be ingredient names (e.g. "chicken", "lemon") and some may be dish names (e.g. "pad thai", "tarte tatin", "carbonara"). If you recognise a dish name, generate a recipe for that dish using its traditional ingredients. If they are all raw ingredients, create a recipe that uses them. If it's a mix, use the ingredients and draw inspiration from any dish names.
 
 Assume they also have these pantry basics:
 ${essentials.map(e => `- ${e}`).join('\n')}
 
-Generate a realistic, delicious recipe using primarily the user's ingredients.
+Generate a realistic, delicious recipe.
 ${preferences?.cookingMethod ? `\nPreferred cooking method: ${preferences.cookingMethod}` : ''}${preferences?.cuisinePreference ? `\nPreferred cuisine style: ${preferences.cuisinePreference}` : ''}${preferences?.mealVibe ? `\nMeal vibe: ${preferences.mealVibe}` : ''}
 Requirements:
 - Title should be descriptive and appetizing

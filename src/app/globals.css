@@ -5,9 +5,10 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply text-foreground;
+  html, body {
+    @apply text-foreground overflow-x-hidden;
     background-color: #FAFAF8;
+    max-width: 100vw;
   }
 }
 

@@ -39,14 +39,14 @@ export default function IngredientInput({ ingredients, onChange }: IngredientInp
   };
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap gap-2 min-h-[3rem] p-4 bg-white border-2 border-gray-200 rounded-lg focus-within:border-primary transition-colors">
+    <div className="space-y-2 max-w-full overflow-hidden">
+      <div className="flex flex-wrap gap-2 min-h-[3rem] p-3 sm:p-4 bg-white border-2 border-gray-200 rounded-lg focus-within:border-primary transition-colors max-w-full">
         {ingredients.map((ingredient, index) => (
           <span
             key={index}
-            className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-white rounded-full text-sm"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary text-white rounded-full text-sm max-w-full"
           >
-            {ingredient}
+            <span className="truncate">{ingredient}</span>
             <button
               onClick={() => removeIngredient(index)}
               className="hover:bg-orange-700 rounded-full p-0.5 transition-colors"
@@ -73,13 +73,12 @@ export default function IngredientInput({ ingredients, onChange }: IngredientInp
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={ingredients.length === 0 ? "Type an ingredient and press Enter..." : ""}
-          className="flex-1 min-w-[120px] outline-none text-sm"
+          placeholder={ingredients.length === 0 ? "e.g. chicken, lemon, pad thai..." : ""}
+          className="flex-1 min-w-0 w-20 outline-none text-sm"
         />
       </div>
-      <p className="text-sm text-secondary">
-        Press <kbd className="px-2 py-0.5 bg-gray-100 rounded border">Enter</kbd> or{' '}
-        <kbd className="px-2 py-0.5 bg-gray-100 rounded border">,</kbd> to add ingredients
+      <p className="text-xs sm:text-sm text-secondary">
+        Ingredients or dish names — press <kbd className="px-1.5 py-0.5 bg-gray-100 rounded border text-xs">Enter</kbd> to add
       </p>
     </div>
   );
