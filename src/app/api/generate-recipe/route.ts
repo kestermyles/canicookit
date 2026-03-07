@@ -11,6 +11,21 @@ import {
   SaveRecipeResponse,
 } from '@/types/generator';
 
+// Rate limiting for recipe generation
+const generateRateLimit = new Map<string, number[]>();
+const GENERATE_RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
+const MAX_GENERATES_PER_WINDOW = 5;
+
+function checkGenerateRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const timestamps = generateRateLimit.get(ip) || [];
+  const recent = timestamps.filter((t) => now - t < GENERATE_RATE_LIMIT_WINDOW);
+  if (recent.length >= MAX_GENERATES_PER_WINDOW) return false;
+  recent.push(now);
+  generateRateLimit.set(ip, recent);
+  return true;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -18,6 +33,23 @@ export async function POST(request: NextRequest) {
     // Check if this is a save request
     if ('save' in body && body.save === true) {
       return handleSaveRecipe(body as SaveRecipeRequest);
+    }
+
+    // Rate limit generation requests only (not saves)
+    const ip =
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
+
+    if (!checkGenerateRateLimit(ip)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error:
+            "You've generated a lot of recipes recently — take a breather and try again in an hour!",
+        },
+        { status: 429 }
+      );
     }
 
     // Otherwise, it's a generation request
