@@ -17,6 +17,25 @@ import { getAllCommunityRecipes } from '@/lib/supabase';
 export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 
+const CARD_BACKGROUND_IMAGES = [
+  '/images/recipes/texas-chili-hero.jpg',
+  '/images/recipes/sausage-rolls-hero.jpg',
+  '/images/recipes/sourdough-crumpets-hero.jpg',
+  '/images/recipes/tilapia-coconut-curry-hero.jpg',
+  '/images/recipes/italian-tomato-pasta-sauce-hero.jpg',
+  '/images/recipes/pozole-verde-hero.jpg',
+  '/images/recipes/okra-tomatoes-hero.jpg',
+  '/images/recipes/roasted-acorn-squash-hero.jpg',
+  '/images/recipes/rainbow-chard-hero.jpg',
+  '/images/recipes/vongole-closeup.jpg',
+  '/images/recipes/beef-ragu-tagliatelle.jpg',
+  '/images/recipes/chargrilled-chicken-coleslaw.jpg',
+  '/images/recipes/spaghetti-meatballs.jpg',
+  '/images/recipes/fresh-tagliatelle.jpg',
+  '/images/recipes/roast-turkey.jpg',
+  '/images/recipes/mexican-eggs.jpg',
+];
+
 const PANTRY_CATEGORIES = [
   { label: 'Fats & Oils', items: ['olive oil', 'vegetable oil', 'butter'] },
   { label: 'Seasoning', items: ['salt', 'black pepper'] },
@@ -705,29 +724,26 @@ export default function GeneratePage() {
               Your recent recipes
             </h2>
             <div className="grid md:grid-cols-3 gap-4">
-              {recentGenerated.map((recipe, i) => (
-                <button
-                  key={i}
-                  onClick={() => setGeneratedRecipe(recipe)}
-                  className="group block rounded-lg overflow-hidden h-40 relative text-left"
-                >
-                  {recipe.heroImage ? (
-                    <>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={recipe.heroImage} alt={recipe.title} className="absolute inset-0 w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20" />
-                    </>
-                  ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-orange-900/80 to-stone-800/80" />
-                  )}
-                  <div className="relative h-full flex flex-col justify-end p-4">
-                    <h3 className="font-semibold text-white mb-1 line-clamp-2 group-hover:text-orange-200 transition-colors">
-                      {recipe.title}
-                    </h3>
-                    <p className="text-xs text-white/60 line-clamp-2">{recipe.description}</p>
-                  </div>
-                </button>
-              ))}
+              {recentGenerated.map((recipe, i) => {
+                const bgImage = CARD_BACKGROUND_IMAGES[i % CARD_BACKGROUND_IMAGES.length];
+                return (
+                  <button
+                    key={i}
+                    onClick={() => setGeneratedRecipe(recipe)}
+                    className="group block rounded-lg overflow-hidden h-40 relative text-left"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 blur-[2px]" aria-hidden="true" />
+                    <div className="absolute inset-0 bg-black/60" />
+                    <div className="relative z-10 h-full flex flex-col justify-end p-4">
+                      <h3 className="font-semibold text-white mb-1 line-clamp-2 group-hover:text-orange-200 transition-colors">
+                        {recipe.title}
+                      </h3>
+                      <p className="text-xs text-white/60 line-clamp-2">{recipe.description}</p>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
@@ -739,31 +755,38 @@ export default function GeneratePage() {
               See what others have made
             </h2>
             <div className="grid md:grid-cols-3 gap-4">
-              {recentRecipes.map((recipe) => (
-                <Link
-                  key={recipe.id}
-                  href={`/recipes/community/${recipe.slug}`}
-                  className="group block rounded-lg overflow-hidden h-40 relative"
-                >
-                  {recipe.photo_url && !recipe.photo_is_ai_generated ? (
-                    <>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={recipe.photo_url} alt={recipe.title} className="absolute inset-0 w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20" />
-                    </>
-                  ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-orange-900/80 to-stone-800/80" />
-                  )}
-                  <div className="relative h-full flex flex-col justify-end p-4">
-                    <h3 className="font-semibold text-white mb-2 line-clamp-2 group-hover:text-orange-200 transition-colors">
-                      {recipe.title}
-                    </h3>
-                    <span className="inline-block px-2 py-0.5 text-xs bg-orange-500/80 text-white rounded-full capitalize w-fit">
-                      {recipe.cuisine || 'Community'}
-                    </span>
-                  </div>
-                </Link>
-              ))}
+              {recentRecipes.map((recipe, i) => {
+                const bgImage = CARD_BACKGROUND_IMAGES[(i + 3) % CARD_BACKGROUND_IMAGES.length];
+                return (
+                  <Link
+                    key={recipe.id}
+                    href={`/recipes/community/${recipe.slug}`}
+                    className="group block rounded-lg overflow-hidden h-40 relative"
+                  >
+                    {recipe.photo_url && !recipe.photo_is_ai_generated ? (
+                      <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={recipe.photo_url} alt={recipe.title} className="absolute inset-0 w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20" />
+                      </>
+                    ) : (
+                      <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 blur-[2px]" aria-hidden="true" />
+                        <div className="absolute inset-0 bg-black/60" />
+                      </>
+                    )}
+                    <div className="relative z-10 h-full flex flex-col justify-end p-4">
+                      <h3 className="font-semibold text-white mb-2 line-clamp-2 group-hover:text-orange-200 transition-colors">
+                        {recipe.title}
+                      </h3>
+                      <span className="inline-block px-2 py-0.5 text-xs bg-orange-500/80 text-white rounded-full capitalize w-fit">
+                        {recipe.cuisine || 'Community'}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}
