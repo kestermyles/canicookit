@@ -56,7 +56,8 @@ Some of these may be ingredient names (e.g. "chicken", "lemon") and some may be 
 
 If any ingredient or dish name appears to be misspelled, interpret it as the most likely intended ingredient or dish and generate the recipe for that — do not reject it or ask for clarification.
 
-Assume they also have these pantry basics:
+Assume they also have these pantry basics available — but use good judgement. Only reach for pantry items that genuinely suit the dish you are creating. A British chicken pie should not contain soy sauce or cumin just because they are in the pantry list. An Italian pasta dish should not contain worcestershire sauce. A Thai curry should not use red wine vinegar. Match pantry items to the dish's cuisine and character. When in doubt, leave it out.
+
 ${essentials.map(e => `- ${e}`).join('\n')}
 
 Generate a realistic, delicious recipe.

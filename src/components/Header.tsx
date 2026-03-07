@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from './AuthModal';
-import { Menu, X, ChevronDown, UtensilsCrossed, BookOpen, Sparkles, Lightbulb } from 'lucide-react';
+import { Menu, X, ChevronDown, UtensilsCrossed, BookOpen, ChefHat, GraduationCap } from 'lucide-react';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -66,7 +66,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex gap-6 text-sm items-center">
+          <nav className="hidden lg:flex gap-6 text-sm items-center">
             <Link
               href="/"
               className={`text-secondary hover:text-foreground transition-colors relative flex items-center gap-1.5 ${
@@ -91,8 +91,8 @@ export default function Header() {
                 isActive('/generate') ? 'after:absolute after:bottom-[-12px] after:left-0 after:right-0 after:h-0.5 after:bg-primary' : ''
               }`}
             >
-              <Sparkles className="w-4 h-4" />
-              Build a Recipe
+              <ChefHat className="w-4 h-4" />
+              Can I Cook It?
             </Link>
             <Link
               href="/basics"
@@ -100,8 +100,8 @@ export default function Header() {
                 isActive('/basics') ? 'after:absolute after:bottom-[-12px] after:left-0 after:right-0 after:h-0.5 after:bg-primary' : ''
               }`}
             >
-              <Lightbulb className="w-4 h-4" />
-              Stuff Nobody Tells You
+              <GraduationCap className="w-4 h-4" />
+              Kitchen Tips
             </Link>
 
             {user ? (
@@ -163,7 +163,7 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="md:hidden p-2 text-gray-700 hover:text-primary transition-colors"
+            className="lg:hidden p-2 text-gray-700 hover:text-primary transition-colors"
             aria-label="Open menu"
           >
             <Menu className="w-6 h-6" />
@@ -174,14 +174,14 @@ export default function Header() {
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 md:hidden"
+          className="fixed inset-0 bg-black/50 z-50 lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
 
       {/* Mobile Menu Drawer */}
       <div
-        className={`fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
@@ -223,8 +223,8 @@ export default function Header() {
               isActive('/generate') ? 'bg-orange-50 text-primary' : 'text-gray-700 hover:bg-gray-50'
             }`}
           >
-            <Sparkles className="w-5 h-5" />
-            <span className="font-medium">Build a Recipe</span>
+            <ChefHat className="w-5 h-5" />
+            <span className="font-medium">Can I Cook It?</span>
           </Link>
           <Link
             href="/basics"
@@ -232,8 +232,8 @@ export default function Header() {
               isActive('/basics') ? 'bg-orange-50 text-primary' : 'text-gray-700 hover:bg-gray-50'
             }`}
           >
-            <Lightbulb className="w-5 h-5" />
-            <span className="font-medium">Stuff Nobody Tells You</span>
+            <GraduationCap className="w-5 h-5" />
+            <span className="font-medium">Kitchen Tips</span>
           </Link>
 
           {/* Auth Buttons */}

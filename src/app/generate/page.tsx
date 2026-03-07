@@ -17,6 +17,20 @@ import { getAllCommunityRecipes } from '@/lib/supabase';
 export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 
+const PANTRY_CATEGORIES = [
+  { label: 'Fats & Oils', items: ['olive oil', 'vegetable oil', 'butter'] },
+  { label: 'Seasoning', items: ['salt', 'black pepper'] },
+  { label: 'Aromatics', items: ['garlic', 'onion'] },
+  { label: 'Acids', items: ['lemon juice', 'white wine vinegar', 'red wine vinegar'] },
+  { label: 'Sweeteners', items: ['sugar', 'honey'] },
+  { label: 'Dry Goods', items: ['plain flour', 'rice', 'pasta'] },
+  { label: 'Eggs & Dairy', items: ['eggs', 'milk'] },
+  { label: 'Tinned & Jarred', items: ['tinned tomatoes', 'tomato paste', 'tinned beans', 'tinned coconut milk', 'stock cubes'] },
+  { label: 'Condiments & Sauces', items: ['dijon mustard', 'worcestershire sauce', 'hot sauce', 'soy sauce'] },
+  { label: 'Spices', items: ['smoked paprika', 'cumin', 'ground coriander', 'cinnamon', 'chilli flakes', 'garlic powder'] },
+  { label: 'Dried Herbs', items: ['dried oregano', 'dried thyme', 'bay leaves', 'dried mixed herbs'] },
+];
+
 function PreferencesPanel({
   cookingMethod,
   setCookingMethod,
@@ -206,6 +220,8 @@ export default function GeneratePage() {
   const [cookingMethod, setCookingMethod] = useState<string | null>(null);
   const [cuisinePreference, setCuisinePreference] = useState<string | null>(null);
   const [mealVibe, setMealVibe] = useState<string | null>(null);
+  const [showPantryModal, setShowPantryModal] = useState(false);
+  const [showPreferences, setShowPreferences] = useState(false);
   const { user } = useAuth();
 
   const handleGenerate = async () => {
@@ -391,7 +407,16 @@ export default function GeneratePage() {
             <div className="space-y-3 sm:space-y-6">
               {/* Scan ingredients — compact on mobile, prominent on desktop */}
               <div>
-                <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">What ingredients do you have?</h2>
+                <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                  <h2 className="text-lg sm:text-xl font-semibold">What ingredients do you have?</h2>
+                  <button
+                    type="button"
+                    onClick={() => setShowPantryModal(true)}
+                    className="px-2.5 py-1 text-xs bg-orange-50 border border-orange-200 rounded-full text-orange-700 hover:bg-orange-100 transition-colors flex-shrink-0"
+                  >
+                    🧂 Pantry
+                  </button>
+                </div>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
@@ -497,63 +522,94 @@ export default function GeneratePage() {
                 </div>
               )}
 
-              {/* Generate Button — immediately after input so it's visible without scrolling */}
-              <div className="flex justify-center pt-1 sm:pt-2">
-                <button
-                  onClick={handleGenerate}
-                  disabled={isGenerating || (userIngredients.length === 0 && pendingInputText.trim() === '')}
-                  className="w-full sm:w-auto px-8 py-3 sm:py-4 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed font-semibold text-base sm:text-lg shadow-md hover:shadow-lg"
-                >
+              {/* Surprise Me / Let Me Choose dual-card UX */}
+              {(userIngredients.length > 0 || pendingInputText.trim() !== '') && (
+                <div className="pt-1 sm:pt-2">
                   {isGenerating ? (
-                    <span className="flex items-center justify-center gap-3">
-                      <svg
-                        className="animate-spin h-5 w-5 sm:h-6 sm:w-6"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
+                    <div className="text-center py-4">
+                      <span className="flex items-center justify-center gap-3 text-primary font-semibold text-base sm:text-lg">
+                        <svg
+                          className="animate-spin h-5 w-5 sm:h-6 sm:w-6"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
+                        </svg>
+                        Cooking up something delicious...
+                      </span>
+                      <p className="text-secondary text-sm mt-2">
+                        This usually takes 10-20 seconds...
+                      </p>
+                    </div>
+                  ) : !showPreferences ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={handleGenerate}
+                        className="flex flex-col items-center gap-1.5 p-4 sm:p-5 bg-primary text-white rounded-xl shadow-md hover:bg-orange-700 transition-colors"
                       >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
-                      Cooking up something delicious...
-                    </span>
+                        <span className="text-2xl">🎲</span>
+                        <span className="font-semibold text-base">Surprise Me</span>
+                        <span className="text-sm opacity-80">Just make something delicious</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowPreferences(true)}
+                        className="flex flex-col items-center gap-1.5 p-4 sm:p-5 bg-white border-2 border-orange-300 text-gray-800 rounded-xl shadow-md hover:border-primary transition-colors"
+                      >
+                        <span className="text-2xl">⚙️</span>
+                        <span className="font-semibold text-base">Let Me Choose</span>
+                        <span className="text-sm text-gray-500">Pick your style first</span>
+                      </button>
+                    </div>
                   ) : (
-                    'Can I Cook It?'
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium text-gray-600">Your preferences</p>
+                        <button
+                          type="button"
+                          onClick={() => setShowPreferences(false)}
+                          className="text-xs text-gray-400 hover:text-gray-600"
+                        >
+                          ← Back
+                        </button>
+                      </div>
+                      <PreferencesPanel
+                        cookingMethod={cookingMethod}
+                        setCookingMethod={setCookingMethod}
+                        cuisinePreference={cuisinePreference}
+                        setCuisinePreference={setCuisinePreference}
+                        mealVibe={mealVibe}
+                        setMealVibe={setMealVibe}
+                      />
+                      <div className="flex justify-center pt-1">
+                        <button
+                          onClick={handleGenerate}
+                          className="w-full sm:w-auto px-8 py-3 sm:py-4 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors font-semibold text-base sm:text-lg shadow-md hover:shadow-lg"
+                        >
+                          Can I Cook It?
+                        </button>
+                      </div>
+                    </div>
                   )}
-                </button>
-              </div>
-
-              {isGenerating && (
-                <p className="text-center text-secondary text-sm">
-                  This usually takes 10-20 seconds...
-                </p>
+                </div>
               )}
 
               {/* Collapsible extras below the CTA */}
               <EssentialsPanel />
-
-              {/* Refine Filters — collapsed on mobile by default */}
-              {userIngredients.length > 0 && (
-                <PreferencesPanel
-                  cookingMethod={cookingMethod}
-                  setCookingMethod={setCookingMethod}
-                  cuisinePreference={cuisinePreference}
-                  setCuisinePreference={setCuisinePreference}
-                  mealVibe={mealVibe}
-                  setMealVibe={setMealVibe}
-                />
-              )}
             </div>
           </div>
         ) : (
@@ -674,6 +730,56 @@ export default function GeneratePage() {
         onClose={() => setShowSignupPrompt(false)}
         initialMode="signup"
       />
+
+      {/* Pantry Modal */}
+      {showPantryModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowPantryModal(false)}
+        >
+          <div className="absolute inset-0 bg-black/50" />
+          <div
+            className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[80vh] overflow-y-auto p-5 sm:p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setShowPantryModal(false)}
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+              aria-label="Close"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+            <h3 className="text-lg font-semibold mb-1">Your Pantry Essentials 🧂</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              We assume you have these basics. Anything missing? Just add it to your ingredients.
+            </p>
+            <div className="space-y-3">
+              {PANTRY_CATEGORIES.map((cat) => (
+                <div key={cat.label}>
+                  <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1.5">{cat.label}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {cat.items.map((item) => (
+                      <span
+                        key={item}
+                        className="px-2.5 py-1 text-xs bg-orange-50 text-orange-700 border border-orange-200 rounded-full"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

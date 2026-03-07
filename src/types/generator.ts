@@ -52,17 +52,61 @@ export interface SaveRecipeResponse {
  * These ingredients are displayed as "Your Essentials" and dimmed in recipes
  */
 export const PANTRY_ESSENTIALS = [
+  // Fats & oils
   'olive oil',
+  'vegetable oil',
+  'butter',
+
+  // Seasoning
   'salt',
-  'pepper',
+  'black pepper',
+
+  // Aromatics
   'garlic',
   'onion',
-  'butter',
-  'flour',
-  'cornstarch',
+
+  // Acids
+  'lemon juice',
+  'white wine vinegar',
+  'red wine vinegar',
+
+  // Sweeteners
+  'sugar',
+  'honey',
+
+  // Dry goods
+  'plain flour',
+  'rice',
+  'pasta',
+
+  // Eggs & dairy
+  'eggs',
+  'milk',
+
+  // Tinned & jarred
   'tinned tomatoes',
+  'tomato paste',
+  'tinned beans',
+  'tinned coconut milk',
   'stock cubes',
+
+  // Condiments & sauces
+  'dijon mustard',
+  'worcestershire sauce',
+  'hot sauce',
   'soy sauce',
-  'dried herbs',
-  'lemon',
+
+  // Spices
+  'smoked paprika',
+  'cumin',
+  'ground coriander',
+  'cinnamon',
+  'chilli flakes',
+  'garlic powder',
+
+  // Dried herbs
+  'dried oregano',
+  'dried thyme',
+  'bay leaves',
+  'dried mixed herbs',
 ] as const;
