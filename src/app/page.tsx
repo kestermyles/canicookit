@@ -222,33 +222,6 @@ export default async function HomePage() {
                 </div>
               ))}
 
-              {/* Ad card at position 4 */}
-              <div className="break-inside-avoid mb-4">
-                <div className="rounded-lg overflow-hidden bg-stone-100 shadow-sm hover:shadow-lg transition-shadow flex items-center justify-center min-h-[250px] relative">
-                  <span className="absolute top-3 right-3 text-xs text-gray-500 uppercase tracking-wide">
-                    Sponsored
-                  </span>
-                  <div className="text-center text-gray-400 py-12">
-                    <svg
-                      className="w-12 h-12 mx-auto mb-2 opacity-40"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                      />
-                    </svg>
-                    <p className="text-sm">Advertisement</p>
-                  </div>
-                  {/* TODO: Replace inner content with AdSense unit (300x250) */}
-                </div>
-              </div>
-
-              {/* Remaining recipes */}
               {recipes.slice(3).map((recipe) => (
                 <div key={`${recipe.source || 'curated'}-${recipe.slug}`} className="break-inside-avoid mb-4">
                   <RecipeCard {...recipe} photoIsAiGenerated={recipe.photo_is_ai_generated} />

@@ -6,7 +6,6 @@ import PhotoUpload from '@/components/PhotoUpload';
 import CommentSection from '@/components/CommentSection';
 import StarRating from '@/components/StarRating';
 import AbilityLevel from '@/components/AbilityLevel';
-import AdUnit from '@/components/AdUnit';
 import ReportButton from '@/components/ReportButton';
 import NoPhotoPlaceholder from '@/components/NoPhotoPlaceholder';
 
@@ -227,55 +226,29 @@ export default async function CommunityRecipePage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Two-column layout: Ingredients + Method + Sidebar Ad */}
-        <div className="lg:grid lg:grid-cols-[1fr_2fr_300px] lg:gap-8">
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 lg:col-span-2">
-            {/* Ingredients */}
-            <div>
-              <h2 className="text-xl font-bold mb-4">Ingredients</h2>
-              <ul className="space-y-2">
-                {recipe.ingredients.map((ingredient, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
-                    <span>{ingredient}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Ad slot between ingredients and method (mobile/tablet only) */}
-            <div className="lg:hidden col-span-full">
-              <div className="flex items-center justify-center bg-stone-50 rounded-lg py-6 px-4 relative">
-                <span className="absolute top-2 right-3 text-xs text-gray-400 uppercase tracking-wide">
-                  Sponsored
-                </span>
-                <p className="text-sm text-gray-400">Advertisement</p>
-                {/* TODO: Replace with AdSense leaderboard unit (728x90 desktop / 320x50 mobile) */}
-              </div>
-            </div>
-
-            {/* Method */}
-            <div className="md:col-span-1">
-              <h2 className="text-xl font-bold mb-4">Method</h2>
-              <div
-                className="recipe-content"
-                dangerouslySetInnerHTML={{ __html: recipe.contentHtml }}
-              />
-            </div>
+        {/* Ingredients + Method */}
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
+          {/* Ingredients */}
+          <div>
+            <h2 className="text-xl font-bold mb-4">Ingredients</h2>
+            <ul className="space-y-2">
+              {recipe.ingredients.map((ingredient, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
+                  <span>{ingredient}</span>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          {/* Sidebar Ad (desktop only - sticky) */}
-          <aside className="hidden lg:block">
-            <div className="sticky top-4">
-              <div className="w-[300px] h-[250px] bg-stone-50 rounded-lg flex items-center justify-center relative">
-                <span className="absolute top-2 right-3 text-xs text-gray-400 uppercase tracking-wide">
-                  Sponsored
-                </span>
-                <p className="text-sm text-gray-400">Advertisement</p>
-                {/* TODO: Replace with AdSense medium rectangle (300x250) */}
-              </div>
-            </div>
-          </aside>
+          {/* Method */}
+          <div>
+            <h2 className="text-xl font-bold mb-4">Method</h2>
+            <div
+              className="recipe-content"
+              dangerouslySetInnerHTML={{ __html: recipe.contentHtml }}
+            />
+          </div>
         </div>
 
         {/* Nutrition */}
