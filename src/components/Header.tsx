@@ -61,7 +61,7 @@ export default function Header() {
               src="/images/logo-color.svg"
               alt="Can I Cook It"
               style={{ height: '60px', width: 'auto' }}
-              className="mix-blend-darken"
+              className="mix-blend-darken max-w-[120px] sm:max-w-none"
             />
           </Link>
 

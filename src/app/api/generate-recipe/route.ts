@@ -69,9 +69,9 @@ export async function POST(request: NextRequest) {
 async function handleGenerateRecipe(
   body: GenerateRecipeRequest
 ): Promise<NextResponse<GenerateRecipeResponse>> {
-  const { userIngredients, essentials, cookingMethod, cuisinePreference, mealVibe } = body;
+  const { userIngredients, essentials, cookingMethod, cuisinePreference, mealVibe, extraPreferences } = body;
 
-  console.log('[Generate Recipe] Request body:', JSON.stringify({ userIngredients, essentials: essentials?.length, cookingMethod, cuisinePreference, mealVibe }));
+  console.log('[Generate Recipe] Request body:', JSON.stringify({ userIngredients, essentials: essentials?.length, cookingMethod, cuisinePreference, mealVibe, extraPreferences }));
 
   // Validate input
   if (!Array.isArray(userIngredients) || userIngredients.length === 0) {
@@ -131,6 +131,7 @@ async function handleGenerateRecipe(
       cookingMethod,
       cuisinePreference,
       mealVibe,
+      extraPreferences,
     });
 
     console.log('[Generate Recipe] Recipe generated successfully:', recipe.title);

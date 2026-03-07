@@ -19,6 +19,7 @@ export interface GenerateRecipeRequest {
   cookingMethod?: string;
   cuisinePreference?: string;
   mealVibe?: string;
+  extraPreferences?: string;
 }
 
 /**

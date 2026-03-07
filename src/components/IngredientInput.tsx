@@ -87,16 +87,12 @@ const IngredientInput = forwardRef<IngredientInputHandle, IngredientInputProps>(
           return (
           <span
             key={index}
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm max-w-full text-white ${
-              dish ? 'bg-violet-500' : 'bg-primary'
-            }`}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm max-w-full text-white bg-primary"
           >
             <span className="truncate">{ingredient}</span>
             <button
               onClick={() => removeIngredient(index)}
-              className={`rounded-full p-0.5 transition-colors ${
-                dish ? 'hover:bg-violet-700' : 'hover:bg-orange-700'
-              }`}
+              className="rounded-full p-0.5 transition-colors hover:bg-orange-700"
               aria-label={`Remove ${ingredient}`}
             >
               <svg

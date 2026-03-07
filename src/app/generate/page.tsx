@@ -38,6 +38,9 @@ function PreferencesPanel({
   setCuisinePreference,
   mealVibe,
   setMealVibe,
+  extraPreferences,
+  setExtraPreferences,
+  forceOpen = false,
 }: {
   cookingMethod: string | null;
   setCookingMethod: (v: string | null) => void;
@@ -45,15 +48,18 @@ function PreferencesPanel({
   setCuisinePreference: (v: string | null) => void;
   mealVibe: string | null;
   setMealVibe: (v: string | null) => void;
+  extraPreferences: string;
+  setExtraPreferences: (v: string) => void;
+  forceOpen?: boolean;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(forceOpen);
 
-  // Auto-open on desktop
+  // Auto-open on desktop (skip if forceOpen)
   useEffect(() => {
-    if (window.innerWidth >= 640) {
+    if (!forceOpen && window.innerWidth >= 640) {
       setIsOpen(true);
     }
-  }, []);
+  }, [forceOpen]);
 
   const hasSelection = cookingMethod || cuisinePreference || mealVibe;
 
@@ -145,6 +151,17 @@ function PreferencesPanel({
               ))}
             </div>
           </div>
+
+          <div>
+            <p className="text-sm font-medium text-gray-600 mb-2">Anything else?</p>
+            <input
+              type="text"
+              value={extraPreferences}
+              onChange={(e) => setExtraPreferences(e.target.value)}
+              placeholder="e.g. no nuts, extra spicy, make it filling..."
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-primary transition-colors"
+            />
+          </div>
         </div>
       )}
     </div>
@@ -220,6 +237,7 @@ export default function GeneratePage() {
   const [cookingMethod, setCookingMethod] = useState<string | null>(null);
   const [cuisinePreference, setCuisinePreference] = useState<string | null>(null);
   const [mealVibe, setMealVibe] = useState<string | null>(null);
+  const [extraPreferences, setExtraPreferences] = useState('');
   const [showPantryModal, setShowPantryModal] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
   const { user } = useAuth();
@@ -255,6 +273,7 @@ export default function GeneratePage() {
           ...(cookingMethod && { cookingMethod }),
           ...(cuisinePreference && { cuisinePreference }),
           ...(mealVibe && { mealVibe }),
+          ...(extraPreferences.trim() && { extraPreferences: extraPreferences.trim() }),
         }),
       });
 
@@ -373,7 +392,7 @@ export default function GeneratePage() {
   return (
     <div className="min-h-screen relative overflow-x-hidden max-w-[100vw]">
       {/* Background Image with Dark Overlay */}
-      <div className="fixed inset-0 -z-10 w-screen h-screen overflow-hidden">
+      <div className="fixed inset-0 -z-10 w-full h-full overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/images/recipes/texas-chili-hero.jpg"
@@ -594,6 +613,9 @@ export default function GeneratePage() {
                         setCuisinePreference={setCuisinePreference}
                         mealVibe={mealVibe}
                         setMealVibe={setMealVibe}
+                        extraPreferences={extraPreferences}
+                        setExtraPreferences={setExtraPreferences}
+                        forceOpen
                       />
                       <div className="flex justify-center pt-1">
                         <button

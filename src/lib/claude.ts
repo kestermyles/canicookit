@@ -29,7 +29,7 @@ interface ClaudeResponse {
 export async function generateRecipe(
   userIngredients: string[],
   essentials: string[],
-  preferences?: { cookingMethod?: string; cuisinePreference?: string; mealVibe?: string }
+  preferences?: { cookingMethod?: string; cuisinePreference?: string; mealVibe?: string; extraPreferences?: string }
 ): Promise<GeneratedRecipeData> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
 
@@ -63,7 +63,7 @@ ${essentials.map(e => `- ${e}`).join('\n')}
 Generate a realistic, delicious recipe.
 
 CRITICAL: The recipe must exactly match its title. If the title contains an ingredient, that ingredient must appear in the ingredients list. If the title describes a cooking method (fried, roasted, grilled, baked, steamed, sautéed, braised, poached, etc.), that method must be used in the steps. For example, if the title says "fried rice", rice must be in the ingredients AND there must be a step that fries the rice. Never generate a recipe that contradicts its title.
-${preferences?.cookingMethod ? `\nPreferred cooking method: ${preferences.cookingMethod}` : ''}${preferences?.cuisinePreference ? `\nPreferred cuisine style: ${preferences.cuisinePreference}` : ''}${preferences?.mealVibe ? `\nMeal vibe: ${preferences.mealVibe}` : ''}
+${preferences?.cookingMethod ? `\nPreferred cooking method: ${preferences.cookingMethod}` : ''}${preferences?.cuisinePreference ? `\nPreferred cuisine style: ${preferences.cuisinePreference}` : ''}${preferences?.mealVibe ? `\nMeal vibe: ${preferences.mealVibe}` : ''}${preferences?.extraPreferences ? `\nExtra requests: ${preferences.extraPreferences}` : ''}
 Requirements:
 - Title should be descriptive and appetizing
 - Prep time: 5-30 minutes (realistic)
