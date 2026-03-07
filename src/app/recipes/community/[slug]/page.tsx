@@ -133,7 +133,7 @@ export default async function CommunityRecipePage({ params }: PageProps) {
         <NoPhotoPlaceholder size="large" />
       )}
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {/* Community Badge */}
         <div className="mb-4">
           <CommunityBadge

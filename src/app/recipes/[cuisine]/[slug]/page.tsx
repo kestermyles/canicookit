@@ -138,7 +138,7 @@ export default async function RecipePage({ params }: PageProps) {
         <NoPhotoPlaceholder size="large" />
       )}
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {/* Title */}
         <h1 className="text-3xl md:text-4xl font-bold mb-4 font-display">{recipe.title}</h1>
 
