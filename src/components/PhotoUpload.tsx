@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from './AuthModal';
 import NoPhotoPlaceholder from './NoPhotoPlaceholder';
+import imageCompression from 'browser-image-compression';
 
 interface PhotoUploadProps {
   recipeSlug: string;
@@ -23,32 +24,36 @@ export default function PhotoUpload({
   const { user } = useAuth();
   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
 
-    // Validate file type
     if (!selectedFile.type.startsWith('image/')) {
       setError('Please select an image file');
       return;
     }
 
-    // Validate file size (2MB limit)
-    if (selectedFile.size > 2 * 1024 * 1024) {
-      setError('Image must be less than 2MB');
-      return;
-    }
-
-    setFile(selectedFile);
     setError(null);
     setSuccess(false);
+    setUploading(true);
 
-    // Create preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreview(reader.result as string);
-    };
-    reader.readAsDataURL(selectedFile);
+    try {
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      };
+      const compressed = await imageCompression(selectedFile, options);
+      setFile(compressed as unknown as File);
+
+      const reader = new FileReader();
+      reader.onloadend = () => setPreview(reader.result as string);
+      reader.readAsDataURL(compressed);
+    } catch (err) {
+      setError('Could not process image. Please try another file.');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleUpload = async () => {
@@ -162,7 +167,7 @@ export default function PhotoUpload({
                 Click to select or drag & drop your photo
               </p>
               <p className="text-sm text-gray-500">
-                Max 2MB • JPG, PNG, or WebP
+                JPG, PNG, or WebP • Auto-optimised for upload
               </p>
             </div>
           )}
