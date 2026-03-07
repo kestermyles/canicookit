@@ -154,7 +154,7 @@ export default function RecipeCard({
           <span className="inline-block px-2 py-0.5 text-xs font-medium bg-orange-50 text-primary rounded-full capitalize">
             {displayCuisine}
           </span>
-          {isCommunity && status && (
+          {isCommunity && status && cuisine === 'generated' && (
             <div className="scale-75 origin-left">
               <CommunityBadge status={status} qualityScore={qualityScore} />
             </div>

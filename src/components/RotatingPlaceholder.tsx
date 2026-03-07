@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { StylizedCamera } from '@/components/NoPhotoPlaceholder';
 
 const PLACEHOLDERS = [
   'Try: leftover chicken, rice, half a courgette...',
@@ -115,11 +116,7 @@ export default function RotatingPlaceholder({
             className="p-1.5 text-primary hover:text-orange-700 transition-colors"
             aria-label="Recipe options"
           >
-            <svg width="24" height="24" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 22C12 19.79 13.79 18 16 18H48C50.21 18 52 19.79 52 22V46C52 48.21 50.21 50 48 50H16C13.79 50 12 48.21 12 46V22Z" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-              <circle cx="32" cy="34" r="9" stroke="currentColor" strokeWidth="3" />
-              <path d="M24 18C24 18 26 14 28 14H36C38 14 40 18 40 18" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            <StylizedCamera size={28} />
           </button>
           {showMenu && (
             <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">

@@ -390,9 +390,9 @@ export default function GeneratePage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden max-w-[100vw]">
+    <div className="relative min-h-screen overflow-x-hidden max-w-[100vw]">
       {/* Background Image with Dark Overlay */}
-      <div className="fixed inset-0 -z-10 w-full h-full overflow-hidden">
+      <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/images/recipes/texas-chili-hero.jpg"
@@ -709,12 +709,23 @@ export default function GeneratePage() {
                 <button
                   key={i}
                   onClick={() => setGeneratedRecipe(recipe)}
-                  className="group block bg-black/40 backdrop-blur rounded-lg p-4 hover:bg-black/50 transition-all border border-white/10 text-left"
+                  className="group block rounded-lg overflow-hidden h-40 relative text-left"
                 >
-                  <h3 className="font-semibold text-white mb-1 line-clamp-2 group-hover:text-orange-200 transition-colors">
-                    {recipe.title}
-                  </h3>
-                  <p className="text-xs text-white/60 line-clamp-2">{recipe.description}</p>
+                  {recipe.heroImage ? (
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={recipe.heroImage} alt={recipe.title} className="absolute inset-0 w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20" />
+                    </>
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-orange-900/80 to-stone-800/80" />
+                  )}
+                  <div className="relative h-full flex flex-col justify-end p-4">
+                    <h3 className="font-semibold text-white mb-1 line-clamp-2 group-hover:text-orange-200 transition-colors">
+                      {recipe.title}
+                    </h3>
+                    <p className="text-xs text-white/60 line-clamp-2">{recipe.description}</p>
+                  </div>
                 </button>
               ))}
             </div>
@@ -732,14 +743,25 @@ export default function GeneratePage() {
                 <Link
                   key={recipe.id}
                   href={`/recipes/community/${recipe.slug}`}
-                  className="group block bg-black/40 backdrop-blur rounded-lg p-4 hover:bg-black/50 transition-all border border-white/10"
+                  className="group block rounded-lg overflow-hidden h-40 relative"
                 >
-                  <h3 className="font-semibold text-white mb-2 line-clamp-2 group-hover:text-orange-200 transition-colors">
-                    {recipe.title}
-                  </h3>
-                  <span className="inline-block px-2 py-0.5 text-xs bg-orange-500/80 text-white rounded-full capitalize">
-                    {recipe.cuisine || 'Community'}
-                  </span>
+                  {recipe.photo_url && !recipe.photo_is_ai_generated ? (
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={recipe.photo_url} alt={recipe.title} className="absolute inset-0 w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20" />
+                    </>
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-orange-900/80 to-stone-800/80" />
+                  )}
+                  <div className="relative h-full flex flex-col justify-end p-4">
+                    <h3 className="font-semibold text-white mb-2 line-clamp-2 group-hover:text-orange-200 transition-colors">
+                      {recipe.title}
+                    </h3>
+                    <span className="inline-block px-2 py-0.5 text-xs bg-orange-500/80 text-white rounded-full capitalize w-fit">
+                      {recipe.cuisine || 'Community'}
+                    </span>
+                  </div>
                 </Link>
               ))}
             </div>
