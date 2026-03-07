@@ -91,6 +91,9 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
       setComment('');
       if (!user) setName('');
 
+      // Reload comments so the new one appears immediately
+      await loadComments();
+
       // Reset success message after 5 seconds
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
@@ -175,19 +178,11 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
           )}
 
           {success && (
-            <div className="bg-green-50 border border-green-200 rounded-md p-3">
-              <p className="text-sm text-green-700">
-                ✓ Comment submitted! It will appear after moderation.
-              </p>
-              {!user && (
-                <button
-                  type="button"
-                  onClick={() => setShowSignupPrompt(true)}
-                  className="mt-2 text-sm text-primary hover:underline"
-                >
-                  Want to be recognised as a Community Chef? Join for free →
-                </button>
-              )}
+            <div className="bg-green-50 border border-green-200 rounded-md p-4 text-center">
+              <img src="/images/logo-color.svg" alt="Can I Cook It" className="h-12 mx-auto mb-2" />
+              <p className="text-sm font-bold text-primary">Can I Cook It?</p>
+              <p className="text-lg font-bold text-green-700">Yes You Can! 🎉</p>
+              <p className="text-sm text-gray-600">Thanks for joining the conversation!</p>
             </div>
           )}
 
