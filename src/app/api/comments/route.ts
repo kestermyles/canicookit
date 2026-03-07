@@ -4,7 +4,7 @@ import { createComment, getComments } from '@/lib/supabase';
 // Simple rate limiting cache (in-memory, resets on server restart)
 const rateLimitCache = new Map<string, number[]>();
 const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
-const MAX_COMMENTS_PER_WINDOW = 3;
+const MAX_COMMENTS_PER_WINDOW = 10;
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
@@ -100,33 +100,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Simple spam detection (very basic)
+    // Spam/profanity detection
     const lowerComment = comment.toLowerCase();
-    const spamKeywords = [
-      'http://',
-      'https://',
-      'www.',
-      'click here',
-      'buy now',
+    const lowerName = name.toLowerCase();
+    const profanityKeywords = [
       'viagra',
       'casino',
+      'click here',
+      'buy now',
+      'free money',
+      'fuck',
+      'shit',
+      'cunt',
+      'nigger',
+      'faggot',
     ];
 
-    if (spamKeywords.some((keyword) => lowerComment.includes(keyword))) {
-      console.warn('[Comments POST] Possible spam detected:', comment);
-      // Still save but mark as pending (will be moderated)
+    const isFlagged = profanityKeywords.some(
+      (keyword) => lowerComment.includes(keyword) || lowerName.includes(keyword)
+    );
+
+    if (isFlagged) {
+      console.warn('[Comments POST] Flagged for review:', comment);
     }
 
     // Get user agent
     const userAgent = request.headers.get('user-agent') || 'unknown';
 
-    // Create comment
+    // Create comment — approved by default, pending only if flagged
     const result = await createComment({
       recipe_slug: recipeSlug,
       name: name.trim(),
       comment: comment.trim(),
       ip_address: ip,
       user_agent: userAgent,
+      status: isFlagged ? 'pending' : 'approved',
     });
 
     if (!result.success) {
@@ -143,7 +151,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Comment submitted successfully. It will appear after moderation.',
+      message: isFlagged
+        ? 'Comment submitted. It will appear after moderation.'
+        : 'Your comment has been posted!',
     });
   } catch (error) {
     console.error('[Comments POST] ERROR:', error);

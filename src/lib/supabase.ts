@@ -409,6 +409,7 @@ export async function createComment(commentData: {
   user_agent?: string;
   user_id?: string;
   user_email?: string;
+  status?: 'pending' | 'approved' | 'rejected';
 }): Promise<{ success: boolean; data?: CommentRow; error?: string }> {
   try {
     const { data, error } = await supabase
@@ -422,7 +423,7 @@ export async function createComment(commentData: {
           user_agent: commentData.user_agent || null,
           user_id: commentData.user_id || null,
           user_email: commentData.user_email || null,
-          status: 'pending',
+          status: commentData.status || 'approved',
         },
       ])
       .select()

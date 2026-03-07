@@ -60,6 +60,8 @@ Assume they also have these pantry basics:
 ${essentials.map(e => `- ${e}`).join('\n')}
 
 Generate a realistic, delicious recipe.
+
+CRITICAL: The recipe must exactly match its title. If the title contains an ingredient, that ingredient must appear in the ingredients list. If the title describes a cooking method (fried, roasted, grilled, baked, steamed, sautéed, braised, poached, etc.), that method must be used in the steps. For example, if the title says "fried rice", rice must be in the ingredients AND there must be a step that fries the rice. Never generate a recipe that contradicts its title.
 ${preferences?.cookingMethod ? `\nPreferred cooking method: ${preferences.cookingMethod}` : ''}${preferences?.cuisinePreference ? `\nPreferred cuisine style: ${preferences.cuisinePreference}` : ''}${preferences?.mealVibe ? `\nMeal vibe: ${preferences.mealVibe}` : ''}
 Requirements:
 - Title should be descriptive and appetizing
