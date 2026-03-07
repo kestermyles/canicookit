@@ -733,8 +733,8 @@ export default function GeneratePage() {
                     className="group block rounded-lg overflow-hidden h-40 relative text-left"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20 blur-[2px]" aria-hidden="true" />
-                    <div className="absolute inset-0 bg-black/60" />
+                    <img src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30 blur-[2px]" aria-hidden="true" />
+                    <div className="absolute inset-0 bg-black/40" />
                     <div className="relative z-10 h-full flex flex-col justify-end p-4">
                       <h3 className="font-semibold text-white mb-1 line-clamp-2 group-hover:text-orange-200 transition-colors">
                         {recipe.title}
@@ -749,13 +749,16 @@ export default function GeneratePage() {
         )}
 
         {/* See What Others Have Made Section */}
-        {!generatedRecipe && recentRecipes.length > 0 && (
+        {!generatedRecipe && (() => {
+          const recentGeneratedSlugs = new Set(recentGenerated.map(r => r.slug).filter(Boolean));
+          const filteredRecentRecipes = recentRecipes.filter(r => !recentGeneratedSlugs.has(r.slug));
+          return filteredRecentRecipes.length > 0 && (
           <div className="max-w-2xl mx-auto">
             <h2 className="text-2xl font-bold text-white text-center mb-6">
               See what others have made
             </h2>
             <div className="grid md:grid-cols-3 gap-4">
-              {recentRecipes.map((recipe, i) => {
+              {filteredRecentRecipes.map((recipe, i) => {
                 const bgImage = CARD_BACKGROUND_IMAGES[(i + 3) % CARD_BACKGROUND_IMAGES.length];
                 return (
                   <Link
@@ -789,7 +792,8 @@ export default function GeneratePage() {
               })}
             </div>
           </div>
-        )}
+        );
+        })()}
       </div>
 
       <AuthModal
