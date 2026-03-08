@@ -64,12 +64,37 @@ export async function POST(request: NextRequest) {
                request.headers.get('x-real-ip') ||
                'unknown';
 
-    // Ensure recipe row exists to satisfy FK constraint
+    // Ensure recipe row exists in generated_recipes to satisfy FK constraint
+    // (static/curated recipes aren't in this table by default)
     const supabase = getServiceClient();
-    await supabase.from('recipes').upsert(
-      { slug: recipeSlug, title: recipeSlug, cuisine: 'static' },
+    const { error: upsertError } = await supabase.from('generated_recipes').upsert(
+      {
+        slug: recipeSlug,
+        title: recipeSlug,
+        description: 'Static recipe',
+        ingredients: [],
+        method: [],
+        prep_time: 0,
+        cook_time: 0,
+        serves: 0,
+        difficulty: 'easy',
+        budget: 'budget',
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+        status: 'featured',
+      },
       { onConflict: 'slug', ignoreDuplicates: true }
     );
+
+    if (upsertError) {
+      console.error('[Upload Photo] FK upsert failed for slug:', recipeSlug, upsertError);
+      return NextResponse.json(
+        { success: false, error: 'Failed to prepare recipe record' },
+        { status: 500 }
+      );
+    }
 
     // Insert photo record into database
     const { data: photoData, error: photoError } = await supabase
