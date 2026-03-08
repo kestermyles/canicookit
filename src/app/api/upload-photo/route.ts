@@ -64,8 +64,14 @@ export async function POST(request: NextRequest) {
                request.headers.get('x-real-ip') ||
                'unknown';
 
-    // Insert photo record into database
+    // Ensure recipe row exists to satisfy FK constraint
     const supabase = getServiceClient();
+    await supabase.from('recipes').upsert(
+      { slug: recipeSlug, title: recipeSlug, cuisine: 'static' },
+      { onConflict: 'slug', ignoreDuplicates: true }
+    );
+
+    // Insert photo record into database
     const { data: photoData, error: photoError } = await supabase
       .from('recipe_photos')
       .insert([

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createComment, getComments } from '@/lib/supabase';
+import { createComment, getComments, getServiceClient } from '@/lib/supabase';
 
 // Simple rate limiting cache (in-memory, resets on server restart)
 const rateLimitCache = new Map<string, number[]>();
@@ -126,6 +126,13 @@ export async function POST(request: NextRequest) {
 
     // Get user agent
     const userAgent = request.headers.get('user-agent') || 'unknown';
+
+    // Ensure recipe row exists to satisfy FK constraint
+    const supabase = getServiceClient();
+    await supabase.from('recipes').upsert(
+      { slug: recipeSlug, title: recipeSlug, cuisine: 'static' },
+      { onConflict: 'slug', ignoreDuplicates: true }
+    );
 
     // Create comment — approved by default, pending only if flagged
     const result = await createComment({
