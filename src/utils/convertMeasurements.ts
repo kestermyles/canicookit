@@ -18,6 +18,16 @@ export function fahrenheitToCelsius(f: number): number {
 
 // --- Formatting helpers ---
 
+// Small volume shortcuts (tbsp / tsp)
+const SMALL_VOLUMES: [number, string][] = [
+  [5, '1 tsp'],
+  [10, '2 tsp'],
+  [15, '1 tbsp'],
+  [30, '2 tbsp'],
+  [45, '3 tbsp'],
+];
+
+// Cup fractions for matching
 const CUP_FRACTIONS: [number, string][] = [
   [0.25, '¼'],
   [1 / 3, '⅓'],
@@ -26,24 +36,42 @@ const CUP_FRACTIONS: [number, string][] = [
   [0.75, '¾'],
 ];
 
-function formatCups(ml: number): string {
-  const cups = ml / 236.588;
-  if (cups < 0.15) {
-    // Too small for cups, use fl oz
-    return `${mlToFlOz(ml)} fl oz`;
+function formatVolume(ml: number): string {
+  // Very small amounts → tsp/tbsp
+  for (const [threshold, label] of SMALL_VOLUMES) {
+    if (Math.abs(ml - threshold) < 3) return label;
   }
-  // Check for clean fractions
+
+  // Try cups
+  const cups = ml / 236.588;
   const whole = Math.floor(cups);
   const frac = cups - whole;
-  for (const [val, symbol] of CUP_FRACTIONS) {
-    if (Math.abs(frac - val) < 0.08) {
-      return whole > 0 ? `${whole}${symbol} cups` : `${symbol} cup`;
+
+  // Check for clean fraction match
+  let cleanCup: string | null = null;
+
+  if (Math.abs(frac) < 0.08 && whole > 0) {
+    cleanCup = `${whole} cup${whole !== 1 ? 's' : ''}`;
+  } else {
+    for (const [val, symbol] of CUP_FRACTIONS) {
+      if (Math.abs(frac - val) < 0.08) {
+        cleanCup = whole > 0 ? `${whole}${symbol} cups` : `${symbol} cup`;
+        break;
+      }
     }
   }
-  if (Math.abs(frac) < 0.08) {
-    return `${whole} cup${whole !== 1 ? 's' : ''}`;
+
+  // Large volumes (500ml+): show cups with fl oz in parentheses
+  if (ml >= 500 && cleanCup) {
+    return `${cleanCup} (${mlToFlOz(ml)} fl oz)`;
   }
-  // Fallback to fl oz for non-clean amounts
+
+  // Clean cup fraction: cups only
+  if (cleanCup) {
+    return cleanCup;
+  }
+
+  // No clean cup match: fl oz
   return `${mlToFlOz(ml)} fl oz`;
 }
 
@@ -51,7 +79,6 @@ function formatOz(g: number): string {
   const oz = gramsToOz(g);
   if (oz >= 16) {
     const lb = Math.round((oz / 16) * 10) / 10;
-    if (lb % 1 === 0) return `${lb} lb`;
     return `${lb} lb`;
   }
   return `${oz} oz`;
@@ -60,7 +87,7 @@ function formatOz(g: number): string {
 // --- Main conversion function ---
 
 // Matches: number (with optional decimal), optional range (dash + number), then unit
-// e.g. "400g", "150-200g", "2.5kg", "250ml", "1l", "200°C"
+// e.g. "400g", "150-200g", "2.5kg", "250ml", "1l", "1.2l", "200°C"
 const METRIC_PATTERN =
   /(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?)\s*)?(g|kg|ml|l|°C)\b/gi;
 
@@ -74,9 +101,9 @@ function convertSingleMetric(value: number, unit: string): string {
     case 'kg':
       return formatOz(value * 1000);
     case 'ml':
-      return formatCups(value);
+      return formatVolume(value);
     case 'l':
-      return formatCups(value * 1000);
+      return formatVolume(value * 1000);
     case '°c':
       return `${celsiusToFahrenheit(value)}°F`;
     default:
@@ -88,14 +115,14 @@ function convertSingleImperial(value: number, unit: string): string {
   const u = unit.toLowerCase().replace(/\s+/g, '');
   switch (u) {
     case 'oz':
-      return `${Math.round(value * 28.3495 / 5) * 5}g`;
+      return `${Math.round((value * 28.3495) / 5) * 5}g`;
     case 'lb':
-      return `${Math.round(value * 453.592 / 5) * 5}g`;
+      return `${Math.round((value * 453.592) / 5) * 5}g`;
     case 'floz':
-      return `${Math.round(value * 29.5735 / 5) * 5}ml`;
+      return `${Math.round((value * 29.5735) / 5) * 5}ml`;
     case 'cup':
     case 'cups':
-      return `${Math.round(value * 236.588 / 5) * 5}ml`;
+      return `${Math.round((value * 236.588) / 5) * 5}ml`;
     case '°f':
       return `${fahrenheitToCelsius(value)}°C`;
     default:
@@ -111,7 +138,6 @@ export function convertIngredient(str: string, toImperial: boolean): string {
       if (num2) {
         const v2 = parseFloat(num2);
         const c2 = convertSingleMetric(v2, unit);
-        // Extract just the number from c2 (unit is already in c1)
         return `${c1.split(' ')[0]}-${c2}`;
       }
       return c1;
@@ -134,7 +160,10 @@ export function convertIngredient(str: string, toImperial: boolean): string {
  * Convert temperatures in HTML content (for method sections).
  * Only converts °C ↔ °F patterns.
  */
-export function convertTemperaturesInHtml(html: string, toImperial: boolean): string {
+export function convertTemperaturesInHtml(
+  html: string,
+  toImperial: boolean
+): string {
   if (toImperial) {
     return html.replace(/(\d+)\s*°C/g, (_m, num) => {
       return `${celsiusToFahrenheit(parseInt(num))}°F`;
