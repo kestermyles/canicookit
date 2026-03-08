@@ -30,10 +30,7 @@ protein: 52
 carbs: 68
 fat: 42
 heroImage: thanksgiving-turkey/42-turkey-finished-hero-1.jpg
-images:
-  - thanksgiving-turkey/43-turkey-finished-hero-2.jpg
-  - thanksgiving-turkey/49-turkey-finished-hero-3.jpg
-  - thanksgiving-turkey/50-turkey-finished-hero-4.jpg
+images: []
 videoUrl:
 tags:
   - thanksgiving
@@ -153,17 +150,7 @@ Soak the dried apricots. Soak bread in milk, then squeeze out. Soften the onion 
 
 ![Stuffing ingredients](/images/recipes/thanksgiving-turkey/39-stuffing-ingredients.jpg)
 
-![Herbs — sage and rosemary](/images/recipes/thanksgiving-turkey/37-herbs-sage-rosemary.jpg)
-
-![Chopping herbs](/images/recipes/thanksgiving-turkey/36-herbs-chopping.jpg)
-
-![Apricots weighed out](/images/recipes/thanksgiving-turkey/38-apricots-weighed.jpg)
-
-![Apple and apricot stuffing](/images/recipes/thanksgiving-turkey/35-apple-apricot-stuffing.jpg)
-
 ![Sausage meat mixing](/images/recipes/thanksgiving-turkey/34-sausage-meat-mixing.jpg)
-
-![Stuffing mixed and ready](/images/recipes/thanksgiving-turkey/33-stuffing-mixing.jpg)
 
 **3. Butter the Turkey (Day Before)**
 
@@ -171,21 +158,9 @@ Mix the softened butter with pressed garlic, rosemary, thyme, parsley, salt and 
 
 Pack stuffing into the neck cavity. Pull the skin flap down over it and secure with cocktail sticks. Place halved lemons and halved onion into the body cavity — these add fragrance and steam. Cover loosely and refrigerate overnight.
 
-![Turkey raw on prep board](/images/recipes/thanksgiving-turkey/27-turkey-raw-prep-board.jpg)
-
-![Giblets removed](/images/recipes/thanksgiving-turkey/29-turkey-giblets-removed.jpg)
-
 ![Making herb butter](/images/recipes/thanksgiving-turkey/28-herb-butter-making.jpg)
 
-![Herb butter all over the turkey](/images/recipes/thanksgiving-turkey/26-turkey-herb-butter-all-over.jpg)
-
-![Butter under the skin — pressing in](/images/recipes/thanksgiving-turkey/24-butter-under-skin-pressing.jpg)
-
 ![Butter under skin close-up](/images/recipes/thanksgiving-turkey/41-butter-under-skin-closeup.jpg)
-
-![Cavity stuffed](/images/recipes/thanksgiving-turkey/25-turkey-raw-cavity-stuffed.jpg)
-
-![Turkey herb rubbed in roasting pan](/images/recipes/thanksgiving-turkey/23-turkey-herb-rubbed-roasting-pan.jpg)
 
 ---
 
@@ -201,8 +176,6 @@ Remove turkey from fridge 1 hour before roasting. Preheat oven to 160°C. Quarte
 
 Roast at 160°C with foil on. Baste with pan juices every 45 minutes. After 2.5 hours, remove the foil and increase to 200°C. Glaze the breast with giblet stock every 10–15 minutes for the final 30–60 minutes. The turkey is done when the thigh reads 80°C and the breast 74°C. A 6–7kg bird takes approximately 3–3.5 hours total. Always use a thermometer. Rest 30 minutes minimum under loose foil. Do not skip the rest — the turkey will be noticeably juicier for it. Keep all the bacon — when it comes off the bird it's crispy and turkey-fat-soaked.
 
-![Oven tray overview](/images/recipes/thanksgiving-turkey/08-oven-tray-overview.jpg)
-
 ![Turkey with bacon bard, rested](/images/recipes/thanksgiving-turkey/07-turkey-bacon-bard-rested.jpg)
 
 **6. Duck Fat Roast Potatoes**
@@ -210,8 +183,6 @@ Roast at 160°C with foil on. Baste with pan juices every 45 minutes. After 2.5 
 These go in the oven when you remove the turkey foil and crank the heat. Peel and cut potatoes into golf-ball-sized pieces. Cover with cold salted water, bring to boil, parboil 12–15 minutes until edges soften. Drain and return to dry hot pan. Shake aggressively for 30–60 seconds to roughen the edges. Heat duck fat in a large roasting tray until smoking. Add potatoes — they should sizzle. Roast at 200°C for 45–55 minutes, turning every 20 minutes. Season with fleur de sel before serving.
 
 ![Potatoes peeling](/images/recipes/thanksgiving-turkey/20-potatoes-peeling.jpg)
-
-![Water boiling for potatoes](/images/recipes/thanksgiving-turkey/19-water-boiling-pan.jpg)
 
 **7. The Giblet Gravy**
 
@@ -223,15 +194,7 @@ Once the turkey is resting, tip the roasting pan. Spoon off excess fat, keeping 
 
 Cut carrots julienne — matchstick thin. Melt butter over medium-high heat, add carrots, season with cinnamon and fleur de sel. Add a splash of water or stock. Toss for 6–8 minutes until just tender with a slight bite. They should stay vibrant — do not overcook.
 
-![Carrots whole raw](/images/recipes/thanksgiving-turkey/18-carrots-whole-raw.jpg)
-
-![Carrots being collected](/images/recipes/thanksgiving-turkey/16-carrots-being-collected.jpg)
-
-![Carrots peeled raw](/images/recipes/thanksgiving-turkey/17-carrots-peeled-raw.jpg)
-
 ![Carrots glazing in the pan](/images/recipes/thanksgiving-turkey/04-carrots-glazing.jpg)
-
-![Carrots added to the pan](/images/recipes/thanksgiving-turkey/05-carrots-added-to-pan.jpg)
 
 ![Carrots finished](/images/recipes/thanksgiving-turkey/45-carrots-finished.jpg)
 
@@ -239,17 +202,11 @@ Cut carrots julienne — matchstick thin. Melt butter over medium-high heat, add
 
 Blanch in well-salted boiling water for 3–4 minutes — bright green, just tender, good snap. Drain. In a wide pan heat butter and olive oil, add minced garlic for 30 seconds. Add beans, toss 1–2 minutes. Finish with fleur de sel. Serve immediately.
 
-![Green beans in the pan](/images/recipes/thanksgiving-turkey/02-green-beans-pan.jpg)
-
-![Butter and garlic in the pan](/images/recipes/thanksgiving-turkey/03-butter-garlic-pan.jpg)
-
 ![Green beans finished](/images/recipes/thanksgiving-turkey/47-green-beans-finished.jpg)
 
 **10. Mashed Potatoes**
 
 Boil peeled floury potatoes until completely tender. Drain. Steam dry in the empty hot pan 2–3 minutes. Pass through a ricer or mash. Beat in generous butter and warm milk. Season well. Never use a blender — it makes gluey mash.
-
-![Mash being blended](/images/recipes/thanksgiving-turkey/10-mash-blending.jpg)
 
 ![Mash finished](/images/recipes/thanksgiving-turkey/44-mash-finished.jpg)
 
@@ -257,35 +214,11 @@ Boil peeled floury potatoes until completely tender. Drain. Steam dry in the emp
 
 Combine cranberries, sugar, orange juice, zest, spice and water in a saucepan. Bring to medium heat, stir to dissolve sugar. Once cranberries start to burst, reduce to a simmer. Cook 10–15 minutes until thickened. Taste — add more orange juice if it needs brightness. Finish with cold butter for gloss. This can be poured into sterilised jars while still hot and keeps 3–4 weeks in the fridge.
 
-![Cranberry ingredients](/images/recipes/thanksgiving-turkey/15-cranberry-ingredients.jpg)
-
-![Onion chopping for cranberry](/images/recipes/thanksgiving-turkey/14-onion-chopping.jpg)
-
-![Cranberry sauce simmering](/images/recipes/thanksgiving-turkey/11-cranberry-sauce-simmering.jpg)
-
-![Cranberry sauce boiling](/images/recipes/thanksgiving-turkey/12-cranberry-sauce-boiling.jpg)
-
 ![Cranberry sauce finished](/images/recipes/thanksgiving-turkey/46-cranberry-sauce-finished.jpg)
 
 **12. Plating**
 
 Place rested turkey on your largest warm platter. Scatter the caramelised onions from the roasting pan around the bird. Arrange the reserved bacon rashers around the turkey. Add the golden roast potatoes to fill the platter. Sides in separate warm bowls: mash, carrots, green beans, cranberry sauce. Gravy in a warm jug — never pour over the bird before serving. Warm your plates. Cold plates ruin everything.
-
-![Stove overview — all pans going](/images/recipes/thanksgiving-turkey/09-stove-overview.jpg)
-
-![All four pans going](/images/recipes/thanksgiving-turkey/13-all-four-pans-going.jpg)
-
-![Spice going in](/images/recipes/thanksgiving-turkey/06-spice-going-in.jpg)
-
-![Kitchen scene](/images/recipes/thanksgiving-turkey/48-kitchen-scene.jpg)
-
-![The finished turkey — hero shot](/images/recipes/thanksgiving-turkey/42-turkey-finished-hero-1.jpg)
-
-![The finished turkey — second angle](/images/recipes/thanksgiving-turkey/43-turkey-finished-hero-2.jpg)
-
-![The finished turkey — third angle](/images/recipes/thanksgiving-turkey/49-turkey-finished-hero-3.jpg)
-
-![The finished turkey — final shot](/images/recipes/thanksgiving-turkey/50-turkey-finished-hero-4.jpg)
 
 ## Leftovers
 
