@@ -6,6 +6,7 @@ import AbilityLevel from '@/components/AbilityLevel';
 import CommentSection from '@/components/CommentSection';
 import NoPhotoPlaceholder from '@/components/NoPhotoPlaceholder';
 import PhotoGallery from '@/components/PhotoGallery';
+import ServingScaler from '@/components/ServingScaler';
 
 interface PageProps {
   params: { cuisine: string; slug: string };
@@ -209,15 +210,7 @@ export default async function RecipePage({ params }: PageProps) {
         <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
           {/* Ingredients */}
           <div>
-            <h2 className="text-xl font-bold mb-4">Ingredients</h2>
-            <ul className="space-y-2">
-              {recipe.ingredients.map((ingredient, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
-                  <span>{ingredient}</span>
-                </li>
-              ))}
-            </ul>
+            <ServingScaler defaultServings={recipe.serves || 4} ingredients={recipe.ingredients} />
           </div>
 
           {/* Method */}

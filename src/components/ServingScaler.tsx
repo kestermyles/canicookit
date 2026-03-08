@@ -1,0 +1,54 @@
+'use client';
+
+import { useState } from 'react';
+import { scaleIngredient } from '@/utils/scaleIngredient';
+
+interface ServingScalerProps {
+  defaultServings: number;
+  ingredients: string[];
+}
+
+export default function ServingScaler({ defaultServings, ingredients }: ServingScalerProps) {
+  const [servings, setServings] = useState(defaultServings);
+  const scaleFactor = servings / defaultServings;
+  const min = 1;
+  const max = defaultServings * 4;
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold">Ingredients</h2>
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm text-secondary mr-1">Serves</span>
+          <button
+            type="button"
+            onClick={() => setServings((s) => Math.max(min, s - 1))}
+            disabled={servings <= min}
+            className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold border border-orange-300 text-primary hover:bg-orange-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            aria-label="Decrease servings"
+          >
+            −
+          </button>
+          <span className="w-6 text-center font-semibold text-foreground">{servings}</span>
+          <button
+            type="button"
+            onClick={() => setServings((s) => Math.min(max, s + 1))}
+            disabled={servings >= max}
+            className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold border border-orange-300 text-primary hover:bg-orange-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            aria-label="Increase servings"
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <ul className="space-y-2">
+        {ingredients.map((ingredient, i) => (
+          <li key={i} className="flex items-start gap-2">
+            <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
+            <span>{scaleIngredient(ingredient, scaleFactor)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
