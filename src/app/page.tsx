@@ -5,7 +5,7 @@ import SearchBar from '@/components/SearchBar';
 import QuickFilterBar from '@/components/QuickFilterBar';
 import TopCooks from '@/components/TopCooks';
 import WelcomeBack from '@/components/WelcomeBack';
-import { Star, ChefHat, Coffee, Salad, UtensilsCrossed, Cookie, CakeSlice, Soup, IceCream, Wine } from 'lucide-react';
+import { Star, ChefHat, Coffee, Salad, UtensilsCrossed, Cookie, CakeSlice, Soup, IceCream, Wine, Flame } from 'lucide-react';
 
 // Revalidate every 60 seconds to show fresh community recipes
 export const revalidate = 60;
@@ -291,6 +291,13 @@ export default async function HomePage() {
               <Wine className="w-4 h-4" />
               Drinks
             </Link>
+            <Link
+              href="/from-scratch"
+              className="px-4 py-2 rounded-full bg-light-grey text-foreground hover:bg-primary hover:text-white transition-colors inline-flex items-center gap-2"
+            >
+              <Flame className="w-4 h-4" />
+              From Scratch
+            </Link>
           </div>
         </section>
 
@@ -299,7 +306,7 @@ export default async function HomePage() {
           <section className="py-12">
             <h2 className="text-2xl font-bold mb-8">Browse by Cuisine</h2>
             <div className="flex flex-wrap gap-3">
-              {cuisines.filter((c) => c !== 'generated').map((cuisine) => (
+              {cuisines.filter((c) => c !== 'generated' && c !== 'from-scratch').map((cuisine) => (
                 <Link
                   key={cuisine}
                   href={`/recipes/cuisine/${cuisine}`}

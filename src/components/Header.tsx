@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from './AuthModal';
-import { Menu, X, ChevronDown, UtensilsCrossed, BookOpen, ChefHat, GraduationCap } from 'lucide-react';
+import { Menu, X, ChevronDown, UtensilsCrossed, BookOpen, ChefHat, GraduationCap, Flame } from 'lucide-react';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -75,6 +75,15 @@ export default function Header() {
             >
               <UtensilsCrossed className="w-4 h-4" />
               Recipes
+            </Link>
+            <Link
+              href="/from-scratch"
+              className={`text-secondary hover:text-foreground transition-colors relative flex items-center gap-1.5 ${
+                isActive('/from-scratch') ? 'after:absolute after:bottom-[-12px] after:left-0 after:right-0 after:h-0.5 after:bg-primary' : ''
+              }`}
+            >
+              <Flame className="w-4 h-4" />
+              From Scratch
             </Link>
             <Link
               href="/guides"
@@ -207,6 +216,15 @@ export default function Header() {
           >
             <UtensilsCrossed className="w-5 h-5" />
             <span className="font-medium">Recipes</span>
+          </Link>
+          <Link
+            href="/from-scratch"
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+              isActive('/from-scratch') ? 'bg-orange-50 text-primary' : 'text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            <Flame className="w-5 h-5" />
+            <span className="font-medium">From Scratch</span>
           </Link>
           <Link
             href="/guides"

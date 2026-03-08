@@ -4,7 +4,7 @@ export interface RecipeFrontmatter {
   cuisine: string;
   description: string;
   ingredients: string[];
-  difficulty: 'easy' | 'getting-somewhere' | 'weekend-cook';
+  difficulty: 'easy' | 'getting-somewhere' | 'weekend-cook' | 'challenging';
   prepTime: number;
   cookTime: number;
   serves: number;
