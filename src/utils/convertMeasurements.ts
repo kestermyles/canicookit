@@ -16,6 +16,23 @@ export function fahrenheitToCelsius(f: number): number {
   return Math.round(((f - 32) * 5) / 9);
 }
 
+// --- Liquid/dairy detection ---
+
+// Ingredients where grams should convert to cups (density ≈ 1g/ml)
+const LIQUID_DAIRY_KEYWORDS = [
+  'cream', 'milk', 'yogurt', 'yoghurt', 'buttermilk',
+  'sour cream', 'crème fraîche', 'creme fraiche',
+  'water', 'stock', 'broth', 'juice', 'wine',
+  'sauce', 'vinegar', 'honey', 'syrup', 'oil',
+  'coconut milk', 'coconut cream', 'passata',
+  'kefir', 'ricotta', 'mascarpone',
+];
+
+function isLiquidDairy(ingredientContext: string): boolean {
+  const lower = ingredientContext.toLowerCase();
+  return LIQUID_DAIRY_KEYWORDS.some((kw) => lower.includes(kw));
+}
+
 // --- Formatting helpers ---
 
 // Small volume shortcuts (tbsp / tsp)
@@ -94,11 +111,22 @@ const METRIC_PATTERN =
 const IMPERIAL_PATTERN =
   /(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?)\s*)?(oz|lb|fl\s*oz|cups?|°F)\b/gi;
 
-function convertSingleMetric(value: number, unit: string): string {
+function convertSingleMetric(
+  value: number,
+  unit: string,
+  context: string
+): string {
   switch (unit.toLowerCase()) {
     case 'g':
+      // For liquid/dairy ingredients, treat grams as ml and convert to cups
+      if (isLiquidDairy(context)) {
+        return formatVolume(value);
+      }
       return formatOz(value);
     case 'kg':
+      if (isLiquidDairy(context)) {
+        return formatVolume(value * 1000);
+      }
       return formatOz(value * 1000);
     case 'ml':
       return formatVolume(value);
@@ -134,10 +162,10 @@ export function convertIngredient(str: string, toImperial: boolean): string {
   if (toImperial) {
     return str.replace(METRIC_PATTERN, (_match, num1, num2, unit) => {
       const v1 = parseFloat(num1);
-      const c1 = convertSingleMetric(v1, unit);
+      const c1 = convertSingleMetric(v1, unit, str);
       if (num2) {
         const v2 = parseFloat(num2);
-        const c2 = convertSingleMetric(v2, unit);
+        const c2 = convertSingleMetric(v2, unit, str);
         return `${c1.split(' ')[0]}-${c2}`;
       }
       return c1;
