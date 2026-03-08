@@ -7,6 +7,7 @@ import CommentSection from '@/components/CommentSection';
 import NoPhotoPlaceholder from '@/components/NoPhotoPlaceholder';
 import PhotoGallery from '@/components/PhotoGallery';
 import ServingScaler from '@/components/ServingScaler';
+import { extractIngredients, stripIngredientsHtml } from '@/utils/parseRecipeContent';
 
 interface PageProps {
   params: { cuisine: string; slug: string };
@@ -82,6 +83,11 @@ export default async function RecipePage({ params }: PageProps) {
   if (!recipe) notFound();
 
   const totalTime = recipe.prepTime + recipe.cookTime;
+
+  // Extract full ingredient list from markdown body (with quantities)
+  const detailedIngredients = extractIngredients(recipe.content);
+  // Strip the Ingredients section from the rendered HTML (ServingScaler handles it)
+  const methodHtml = stripIngredientsHtml(recipe.contentHtml);
 
   // Extract method steps from markdown for JSON-LD
   // Matches: "1. text", "**1. text**", "**1. text"
@@ -210,15 +216,14 @@ export default async function RecipePage({ params }: PageProps) {
         <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
           {/* Ingredients */}
           <div>
-            <ServingScaler defaultServings={recipe.serves || 4} ingredients={recipe.ingredients} />
+            <ServingScaler defaultServings={recipe.serves || 4} ingredients={detailedIngredients.length > 0 ? detailedIngredients : recipe.ingredients} />
           </div>
 
           {/* Method */}
           <div>
-            <h2 className="text-xl font-bold mb-4">Method</h2>
             <div
               className="recipe-content"
-              dangerouslySetInnerHTML={{ __html: recipe.contentHtml }}
+              dangerouslySetInnerHTML={{ __html: methodHtml }}
             />
           </div>
         </div>
