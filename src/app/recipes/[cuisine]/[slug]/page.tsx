@@ -135,6 +135,7 @@ export default async function RecipePage({ params }: PageProps) {
       <PhotoGallery
         recipeSlug={params.slug}
         heroImage={recipe.heroImage || undefined}
+        heroImagePosition={recipe.heroImagePosition}
       />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">

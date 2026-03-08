@@ -13,9 +13,10 @@ interface Photo {
 interface PhotoGalleryProps {
   recipeSlug: string;
   heroImage?: string;
+  heroImagePosition?: string;
 }
 
-export default function PhotoGallery({ recipeSlug, heroImage }: PhotoGalleryProps) {
+export default function PhotoGallery({ recipeSlug, heroImage, heroImagePosition }: PhotoGalleryProps) {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -56,7 +57,7 @@ export default function PhotoGallery({ recipeSlug, heroImage }: PhotoGalleryProp
       return (
         <div className="relative w-full h-64 md:h-96 bg-light-grey">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={heroImage} alt="Recipe" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={heroImage} alt="Recipe" className="absolute inset-0 w-full h-full object-cover" style={heroImagePosition ? { objectPosition: heroImagePosition } : undefined} />
         </div>
       );
     }
@@ -77,6 +78,7 @@ export default function PhotoGallery({ recipeSlug, heroImage }: PhotoGalleryProp
           src={allImages[0].url}
           alt="Recipe"
           className="absolute inset-0 w-full h-full object-cover"
+          style={heroImagePosition ? { objectPosition: heroImagePosition } : undefined}
         />
       </div>
     );
@@ -94,6 +96,7 @@ export default function PhotoGallery({ recipeSlug, heroImage }: PhotoGalleryProp
           src={allImages[safeIndex].url}
           alt="Recipe"
           className="absolute inset-0 w-full h-full object-cover"
+          style={heroImagePosition ? { objectPosition: heroImagePosition } : undefined}
         />
         <span className="absolute top-3 right-3 px-2.5 py-1 text-xs font-medium bg-black/50 text-white rounded-full">
           {allImages.length} photos

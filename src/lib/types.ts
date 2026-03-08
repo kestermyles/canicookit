@@ -19,6 +19,7 @@ export interface RecipeFrontmatter {
   carbs: number;
   fat: number;
   heroImage: string;
+  heroImagePosition?: string;
   images?: string[];
   videoUrl?: string;
   tags: string[];

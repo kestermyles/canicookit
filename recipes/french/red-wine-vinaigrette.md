@@ -24,6 +24,7 @@ protein: 0
 carbs: 1
 fat: 14
 heroImage: red-wine-vinaigrette/red-wine-vinaigrette.jpg
+heroImagePosition: center 60%
 images: []
 videoUrl:
 tags:
