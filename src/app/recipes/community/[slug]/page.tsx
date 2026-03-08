@@ -119,11 +119,11 @@ export default async function CommunityRecipePage({ params }: PageProps) {
       />
 
       {/* Hero Image */}
-      {recipe.photo_url && !recipe.photo_is_ai_generated ? (
+      {(recipe.heroImage || (recipe.photo_url && !recipe.photo_is_ai_generated)) ? (
         <div className="relative w-full h-64 md:h-96 bg-light-grey">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={recipe.photo_url}
+            src={recipe.heroImage || recipe.photo_url!}
             alt={recipe.title}
             className="absolute inset-0 w-full h-full object-cover"
           />
