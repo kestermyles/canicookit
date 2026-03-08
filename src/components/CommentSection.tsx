@@ -222,7 +222,7 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
             disabled={submitting || !name.trim() || (!comment.trim() && !photoRef.current?.hasFile)}
             className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
           >
-            {submitting ? 'Sharing...' : 'Share your cook'}
+            {submitting ? 'Sharing...' : 'I Cooked It!'}
           </button>
         </div>
       </form>
