@@ -5,6 +5,7 @@ import StarRating from '@/components/StarRating';
 import AbilityLevel from '@/components/AbilityLevel';
 import CommentSection from '@/components/CommentSection';
 import NoPhotoPlaceholder from '@/components/NoPhotoPlaceholder';
+import PhotoGallery from '@/components/PhotoGallery';
 
 interface PageProps {
   params: { cuisine: string; slug: string };
@@ -123,19 +124,11 @@ export default async function RecipePage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero Image */}
-      {recipe.heroImage ? (
-        <div className="relative w-full h-64 md:h-96 bg-light-grey">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={recipe.heroImage}
-            alt={recipe.title}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </div>
-      ) : (
-        <NoPhotoPlaceholder size="large" />
-      )}
+      {/* Photo Gallery / Hero Image */}
+      <PhotoGallery
+        recipeSlug={params.slug}
+        heroImage={recipe.heroImage || undefined}
+      />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {/* Title */}

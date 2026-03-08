@@ -7,6 +7,7 @@ import StarRating from '@/components/StarRating';
 import AbilityLevel from '@/components/AbilityLevel';
 import ReportButton from '@/components/ReportButton';
 import NoPhotoPlaceholder from '@/components/NoPhotoPlaceholder';
+import PhotoGallery from '@/components/PhotoGallery';
 
 interface PageProps {
   params: { slug: string };
@@ -118,19 +119,11 @@ export default async function CommunityRecipePage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero Image */}
-      {(recipe.heroImage || (recipe.photo_url && !recipe.photo_is_ai_generated)) ? (
-        <div className="relative w-full h-64 md:h-96 bg-light-grey">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={recipe.heroImage || recipe.photo_url!}
-            alt={recipe.title}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </div>
-      ) : (
-        <NoPhotoPlaceholder size="large" />
-      )}
+      {/* Photo Gallery / Hero Image */}
+      <PhotoGallery
+        recipeSlug={params.slug}
+        heroImage={recipe.heroImage || (recipe.photo_url && !recipe.photo_is_ai_generated ? recipe.photo_url : undefined)}
+      />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
         {/* Community Badge */}
