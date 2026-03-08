@@ -206,10 +206,14 @@ export default function GeneratePage() {
   const [scanError, setScanError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-open file picker if navigated with ?scan=true
+  // Highlight camera button if navigated with ?scan=true
+  const cameraButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (searchParams.get('scan') === 'true') {
-      setTimeout(() => fileInputRef.current?.click(), 400);
+      setHighlightCamera(true);
+      setTimeout(() => {
+        cameraButtonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
     }
   }, [searchParams]);
   const ingredientInputRef = useRef<IngredientInputHandle>(null);
@@ -240,6 +244,7 @@ export default function GeneratePage() {
   const [extraPreferences, setExtraPreferences] = useState('');
   const [showPantryModal, setShowPantryModal] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
+  const [highlightCamera, setHighlightCamera] = useState(false);
   const { user } = useAuth();
 
   const handleGenerate = async () => {
@@ -437,10 +442,11 @@ export default function GeneratePage() {
                   </button>
                 </div>
                 <button
+                  ref={cameraButtonRef}
                   type="button"
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={() => { setHighlightCamera(false); fileInputRef.current?.click(); }}
                   disabled={isScanning}
-                  className="w-full bg-orange-50 border-2 border-orange-300 rounded-xl p-3 sm:p-6 flex flex-row sm:flex-col items-center gap-2 sm:gap-2 cursor-pointer hover:border-primary hover:bg-orange-100/70 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
+                  className={`w-full bg-orange-50 border-2 border-orange-300 rounded-xl p-3 sm:p-6 flex flex-row sm:flex-col items-center gap-2 sm:gap-2 cursor-pointer hover:border-primary hover:bg-orange-100/70 transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${highlightCamera ? 'ring-2 ring-primary ring-offset-2 animate-pulse' : ''}`}
                 >
                   {isScanning ? (
                     <>
@@ -725,8 +731,12 @@ export default function GeneratePage() {
 
         {/* See What Others Have Made Section */}
         {!generatedRecipe && (() => {
-          const recentGeneratedSlugs = new Set(recentGenerated.map(r => r.slug).filter(Boolean));
-          const filteredRecentRecipes = recentRecipes.filter(r => !recentGeneratedSlugs.has(r.slug));
+          const recentGeneratedTitles = new Set(
+            recentGenerated.map(r => r.title?.toLowerCase().trim()).filter(Boolean)
+          );
+          const filteredRecentRecipes = recentRecipes.filter(
+            r => !recentGeneratedTitles.has(r.title?.toLowerCase().trim())
+          );
           return filteredRecentRecipes.length > 0 && (
           <div className="max-w-2xl mx-auto">
             <h2 className="text-2xl font-bold text-white text-center mb-6">
