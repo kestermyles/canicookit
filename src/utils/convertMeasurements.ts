@@ -33,6 +33,17 @@ function isLiquidDairy(ingredientContext: string): boolean {
   return LIQUID_DAIRY_KEYWORDS.some((kw) => lower.includes(kw));
 }
 
+function isFlour(context: string): boolean {
+  return context.toLowerCase().includes('flour');
+}
+
+function isButter(context: string): boolean {
+  const lower = context.toLowerCase();
+  return lower.includes('butter') &&
+    !lower.includes('buttermilk') &&
+    !lower.includes('peanut butter');
+}
+
 // --- Formatting helpers ---
 
 // Small volume shortcuts (tbsp / tsp)
@@ -101,6 +112,48 @@ function formatOz(g: number): string {
   return `${oz} oz`;
 }
 
+// Flour: 1 cup = 4.25 oz by weight, round to nearest ¼ cup
+function formatFlourCups(grams: number): string {
+  const oz = gramsToOz(grams);
+  const cups = Math.round((oz / 4.25) * 4) / 4;
+  const whole = Math.floor(cups);
+  const frac = cups - whole;
+
+  const fracSymbol =
+    Math.abs(frac - 0.25) < 0.01 ? '¼' :
+    Math.abs(frac - 0.5) < 0.01 ? '½' :
+    Math.abs(frac - 0.75) < 0.01 ? '¾' : null;
+
+  if (fracSymbol) {
+    return whole > 0 ? `${whole}${fracSymbol} cups` : `${fracSymbol} cup`;
+  }
+  if (whole > 0) return `${whole} cup${whole !== 1 ? 's' : ''}`;
+  return formatOz(grams);
+}
+
+// Butter: under 4 oz → tbsp (1 oz = 2 tbsp), 4 oz+ → cups (1 cup = 8 oz)
+function formatButterVolume(grams: number): string {
+  const oz = gramsToOz(grams);
+  if (oz < 4) {
+    const tbsp = Math.round(oz * 2);
+    return `${tbsp} tbsp`;
+  }
+  const cups = Math.round((oz / 8) * 4) / 4;
+  const whole = Math.floor(cups);
+  const frac = cups - whole;
+
+  const fracSymbol =
+    Math.abs(frac - 0.25) < 0.01 ? '¼' :
+    Math.abs(frac - 0.5) < 0.01 ? '½' :
+    Math.abs(frac - 0.75) < 0.01 ? '¾' : null;
+
+  if (fracSymbol) {
+    return whole > 0 ? `${whole}${fracSymbol} cups` : `${fracSymbol} cup`;
+  }
+  if (whole > 0) return `${whole} cup${whole !== 1 ? 's' : ''}`;
+  return formatOz(grams);
+}
+
 // --- Main conversion function ---
 
 // Matches: number (with optional decimal), optional range (dash + number), then unit
@@ -118,15 +171,14 @@ function convertSingleMetric(
 ): string {
   switch (unit.toLowerCase()) {
     case 'g':
-      // For liquid/dairy ingredients, treat grams as ml and convert to cups
-      if (isLiquidDairy(context)) {
-        return formatVolume(value);
-      }
+      if (isFlour(context)) return formatFlourCups(value);
+      if (isButter(context)) return formatButterVolume(value);
+      if (isLiquidDairy(context)) return formatVolume(value);
       return formatOz(value);
     case 'kg':
-      if (isLiquidDairy(context)) {
-        return formatVolume(value * 1000);
-      }
+      if (isFlour(context)) return formatFlourCups(value * 1000);
+      if (isButter(context)) return formatButterVolume(value * 1000);
+      if (isLiquidDairy(context)) return formatVolume(value * 1000);
       return formatOz(value * 1000);
     case 'ml':
       return formatVolume(value);
