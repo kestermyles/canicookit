@@ -8,7 +8,7 @@ import AbilityLevel from '@/components/AbilityLevel';
 import ReportButton from '@/components/ReportButton';
 import NoPhotoPlaceholder from '@/components/NoPhotoPlaceholder';
 import PhotoGallery from '@/components/PhotoGallery';
-import ServingScaler from '@/components/ServingScaler';
+import RecipeBody from '@/components/RecipeBody';
 
 interface PageProps {
   params: { slug: string };
@@ -220,21 +220,11 @@ export default async function CommunityRecipePage({ params }: PageProps) {
         </div>
 
         {/* Ingredients + Method */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
-          {/* Ingredients */}
-          <div>
-            <ServingScaler defaultServings={recipe.serves || 4} ingredients={recipe.ingredients} />
-          </div>
-
-          {/* Method */}
-          <div>
-            <h2 className="text-xl font-bold mb-4">Method</h2>
-            <div
-              className="recipe-content"
-              dangerouslySetInnerHTML={{ __html: recipe.contentHtml }}
-            />
-          </div>
-        </div>
+        <RecipeBody
+          defaultServings={recipe.serves || 4}
+          ingredients={recipe.ingredients}
+          methodHtml={recipe.contentHtml}
+        />
 
         {/* Nutrition */}
         <section className="mt-12">

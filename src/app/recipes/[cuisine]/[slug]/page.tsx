@@ -6,7 +6,7 @@ import AbilityLevel from '@/components/AbilityLevel';
 import CommentSection from '@/components/CommentSection';
 import NoPhotoPlaceholder from '@/components/NoPhotoPlaceholder';
 import PhotoGallery from '@/components/PhotoGallery';
-import ServingScaler from '@/components/ServingScaler';
+import RecipeBody from '@/components/RecipeBody';
 import { extractIngredients, stripIngredientsHtml } from '@/utils/parseRecipeContent';
 
 interface PageProps {
@@ -213,20 +213,11 @@ export default async function RecipePage({ params }: PageProps) {
         </div>
 
         {/* Ingredients + Method */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
-          {/* Ingredients */}
-          <div>
-            <ServingScaler defaultServings={recipe.serves || 4} ingredients={detailedIngredients.length > 0 ? detailedIngredients : recipe.ingredients} />
-          </div>
-
-          {/* Method */}
-          <div>
-            <div
-              className="recipe-content"
-              dangerouslySetInnerHTML={{ __html: methodHtml }}
-            />
-          </div>
-        </div>
+        <RecipeBody
+          defaultServings={recipe.serves || 4}
+          ingredients={detailedIngredients.length > 0 ? detailedIngredients : recipe.ingredients}
+          methodHtml={methodHtml}
+        />
 
         {/* Video */}
         {recipe.videoUrl && (
