@@ -20,8 +20,41 @@ const NUMBER_TO_FRACTION: [number, string][] = [
   [0.75, '¾'],
 ];
 
+// Items that should always round to whole numbers when scaling
+const COUNTABLE_KEYWORDS = [
+  'egg', 'eggs',
+  'onion', 'onions',
+  'clove', 'cloves',
+  'slice', 'slices',
+  'sprig', 'sprigs',
+  'leaf', 'leaves',
+  'rasher', 'rashers',
+  'sausage', 'sausages',
+  'sheet', 'sheets',
+  'pepper', 'peppers',
+  'tomato', 'tomatoes',
+  'potato', 'potatoes',
+  'banana', 'bananas',
+  'apple', 'apples',
+  'lemon', 'lemons',
+  'lime', 'limes',
+  'orange', 'oranges',
+  'avocado', 'avocados',
+  'carrot', 'carrots',
+  'courgette', 'courgettes',
+  'aubergine', 'aubergines',
+  'chicken breast', 'chicken breasts',
+  'fillet', 'fillets',
+  'steak', 'steaks',
+  'chop', 'chops',
+];
+
+function isCountable(rest: string): boolean {
+  const trimmed = rest.trim().toLowerCase();
+  return COUNTABLE_KEYWORDS.some((kw) => trimmed.startsWith(kw));
+}
+
 function formatNumber(n: number): string {
-  // Check if the fractional part matches a vulgar fraction
   const whole = Math.floor(n);
   const frac = n - whole;
 
@@ -33,18 +66,15 @@ function formatNumber(n: number): string {
     }
   }
 
-  // Whole number
   if (Math.abs(n - Math.round(n)) < 0.05) {
     return String(Math.round(n));
   }
 
-  // Under 10: 1 decimal place max
   if (n < 10) {
     const rounded = Math.round(n * 10) / 10;
     return rounded % 1 === 0 ? String(rounded) : rounded.toFixed(1);
   }
 
-  // 10+: round to nearest whole
   return String(Math.round(n));
 }
 
@@ -52,25 +82,50 @@ function formatNumber(n: number): string {
 const LEADING_NUMBER_RE =
   /^(\d+)?\s*([½⅓⅔¼¾⅕⅖⅗⅘⅙⅛])?(?:(\d+)\/(\d+))?\s*/;
 
+function parseLeadingNumber(s: string): { value: number; length: number } | null {
+  const match = s.match(LEADING_NUMBER_RE);
+  if (!match) return null;
+  const [fullMatch, wholeStr, vulgar, numer, denom] = match;
+  if (!wholeStr && !vulgar && !numer) return null;
+  let value = 0;
+  if (wholeStr) value += parseFloat(wholeStr);
+  if (vulgar) value += VULGAR_FRACTIONS[vulgar] || 0;
+  if (numer && denom) value += parseInt(numer) / parseInt(denom);
+  return { value, length: fullMatch.length };
+}
+
+function formatScaled(n: number, rest: string): string {
+  if (isCountable(rest)) return String(Math.round(n));
+  return formatNumber(n);
+}
+
 export function scaleIngredient(raw: string, scaleFactor: number): string {
   if (scaleFactor === 1) return raw;
 
-  const match = raw.match(LEADING_NUMBER_RE);
-  if (!match) return raw;
+  const first = parseLeadingNumber(raw);
+  if (!first) return raw;
 
-  const [fullMatch, wholeStr, vulgar, numerator, denominator] = match;
+  // Check for range separator (en-dash or hyphen) after the first number
+  const afterFirst = raw.slice(first.length);
+  const rangeMatch = afterFirst.match(/^[–-]\s*/);
 
-  // Must have at least one numeric part
-  if (!wholeStr && !vulgar && !numerator) return raw;
+  if (rangeMatch) {
+    const secondStart = first.length + rangeMatch[0].length;
+    const second = parseLeadingNumber(raw.slice(secondStart));
+    if (second) {
+      const rest = raw.slice(secondStart + second.length);
+      const s1 = first.value * scaleFactor;
+      const s2 = second.value * scaleFactor;
+      const f1 = formatScaled(s1, rest);
+      const f2 = formatScaled(s2, rest);
+      const restStr = rest.startsWith(' ') ? rest : ' ' + rest;
+      return `${f1}–${f2}${restStr}`.replace(/ {2,}/g, ' ');
+    }
+  }
 
-  let value = 0;
-
-  if (wholeStr) value += parseFloat(wholeStr);
-  if (vulgar) value += VULGAR_FRACTIONS[vulgar] || 0;
-  if (numerator && denominator) value += parseInt(numerator) / parseInt(denominator);
-
-  const scaled = value * scaleFactor;
-  const rest = raw.slice(fullMatch.length);
-
-  return formatNumber(scaled) + (rest.startsWith(' ') ? rest : ' ' + rest).replace(/^ {2,}/, ' ');
+  // Single number
+  const scaled = first.value * scaleFactor;
+  const rest = raw.slice(first.length);
+  const formatted = formatScaled(scaled, rest);
+  return formatted + (rest.startsWith(' ') ? rest : ' ' + rest).replace(/^ {2,}/, ' ');
 }

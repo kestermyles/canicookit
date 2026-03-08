@@ -154,15 +154,27 @@ function formatButterVolume(grams: number): string {
   return formatOz(grams);
 }
 
+// --- Vulgar fraction parsing (for scaled numbers like 562½) ---
+
+const VULGAR_VALUES: Record<string, number> = {
+  '½': 0.5, '⅓': 1 / 3, '⅔': 2 / 3, '¼': 0.25, '¾': 0.75,
+  '⅕': 0.2, '⅖': 0.4, '⅗': 0.6, '⅘': 0.8, '⅙': 1 / 6, '⅛': 0.125,
+};
+
 // --- Main conversion function ---
 
-// Matches: number (with optional decimal), optional range (dash + number), then unit
-// e.g. "400g", "150-200g", "2.5kg", "250ml", "1l", "1.2l", "200°C"
-const METRIC_PATTERN =
-  /(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?)\s*)?(g|kg|ml|l|°C)\b/gi;
+// Matches: number (with optional decimal/vulgar fraction), optional range, then unit
+// e.g. "400g", "150-200g", "562½g", "2.5kg", "250ml", "200°C"
+const VF = '[½⅓⅔¼¾⅕⅖⅗⅘⅙⅛]';
+const METRIC_PATTERN = new RegExp(
+  `(\\d+(?:\\.\\d+)?)(${VF})?\\s*(?:[–-]\\s*(\\d+(?:\\.\\d+)?)(${VF})?\\s*)?(g|kg|ml|l|°C)\\b`,
+  'gi'
+);
 
-const IMPERIAL_PATTERN =
-  /(\d+(?:\.\d+)?)\s*(?:-\s*(\d+(?:\.\d+)?)\s*)?(oz|lb|fl\s*oz|cups?|°F)\b/gi;
+const IMPERIAL_PATTERN = new RegExp(
+  `(\\d+(?:\\.\\d+)?)(${VF})?\\s*(?:[–-]\\s*(\\d+(?:\\.\\d+)?)(${VF})?\\s*)?(oz|lb|fl\\s*oz|cups?|°F)\\b`,
+  'gi'
+);
 
 function convertSingleMetric(
   value: number,
@@ -212,24 +224,24 @@ function convertSingleImperial(value: number, unit: string): string {
 
 export function convertIngredient(str: string, toImperial: boolean): string {
   if (toImperial) {
-    return str.replace(METRIC_PATTERN, (_match, num1, num2, unit) => {
-      const v1 = parseFloat(num1);
+    return str.replace(METRIC_PATTERN, (_match, num1, vf1, num2, vf2, unit) => {
+      const v1 = parseFloat(num1) + (vf1 ? (VULGAR_VALUES[vf1] || 0) : 0);
       const c1 = convertSingleMetric(v1, unit, str);
       if (num2) {
-        const v2 = parseFloat(num2);
+        const v2 = parseFloat(num2) + (vf2 ? (VULGAR_VALUES[vf2] || 0) : 0);
         const c2 = convertSingleMetric(v2, unit, str);
-        return `${c1.split(' ')[0]}-${c2}`;
+        return `${c1.split(' ')[0]}–${c2}`;
       }
       return c1;
     });
   } else {
-    return str.replace(IMPERIAL_PATTERN, (_match, num1, num2, unit) => {
-      const v1 = parseFloat(num1);
+    return str.replace(IMPERIAL_PATTERN, (_match, num1, vf1, num2, vf2, unit) => {
+      const v1 = parseFloat(num1) + (vf1 ? (VULGAR_VALUES[vf1] || 0) : 0);
       const c1 = convertSingleImperial(v1, unit);
       if (num2) {
-        const v2 = parseFloat(num2);
+        const v2 = parseFloat(num2) + (vf2 ? (VULGAR_VALUES[vf2] || 0) : 0);
         const c2 = convertSingleImperial(v2, unit);
-        return `${c1.split(' ')[0]}-${c2}`;
+        return `${c1.split(' ')[0]}–${c2}`;
       }
       return c1;
     });
