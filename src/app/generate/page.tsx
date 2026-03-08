@@ -179,7 +179,15 @@ export default function GeneratePage() {
     async function fetchRecent() {
       try {
         const recipes = await getAllCommunityRecipes();
-        setRecentRecipes(recipes.slice(0, 3));
+        // Deduplicate by normalised title, keeping first occurrence (most recent)
+        const seenTitles = new Set<string>();
+        const deduped = recipes.filter((r: any) => {
+          const key = r.title?.toLowerCase().trim() ?? '';
+          if (seenTitles.has(key)) return false;
+          seenTitles.add(key);
+          return true;
+        });
+        setRecentRecipes(deduped.slice(0, 3));
       } catch (error) {
         console.error('Error fetching recent recipes:', error);
       }
