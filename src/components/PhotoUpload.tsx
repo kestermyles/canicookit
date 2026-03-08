@@ -1,28 +1,58 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import AuthModal from './AuthModal';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import NoPhotoPlaceholder from './NoPhotoPlaceholder';
 import imageCompression from 'browser-image-compression';
 
-interface PhotoUploadProps {
-  recipeSlug: string;
-  onUploadSuccess?: (photoUrl: string) => void;
+export interface PhotoUploadHandle {
+  upload: (name: string, recipeSlug: string) => Promise<boolean>;
+  hasFile: boolean;
+  reset: () => void;
 }
 
-export default function PhotoUpload({
-  recipeSlug,
-  onUploadSuccess,
-}: PhotoUploadProps) {
+const PhotoUpload = forwardRef<PhotoUploadHandle>(function PhotoUpload(_props, ref) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const [compressing, setCompressing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-  const [uploaderName, setUploaderName] = useState('');
-  const { user } = useAuth();
-  const [showSignupPrompt, setShowSignupPrompt] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    hasFile: !!file,
+    reset: () => {
+      setFile(null);
+      setPreview(null);
+      setError(null);
+    },
+    upload: async (name: string, recipeSlug: string) => {
+      if (!file) return false;
+
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('recipeSlug', recipeSlug);
+        formData.append('uploaderName', name.trim());
+
+        const response = await fetch('/api/upload-photo', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          setError(result.error || 'Upload failed');
+          return false;
+        }
+
+        setFile(null);
+        setPreview(null);
+        return true;
+      } catch {
+        setError('Network error. Please try again.');
+        return false;
+      }
+    },
+  }), [file]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -34,8 +64,7 @@ export default function PhotoUpload({
     }
 
     setError(null);
-    setSuccess(false);
-    setUploading(true);
+    setCompressing(true);
 
     try {
       const options = {
@@ -49,60 +78,10 @@ export default function PhotoUpload({
       const reader = new FileReader();
       reader.onloadend = () => setPreview(reader.result as string);
       reader.readAsDataURL(compressed);
-    } catch (err) {
+    } catch {
       setError('Could not process image. Please try another file.');
     } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleUpload = async () => {
-    if (!file) {
-      setError('Please select a photo first');
-      return;
-    }
-
-    if (!uploaderName.trim()) {
-      setError('Please enter your name');
-      return;
-    }
-
-    setUploading(true);
-    setError(null);
-
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('recipeSlug', recipeSlug);
-      formData.append('uploaderName', uploaderName.trim());
-
-      const response = await fetch('/api/upload-photo', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (!result.success) {
-        setError(result.error || 'Upload failed');
-        return;
-      }
-
-      setSuccess(true);
-      setFile(null);
-      setPreview(null);
-      setUploaderName('');
-
-      if (onUploadSuccess && result.photoUrl) {
-        onUploadSuccess(result.photoUrl);
-      }
-
-      // Reset success message after 5 seconds
-      setTimeout(() => setSuccess(false), 5000);
-    } catch (err) {
-      setError('Network error. Please try again.');
-    } finally {
-      setUploading(false);
+      setCompressing(false);
     }
   };
 
@@ -122,111 +101,53 @@ export default function PhotoUpload({
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6">
-      <div className="space-y-4">
-        {/* Name Input */}
-        <div>
-          <label
-            htmlFor="uploaderName"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Your Name
-          </label>
-          <input
-            type="text"
-            id="uploaderName"
-            value={uploaderName}
-            onChange={(e) => setUploaderName(e.target.value)}
-            placeholder="e.g., Jamie"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-            disabled={uploading}
-          />
-        </div>
-
-        {/* File Input / Drop Zone */}
-        <div
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-primary transition-colors"
-          onClick={() => document.getElementById('photoInput')?.click()}
-        >
-          {preview ? (
-            <div className="space-y-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={preview}
-                alt="Preview"
-                className="max-h-64 mx-auto rounded-lg"
-              />
-              <p className="text-sm text-gray-500">{file?.name}</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <NoPhotoPlaceholder size="small" className="bg-transparent h-auto" />
-              <p className="text-gray-700">
-                Click to select or drag & drop your photo
-              </p>
-              <p className="text-sm text-gray-500">
-                JPG, PNG, or WebP • Auto-optimised for upload
-              </p>
-            </div>
-          )}
-          <input
-            id="photoInput"
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            onChange={handleFileChange}
-            className="hidden"
-            disabled={uploading}
-          />
-        </div>
-
-        {/* Error Message */}
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-md p-3">
-            <p className="text-sm text-red-700">{error}</p>
+    <div className="space-y-2">
+      <div
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-primary transition-colors"
+        onClick={() => document.getElementById('photoInput')?.click()}
+      >
+        {compressing ? (
+          <p className="text-sm text-primary">Compressing image...</p>
+        ) : preview ? (
+          <div className="space-y-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={preview}
+              alt="Preview"
+              className="max-h-48 mx-auto rounded-lg"
+            />
+            <p className="text-xs text-gray-500">Tap to change photo</p>
           </div>
-        )}
-
-        {/* Success Message */}
-        {success && (
-          <div className="bg-green-50 border border-green-200 rounded-md p-3">
-            <p className="text-sm text-green-700">
-              ✓ Photo uploaded successfully! It will be reviewed and may become
-              the recipe's main image.
+        ) : (
+          <div className="space-y-1">
+            <NoPhotoPlaceholder size="small" className="bg-transparent h-auto" />
+            <p className="text-sm text-gray-600">
+              Add a photo of your cook (optional)
             </p>
-            {!user && (
-              <button
-                onClick={() => setShowSignupPrompt(true)}
-                className="mt-2 text-sm text-primary hover:underline"
-              >
-                Want to be recognised as a Community Chef? Join for free →
-              </button>
-            )}
+            <p className="text-xs text-gray-400">
+              JPG, PNG, or WebP
+            </p>
           </div>
         )}
-
-        {/* Upload Button */}
-        <button
-          onClick={handleUpload}
-          disabled={!file || uploading || !uploaderName.trim()}
-          className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-        >
-          {uploading ? 'Uploading...' : 'Upload Photo'}
-        </button>
-
-        <p className="text-xs text-gray-500 text-center">
-          Your photo will be analyzed for quality. High-scoring photos may
-          become the recipe's featured image!
-        </p>
+        <input
+          id="photoInput"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={handleFileChange}
+          className="hidden"
+          disabled={compressing}
+        />
       </div>
 
-      <AuthModal
-        isOpen={showSignupPrompt}
-        onClose={() => setShowSignupPrompt(false)}
-        initialMode="signup"
-        context="photo"
-      />
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-md p-2">
+          <p className="text-sm text-red-700">{error}</p>
+        </div>
+      )}
     </div>
   );
-}
+});
+
+export default PhotoUpload;

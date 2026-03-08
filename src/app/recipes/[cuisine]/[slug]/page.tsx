@@ -3,7 +3,6 @@ import { Metadata } from 'next';
 import { getRecipeBySlug, getAllRecipes } from '@/lib/recipes';
 import StarRating from '@/components/StarRating';
 import AbilityLevel from '@/components/AbilityLevel';
-import PhotoUpload from '@/components/PhotoUpload';
 import CommentSection from '@/components/CommentSection';
 import NoPhotoPlaceholder from '@/components/NoPhotoPlaceholder';
 
@@ -304,17 +303,8 @@ export default async function RecipePage({ params }: PageProps) {
           </div>
         </section>
 
-        {/* Photo Upload Section */}
+        {/* Share & Comments Section */}
         <section id="photo-upload" className="mt-12 border-t pt-8 scroll-mt-20">
-          <h2 className="text-xl font-bold mb-4">Made this dish? Share your photo!</h2>
-          <p className="text-gray-600 mb-4">
-            Upload your photo below. Great photos get featured on our homepage 📸
-          </p>
-          <PhotoUpload recipeSlug={params.slug} />
-        </section>
-
-        {/* Comments Section */}
-        <section className="mt-12 border-t pt-8">
           <CommentSection recipeSlug={params.slug} />
         </section>
       </div>

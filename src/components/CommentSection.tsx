@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from './AuthModal';
+import PhotoUpload, { PhotoUploadHandle } from './PhotoUpload';
 
 interface Comment {
   id: string;
@@ -25,14 +26,18 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
+  const photoRef = useRef<PhotoUploadHandle>(null);
+
+  const displayName = user
+    ? user.user_metadata?.username || user.user_metadata?.name || ''
+    : '';
 
   // Pre-fill name with username for logged-in users
   useEffect(() => {
-    if (user) {
-      const username = user.user_metadata?.username || user.user_metadata?.name;
-      if (username) setName(username);
+    if (user && displayName) {
+      setName(displayName);
     }
-  }, [user]);
+  }, [user, displayName]);
 
   // Load comments on mount
   useEffect(() => {
@@ -59,8 +64,16 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name.trim() || !comment.trim()) {
-      setError('Please fill in all fields');
+    const hasPhoto = photoRef.current?.hasFile;
+    const hasComment = comment.trim().length > 0;
+
+    if (!hasPhoto && !hasComment) {
+      setError('Add a photo or comment to share');
+      return;
+    }
+
+    if (!name.trim()) {
+      setError('Please enter your name');
       return;
     }
 
@@ -68,35 +81,47 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
     setError(null);
 
     try {
-      const response = await fetch('/api/comments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          recipeSlug,
-          name: name.trim(),
-          comment: comment.trim(),
-        }),
-      });
-
-      const result = await response.json();
-
-      if (!result.success) {
-        setError(result.error || 'Failed to submit comment');
-        return;
+      // Upload photo if one is selected
+      if (hasPhoto) {
+        const photoOk = await photoRef.current!.upload(name.trim(), recipeSlug);
+        if (!photoOk) {
+          setSubmitting(false);
+          return;
+        }
       }
 
-      // Success!
+      // Submit comment if one was written
+      if (hasComment) {
+        const response = await fetch('/api/comments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recipeSlug,
+            name: name.trim(),
+            comment: comment.trim(),
+          }),
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          setError(result.error || 'Failed to submit comment');
+          setSubmitting(false);
+          return;
+        }
+      }
+
+      // Success
       setSuccess(true);
       if (!user) setShowSignupPrompt(true);
       setComment('');
       if (!user) setName('');
+      photoRef.current?.reset();
 
-      // Reload comments so the new one appears immediately
       await loadComments();
 
-      // Reset success message after 5 seconds
       setTimeout(() => setSuccess(false), 5000);
-    } catch (err) {
+    } catch {
       setError('Network error. Please try again.');
     } finally {
       setSubmitting(false);
@@ -125,43 +150,48 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
 
   return (
     <div className="space-y-6">
-      {/* Comment Form */}
+      {/* Unified Share Form */}
       <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold mb-4">Leave a Comment</h3>
+        <h3 className="text-lg font-semibold mb-4">Made this? Share it!</h3>
 
         <div className="space-y-4">
-          <div>
-            <label
-              htmlFor="commentName"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Your Name
-            </label>
-            <input
-              type="text"
-              id="commentName"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Alex"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-              disabled={submitting || !!user}
-              maxLength={50}
-            />
-          </div>
+          {/* Photo Upload */}
+          <PhotoUpload ref={photoRef} />
 
+          {/* Name - show input for guests, plain text for logged-in users */}
+          {user && displayName ? (
+            <p className="text-sm text-gray-600">
+              Commenting as <span className="font-semibold text-foreground">{displayName}</span>
+            </p>
+          ) : (
+            <div>
+              <label
+                htmlFor="commentName"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Your Name
+              </label>
+              <input
+                type="text"
+                id="commentName"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Alex"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                disabled={submitting}
+                maxLength={50}
+              />
+            </div>
+          )}
+
+          {/* Comment textarea */}
           <div>
-            <label
-              htmlFor="commentText"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Comment
-            </label>
             <textarea
               id="commentText"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Share your thoughts, tips, or how it turned out..."
-              rows={4}
+              rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary resize-none"
               disabled={submitting}
               maxLength={500}
@@ -179,19 +209,20 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
 
           {success && (
             <div className="bg-green-50 border border-green-200 rounded-md p-4 text-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/images/logo-color.svg" alt="Can I Cook It" className="h-12 mx-auto mb-2" />
               <p className="text-sm font-bold text-primary">Can I Cook It?</p>
-              <p className="text-lg font-bold text-green-700">Yes You Can! 🎉</p>
-              <p className="text-sm text-gray-600">Thanks for joining the conversation!</p>
+              <p className="text-lg font-bold text-green-700">Yes You Can!</p>
+              <p className="text-sm text-gray-600">Thanks for sharing!</p>
             </div>
           )}
 
           <button
             type="submit"
-            disabled={submitting || !name.trim() || !comment.trim()}
-            className="w-full bg-primary text-white py-2 px-4 rounded-lg font-medium hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            disabled={submitting || !name.trim() || (!comment.trim() && !photoRef.current?.hasFile)}
+            className="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
           >
-            {submitting ? 'Submitting...' : 'Submit Comment'}
+            {submitting ? 'Sharing...' : 'Share your cook'}
           </button>
         </div>
       </form>
