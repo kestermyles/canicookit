@@ -203,7 +203,8 @@ export async function getRecipeBySlug(
 }
 
 /**
- * Get all featured community recipes
+ * Get all featured community recipes.
+ * Only returns recipes that have a non-empty photo_url.
  */
 export async function getFeaturedRecipes(
   limit: number = 50
@@ -213,6 +214,8 @@ export async function getFeaturedRecipes(
       .from('generated_recipes')
       .select('*')
       .eq('status', 'featured')
+      .not('photo_url', 'is', null)
+      .neq('photo_url', '')
       .order('quality_score', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(limit);
@@ -252,14 +255,77 @@ export async function getAllCommunityRecipes(): Promise<GeneratedRecipeRow[]> {
 }
 
 /**
- * Update a recipe's quality score and status
+ * Get all recipe slugs that have at least one approved photo
+ */
+export async function getSlugsWithApprovedPhotos(): Promise<Set<string>> {
+  try {
+    const { data, error } = await supabase
+      .from('recipe_photos')
+      .select('recipe_slug')
+      .eq('status', 'approved');
+
+    if (error) {
+      console.error('Error fetching approved photo slugs:', error);
+      return new Set();
+    }
+
+    return new Set((data || []).map((row: { recipe_slug: string }) => row.recipe_slug));
+  } catch (error) {
+    console.error('Error in getSlugsWithApprovedPhotos:', error);
+    return new Set();
+  }
+}
+
+/**
+ * Check if a recipe has at least one approved photo in recipe_photos
+ */
+export async function hasApprovedPhoto(recipeSlug: string): Promise<boolean> {
+  try {
+    const { count, error } = await supabase
+      .from('recipe_photos')
+      .select('id', { count: 'exact', head: true })
+      .eq('recipe_slug', recipeSlug)
+      .eq('status', 'approved');
+
+    if (error) {
+      console.error('Error checking approved photos:', error);
+      return false;
+    }
+
+    return (count ?? 0) > 0;
+  } catch (error) {
+    console.error('Error in hasApprovedPhoto:', error);
+    return false;
+  }
+}
+
+/**
+ * Update a recipe's quality score and status.
+ * A recipe can only be featured if it has a non-empty photo_url
+ * and at least one approved photo in recipe_photos.
  */
 export async function updateRecipeScore(
   recipeId: string,
   score: number
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const status = score >= 7 ? 'featured' : 'pending';
+    let status: 'featured' | 'pending' = 'pending';
+
+    if (score >= 7) {
+      // Check the recipe has a real photo before featuring
+      const { data: recipe } = await supabase
+        .from('generated_recipes')
+        .select('slug, photo_url')
+        .eq('id', recipeId)
+        .single();
+
+      if (recipe?.photo_url) {
+        const hasPhoto = await hasApprovedPhoto(recipe.slug);
+        if (hasPhoto) {
+          status = 'featured';
+        }
+      }
+    }
 
     const { error } = await supabase
       .from('generated_recipes')

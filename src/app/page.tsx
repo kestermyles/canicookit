@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getAllRecipes, getAllCuisines, getPopularIngredients } from '@/lib/recipes';
+import { getSlugsWithApprovedPhotos } from '@/lib/supabase';
 import RecipeCard from '@/components/RecipeCard';
 import SearchBar from '@/components/SearchBar';
 import QuickFilterBar from '@/components/QuickFilterBar';
@@ -23,24 +24,22 @@ export default async function HomePage() {
   const popularIngredients = await getPopularIngredients();
   const recipeCount = allRecipes.length;
 
-  // Get recipe of the week - ANY recipe (curated, community, or generated)
-  // ONLY restriction: Must have a REAL photo (photo_is_ai_generated !== true)
-  // Celebrate community recipes with real photos!
+  // Get slugs that have approved photos in recipe_photos
+  const slugsWithPhotos = await getSlugsWithApprovedPhotos();
 
-  // Helper function: Check if recipe has a real (non-AI) photo
-  const hasRealPhoto = (recipe: any) => {
-    // Must have a hero image
+  // Helper: check if a recipe is eligible for featured/hero display
+  // Must have a real (non-AI) hero image.
+  // Community recipes must also have at least one approved photo.
+  const isFeaturable = (recipe: any) => {
     if (!recipe.heroImage) return false;
-
-    // CRITICAL: Never show AI-generated images
     if (recipe.photo_is_ai_generated === true) return false;
-
+    if (recipe.source === 'community' && !slugsWithPhotos.has(recipe.slug)) return false;
     return true;
   };
 
-  // Get ALL recipes with real photos (any source)
+  // Get ALL recipes eligible for featured display
   const recipesWithRealPhotos = allRecipes
-    .filter((r) => hasRealPhoto(r))
+    .filter((r) => isFeaturable(r))
     .sort((a, b) => {
       // Prioritize by quality score, defaulting to 10 for curated, 0 for others
       const scoreA = a.source === 'curated' ? (a.quality_score || 10) : (a.quality_score || 0);
