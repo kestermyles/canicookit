@@ -90,13 +90,27 @@ export default async function RecipePage({ params }: PageProps) {
   const methodHtml = stripIngredientsHtml(recipe.contentHtml);
 
   // Extract method steps from markdown for JSON-LD
-  // Matches: "1. text", "**1. text**", "**1. text"
-  const steps = recipe.content
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => /^\*{0,2}\d+\.?\s/.test(line))
-    .map((line) => line.replace(/^\*{0,2}\d+\.?\s*/, '').replace(/\*{0,2}$/, '').trim())
-    .filter(Boolean);
+  // Captures the numbered heading + following paragraph text
+  const contentLines = recipe.content.split('\n');
+  const steps: string[] = [];
+  for (let i = 0; i < contentLines.length; i++) {
+    const trimmed = contentLines[i].trim();
+    if (/^\*{0,2}\d+\.?\s/.test(trimmed)) {
+      const title = trimmed.replace(/^\*{0,2}\d+\.?\s*/, '').replace(/\*{0,2}$/, '').trim();
+      // Collect following non-empty, non-heading, non-image lines as step body
+      const bodyParts: string[] = [];
+      for (let j = i + 1; j < contentLines.length; j++) {
+        const next = contentLines[j].trim();
+        if (!next || /^\*{0,2}\d+\.?\s/.test(next) || next.startsWith('#') || next.startsWith('![')) break;
+        bodyParts.push(next);
+      }
+      const fullStep = bodyParts.length > 0 ? `${title}: ${bodyParts.join(' ')}` : title;
+      if (fullStep) steps.push(fullStep);
+    }
+  }
+
+  // Use detailed ingredients (with quantities) for JSON-LD, fall back to frontmatter
+  const jsonLdIngredients = detailedIngredients.length > 0 ? detailedIngredients : recipe.ingredients;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -117,7 +131,7 @@ export default async function RecipePage({ params }: PageProps) {
       carbohydrateContent: `${recipe.carbs}g`,
       fatContent: `${recipe.fat}g`,
     },
-    recipeIngredient: recipe.ingredients,
+    recipeIngredient: jsonLdIngredients,
     recipeInstructions: steps.map((step) => ({
       '@type': 'HowToStep',
       text: step,

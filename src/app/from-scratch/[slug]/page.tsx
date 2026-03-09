@@ -100,18 +100,23 @@ export default async function FromScratchRecipePage({ params }: PageProps) {
   const detailedIngredients = extractIngredients(recipe.content);
   const methodHtml = stripIngredientsHtml(recipe.contentHtml);
 
-  // Method steps for JSON-LD
-  const steps = recipe.content
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => /^\*{0,2}\d+\.?\s/.test(line))
-    .map((line) =>
-      line
-        .replace(/^\*{0,2}\d+\.?\s*/, '')
-        .replace(/\*{0,2}$/, '')
-        .trim()
-    )
-    .filter(Boolean);
+  // Method steps for JSON-LD (heading + following paragraph text)
+  const contentLines = recipe.content.split('\n');
+  const steps: string[] = [];
+  for (let i = 0; i < contentLines.length; i++) {
+    const trimmed = contentLines[i].trim();
+    if (/^\*{0,2}\d+\.?\s/.test(trimmed)) {
+      const title = trimmed.replace(/^\*{0,2}\d+\.?\s*/, '').replace(/\*{0,2}$/, '').trim();
+      const bodyParts: string[] = [];
+      for (let j = i + 1; j < contentLines.length; j++) {
+        const next = contentLines[j].trim();
+        if (!next || /^\*{0,2}\d+\.?\s/.test(next) || next.startsWith('#') || next.startsWith('![')) break;
+        bodyParts.push(next);
+      }
+      const fullStep = bodyParts.length > 0 ? `${title}: ${bodyParts.join(' ')}` : title;
+      if (fullStep) steps.push(fullStep);
+    }
+  }
 
   const totalTime = recipe.prepTime + recipe.cookTime;
 
@@ -134,7 +139,7 @@ export default async function FromScratchRecipePage({ params }: PageProps) {
       carbohydrateContent: `${recipe.carbs}g`,
       fatContent: `${recipe.fat}g`,
     },
-    recipeIngredient: recipe.ingredients,
+    recipeIngredient: detailedIngredients.length > 0 ? detailedIngredients : recipe.ingredients,
     recipeInstructions: steps.map((step) => ({
       '@type': 'HowToStep',
       text: step,
