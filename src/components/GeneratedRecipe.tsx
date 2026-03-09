@@ -1,5 +1,4 @@
 import { GeneratedRecipeData } from '@/types/generator';
-import { PANTRY_ESSENTIALS } from '@/types/generator';
 
 interface GeneratedRecipeProps {
   recipe: GeneratedRecipeData;
@@ -15,32 +14,10 @@ function formatLabel(s: string): string {
     .join(' ');
 }
 
-/**
- * Check if an ingredient is from user's list, essentials, or mixed
- */
-function categorizeIngredient(ingredient: string, userIngredients: string[]): 'user' | 'essential' | 'mixed' {
-  const lowerIngredient = ingredient.toLowerCase();
-
-  // Check if it contains a user ingredient
-  const hasUserIngredient = userIngredients.some((ui) =>
-    lowerIngredient.includes(ui.toLowerCase())
-  );
-
-  // Check if it contains an essential
-  const hasEssential = PANTRY_ESSENTIALS.some((e) =>
-    lowerIngredient.includes(e.toLowerCase())
-  );
-
-  if (hasUserIngredient && !hasEssential) return 'user';
-  if (hasEssential && !hasUserIngredient) return 'essential';
-  return 'mixed'; // Contains both or neither
-}
-
 export default function GeneratedRecipe({
   recipe,
   onSave,
   isSaving,
-  isLoggedIn = false,
 }: GeneratedRecipeProps) {
   const totalTime = recipe.prepTime + recipe.cookTime;
 
@@ -54,17 +31,6 @@ export default function GeneratedRecipe({
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-4">{recipe.title}</h1>
           <p className="text-secondary text-lg">{recipe.description}</p>
-        </div>
-
-        {/* Top save prompt — visible especially for mobile users */}
-        <div className="mb-6">
-          <button
-            onClick={onSave}
-            disabled={isSaving}
-            className="w-full sm:w-auto px-6 py-3 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold text-sm"
-          >
-            {isSaving ? 'Saving...' : isLoggedIn ? 'Save this recipe' : 'Join free to save this recipe'}
-          </button>
         </div>
 
         {/* Dietary badges */}
@@ -96,15 +62,11 @@ export default function GeneratedRecipe({
           )}
         </div>
 
-        {/* Stats Bar */}
+        {/* Difficulty + Quick Stats */}
         <div className="flex flex-wrap gap-4 py-4 border-y border-gray-200 mb-8">
           <div className="text-center px-4">
-            <p className="text-sm text-secondary">Prep</p>
-            <p className="font-semibold">{recipe.prepTime} mins</p>
-          </div>
-          <div className="text-center px-4">
-            <p className="text-sm text-secondary">Cook</p>
-            <p className="font-semibold">{recipe.cookTime} mins</p>
+            <p className="text-sm text-secondary">Difficulty</p>
+            <p className="font-semibold">{formatLabel(recipe.difficulty)}</p>
           </div>
           <div className="text-center px-4">
             <p className="text-sm text-secondary">Total</p>
@@ -115,114 +77,17 @@ export default function GeneratedRecipe({
             <p className="font-semibold">{recipe.serves}</p>
           </div>
           <div className="text-center px-4">
-            <p className="text-sm text-secondary">Difficulty</p>
-            <p className="font-semibold">{formatLabel(recipe.difficulty)}</p>
-          </div>
-          <div className="text-center px-4">
             <p className="text-sm text-secondary">Budget</p>
             <p className="font-semibold">{formatLabel(recipe.budget)}</p>
           </div>
         </div>
 
-        {/* Two-column layout: Ingredients + Method */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 mb-8">
-          {/* Ingredients */}
-          <div>
-            <h2 className="text-xl font-bold mb-4">Ingredients</h2>
-            <ul className="space-y-2">
-              {recipe.ingredients.map((ingredient, i) => {
-                const category = categorizeIngredient(ingredient, recipe.userIngredients);
-                const isUserIngredient = category === 'user' || category === 'mixed';
-                const isEssential = category === 'essential';
-
-                return (
-                  <li
-                    key={i}
-                    className={`flex items-start gap-2 px-3 py-2 rounded ${
-                      isUserIngredient
-                        ? 'bg-orange-50 font-medium'
-                        : isEssential
-                        ? 'text-secondary'
-                        : ''
-                    }`}
-                  >
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0 ${
-                        isUserIngredient ? 'bg-primary' : 'bg-gray-400'
-                      }`}
-                    />
-                    <span>{ingredient}</span>
-                  </li>
-                );
-              })}
-            </ul>
-            <p className="text-xs text-secondary mt-3 italic">
-              Highlighted ingredients are from your list
-            </p>
-          </div>
-
-          {/* Method */}
-          <div>
-            <h2 className="text-xl font-bold mb-4">Method</h2>
-            <ol className="space-y-4">
-              {recipe.method.map((step, i) => (
-                <li key={i} className="flex gap-3">
-                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-white text-sm font-bold flex items-center justify-center">
-                    {i + 1}
-                  </span>
-                  <p className="pt-0.5">{step}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-
-        {/* Flavour Boosters */}
-        {recipe.flavourBoosters && recipe.flavourBoosters.length > 0 && (
-          <section className="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-            <h3 className="text-sm font-semibold text-amber-800 mb-2">Flavour boosters (optional)</h3>
-            <div className="flex flex-wrap gap-2">
-              {recipe.flavourBoosters.map((booster, i) => (
-                <span
-                  key={i}
-                  className="px-3 py-1 bg-white border border-amber-300 text-amber-800 rounded-full text-sm"
-                >
-                  {booster}
-                </span>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Nutrition */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Nutrition per Serving</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-light-grey rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold text-primary">{recipe.calories}</p>
-              <p className="text-sm text-secondary">Calories</p>
-            </div>
-            <div className="bg-light-grey rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold text-primary">{recipe.protein}g</p>
-              <p className="text-sm text-secondary">Protein</p>
-            </div>
-            <div className="bg-light-grey rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold text-primary">{recipe.carbs}g</p>
-              <p className="text-sm text-secondary">Carbs</p>
-            </div>
-            <div className="bg-light-grey rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold text-primary">{recipe.fat}g</p>
-              <p className="text-sm text-secondary">Fat</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Save Button */}
-        <div className="flex justify-center pt-6 border-t border-gray-200">
+        {/* CTA Button */}
+        <div className="flex justify-center">
           <button
             onClick={onSave}
             disabled={isSaving}
-            className="px-8 py-3 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-semibold"
+            className="px-10 py-4 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-bold text-xl shadow-lg"
           >
             {isSaving ? (
               <span className="flex items-center gap-2">
@@ -249,7 +114,7 @@ export default function GeneratedRecipe({
                 Saving...
               </span>
             ) : (
-              'Save this recipe'
+              'Yum! Can I Cook It? →'
             )}
           </button>
         </div>
