@@ -12,7 +12,17 @@ interface ServingScalerProps {
 
 export default function ServingScaler({ defaultServings, ingredients }: ServingScalerProps) {
   const [servings, setServings] = useState(defaultServings);
+  const [checked, setChecked] = useState<Set<number>>(new Set());
   const { isImperial } = useMeasurementPreference();
+
+  const toggleChecked = (index: number) => {
+    setChecked((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
   const scaleFactor = servings / defaultServings;
   const min = 1;
   const max = defaultServings * 4;
@@ -53,9 +63,27 @@ export default function ServingScaler({ defaultServings, ingredients }: ServingS
           const scaled = scaleIngredient(ingredient, scaleFactor);
           const converted = isImperial ? convertIngredient(scaled, true) : scaled;
           return (
-            <li key={i} className="flex items-start gap-2">
-              <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0" />
-              <span>{converted}</span>
+            <li
+              key={i}
+              className="flex items-start gap-2 cursor-pointer group"
+              onClick={() => toggleChecked(i)}
+            >
+              <span
+                className={`w-5 h-5 mt-0.5 flex-shrink-0 rounded border-2 flex items-center justify-center transition-colors ${
+                  checked.has(i)
+                    ? 'bg-primary border-primary'
+                    : 'border-gray-300 group-hover:border-primary'
+                }`}
+              >
+                {checked.has(i) && (
+                  <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </span>
+              <span className={`transition-colors ${checked.has(i) ? 'line-through text-gray-400' : ''}`}>
+                {converted}
+              </span>
             </li>
           );
         })}
