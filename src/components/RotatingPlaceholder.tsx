@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { StylizedCamera } from '@/components/NoPhotoPlaceholder';
+import { Loader2 } from 'lucide-react';
 
 const PLACEHOLDERS = [
   'Try: leftover chicken, rice, half a courgette...',
@@ -41,7 +42,10 @@ export default function RotatingPlaceholder({
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const scanInputRef = useRef<HTMLInputElement>(null);
   const hoverTimeout = useRef<NodeJS.Timeout | null>(null);
   const [canHover, setCanHover] = useState(false);
 
@@ -73,6 +77,43 @@ export default function RotatingPlaceholder({
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, [showMenu]);
+
+  const handleScan = async (file: File) => {
+    setIsScanning(true);
+    setScanError(null);
+    setShowMenu(false);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/scan-ingredients', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to scan ingredients');
+      }
+
+      if (data.ingredients.length === 0) {
+        setScanError("Couldn't spot any ingredients — try a clearer photo");
+        return;
+      }
+
+      onChange(data.ingredients.join(', '));
+    } catch (err) {
+      console.error('Scan error:', err);
+      setScanError(err instanceof Error ? err.message : 'Failed to scan ingredients');
+    } finally {
+      setIsScanning(false);
+      if (scanInputRef.current) {
+        scanInputRef.current.value = '';
+      }
+    }
+  };
 
   return (
     <div className="relative">
@@ -116,18 +157,21 @@ export default function RotatingPlaceholder({
             className="p-1.5 text-primary hover:text-orange-700 transition-colors"
             aria-label="Recipe options"
           >
-            <StylizedCamera size={28} />
+            {isScanning ? (
+              <Loader2 className="w-7 h-7 animate-spin" />
+            ) : (
+              <StylizedCamera size={28} />
+            )}
           </button>
           {showMenu && (
             <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-50">
-              <Link
-                href="/generate?scan=true"
-                className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 transition-colors"
-                onClick={() => setShowMenu(false)}
+              <button
+                onClick={() => { setShowMenu(false); scanInputRef.current?.click(); }}
+                className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 transition-colors w-full text-left"
               >
                 <span>📷</span>
                 <span>Scan your ingredients</span>
-              </Link>
+              </button>
               <Link
                 href="/generate"
                 className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 transition-colors"
@@ -138,8 +182,22 @@ export default function RotatingPlaceholder({
               </Link>
             </div>
           )}
+          <input
+            ref={scanInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleScan(file);
+            }}
+          />
         </div>
       </div>
+      {scanError && (
+        <p className="text-red-500 text-sm mt-2 text-center">{scanError}</p>
+      )}
     </div>
   );
 }
