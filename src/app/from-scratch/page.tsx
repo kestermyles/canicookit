@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { getRecipesByCuisine } from '@/lib/recipes';
-import { Flame, Clock, ChefHat } from 'lucide-react';
+import { Flame, ChefHat } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'From Scratch — Can I Cook It?',
@@ -72,13 +72,9 @@ export default async function FromScratchPage() {
                   <p className="text-secondary text-sm mb-4 line-clamp-2">
                     {recipe.description}
                   </p>
-                  <div className="flex items-center gap-4 text-sm text-secondary">
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      {recipe.prepTime} min active
-                    </span>
-                    <span>Serves {recipe.serves}</span>
-                  </div>
+                  <span className="inline-block w-full px-6 py-3 bg-primary text-white text-center rounded-full font-semibold text-lg group-hover:bg-orange-700 transition-colors">
+                    Can I Cook It?
+                  </span>
                 </div>
               </Link>
             ))}
