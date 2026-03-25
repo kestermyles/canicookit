@@ -50,11 +50,11 @@ export default function Header() {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 border-b border-gray-100 transition-all duration-200 ${
+        className={`fixed top-0 left-0 right-0 z-50 border-b border-gray-100 transition-all duration-200 overflow-hidden ${
           scrolled ? 'bg-white shadow-sm' : 'bg-white shadow-sm'
         }`}
       >
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between min-w-0">
           <Link href="/" className="flex items-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -66,7 +66,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex gap-6 text-sm items-center">
+          <nav className="hidden lg:flex gap-6 text-sm items-center whitespace-nowrap">
             <Link
               href="/"
               className={`text-secondary hover:text-foreground transition-colors relative flex items-center gap-1.5 ${
