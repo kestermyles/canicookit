@@ -29,7 +29,7 @@ export default function RecipeFilterBar({ activeFilter }: RecipeFilterBarProps) 
   const active = activeFilter?.toLowerCase() || '';
 
   return (
-    <div className="mb-10 space-y-4">
+    <div className="sticky top-16 z-10 bg-white border-b border-gray-100 py-3 mb-10 space-y-4">
       {/* Course filters */}
       <div>
         <p className="text-sm font-medium text-gray-600 mb-2">By course</p>
