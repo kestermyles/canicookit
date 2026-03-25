@@ -9,6 +9,7 @@ import ReportButton from '@/components/ReportButton';
 import NoPhotoPlaceholder from '@/components/NoPhotoPlaceholder';
 import PhotoGallery from '@/components/PhotoGallery';
 import RecipeBody from '@/components/RecipeBody';
+import RecipeQA from '@/components/RecipeQA';
 
 interface PageProps {
   params: { slug: string };
@@ -279,6 +280,13 @@ export default async function CommunityRecipePage({ params }: PageProps) {
             </div>
           </div>
         </section>
+
+        {/* Recipe Q&A */}
+        <RecipeQA
+          recipeTitle={recipe.title}
+          recipeDescription={recipe.description}
+          ingredients={recipe.ingredients}
+        />
 
         {/* Share & Comments Section */}
         <section id="photo-upload" className="mt-12 border-t pt-8 scroll-mt-20">

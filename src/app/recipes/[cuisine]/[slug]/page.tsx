@@ -7,6 +7,7 @@ import CommentSection from '@/components/CommentSection';
 import NoPhotoPlaceholder from '@/components/NoPhotoPlaceholder';
 import PhotoGallery from '@/components/PhotoGallery';
 import RecipeBody from '@/components/RecipeBody';
+import RecipeQA from '@/components/RecipeQA';
 import { extractIngredients, stripIngredientsHtml } from '@/utils/parseRecipeContent';
 
 interface PageProps {
@@ -299,6 +300,13 @@ export default async function RecipePage({ params }: PageProps) {
             </div>
           </div>
         </section>
+
+        {/* Recipe Q&A */}
+        <RecipeQA
+          recipeTitle={recipe.title}
+          recipeDescription={recipe.description}
+          ingredients={recipe.ingredients}
+        />
 
         {/* Share & Comments Section */}
         <section id="photo-upload" className="mt-12 border-t pt-8 scroll-mt-20">
