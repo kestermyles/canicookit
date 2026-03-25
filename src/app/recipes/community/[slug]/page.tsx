@@ -95,20 +95,35 @@ export default async function CommunityRecipePage({ params }: PageProps) {
   }
 
   // Only include real photos in structured data (not AI-generated)
-  const recipeImage = recipe.photo_url && !recipe.photo_is_ai_generated ? recipe.photo_url : '';
+  const hasRealPhoto = recipe.photo_url && !recipe.photo_is_ai_generated;
+  const recipeImage = hasRealPhoto
+    ? (recipe.photo_url!.startsWith('http') ? recipe.photo_url! : `https://canicookit.com${recipe.photo_url}`)
+    : null;
+
+  // Derive course category from tags
+  const courseTags = new Set(['breakfast', 'lunch', 'dinner', 'snacks', 'baking', 'desserts', 'drinks']);
+  const courseTag = (recipe.tags || []).find((t) => courseTags.has(t.toLowerCase()));
+  const recipeCategory = courseTag
+    ? courseTag.charAt(0).toUpperCase() + courseTag.slice(1)
+    : 'Main';
+
+  // Use actual cuisine if meaningful, otherwise omit
+  const recipeCuisine = recipe.cuisine && recipe.cuisine !== 'generated'
+    ? recipe.cuisine.charAt(0).toUpperCase() + recipe.cuisine.slice(1)
+    : null;
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Recipe',
     name: recipe.title,
-    image: recipeImage,
+    ...(recipeImage && { image: recipeImage }),
     description: recipe.description,
     prepTime: `PT${recipe.prepTime}M`,
     cookTime: `PT${recipe.cookTime}M`,
     totalTime: `PT${totalTime}M`,
     recipeYield: `${recipe.serves} servings`,
-    recipeCategory: recipe.tags[0] || 'Main',
-    recipeCuisine: 'Community Generated',
+    recipeCategory,
+    ...(recipeCuisine && { recipeCuisine }),
     nutrition: {
       '@type': 'NutritionInformation',
       calories: `${recipe.calories} calories`,
