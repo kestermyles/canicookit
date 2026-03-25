@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { getRecipesByFilter } from '@/lib/recipes';
 import RecipeCard from '@/components/RecipeCard';
+import RecipeFilterBar from '@/components/RecipeFilterBar';
 
 interface PageProps {
   params: { filter: string };
@@ -64,6 +65,8 @@ export default async function FilterPage({ params }: PageProps) {
     <div className="max-w-6xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold mb-2">{label} Recipes</h1>
       {description && <p className="text-secondary mb-8">{description}</p>}
+
+      <RecipeFilterBar activeFilter={params.filter} />
 
       {recipes.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -1,31 +1,15 @@
 import { Metadata } from 'next';
-import { getAllRecipes, getAllCuisines } from '@/lib/recipes';
+import { getAllRecipes } from '@/lib/recipes';
 import RecipeCard from '@/components/RecipeCard';
-import Link from 'next/link';
+import RecipeFilterBar from '@/components/RecipeFilterBar';
 
 export const metadata: Metadata = {
   title: 'All Recipes',
   description: 'Browse all recipes on Can I Cook It — curated and community recipes across every cuisine and course.',
 };
 
-const COURSES = [
-  { label: 'Breakfast', filter: 'breakfast' },
-  { label: 'Lunch', filter: 'lunch' },
-  { label: 'Dinner', filter: 'dinner' },
-  { label: 'Snacks', filter: 'snacks' },
-  { label: 'Baking', filter: 'baking' },
-  { label: 'Starters', filter: 'starters' },
-  { label: 'Desserts', filter: 'desserts' },
-  { label: 'Drinks', filter: 'drinks' },
-];
-
 export default async function RecipesPage() {
-  const [recipes, cuisines] = await Promise.all([
-    getAllRecipes(),
-    getAllCuisines(),
-  ]);
-
-  const filteredCuisines = cuisines.filter((c) => c !== 'generated');
+  const recipes = await getAllRecipes();
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
@@ -34,40 +18,7 @@ export default async function RecipesPage() {
         {recipes.length} recipe{recipes.length !== 1 ? 's' : ''} to explore
       </p>
 
-      {/* Filter Pills */}
-      <div className="mb-10 space-y-4">
-        {/* Cuisine filters */}
-        <div>
-          <p className="text-sm font-medium text-gray-600 mb-2">By cuisine</p>
-          <div className="flex flex-wrap gap-2">
-            {filteredCuisines.map((cuisine) => (
-              <Link
-                key={cuisine}
-                href={`/recipes/cuisine/${cuisine}`}
-                className="px-3 py-1.5 rounded-full text-sm border border-orange-300 text-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-colors capitalize"
-              >
-                {cuisine}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Course filters */}
-        <div>
-          <p className="text-sm font-medium text-gray-600 mb-2">By course</p>
-          <div className="flex flex-wrap gap-2">
-            {COURSES.map((course) => (
-              <Link
-                key={course.filter}
-                href={`/recipes/filter/${course.filter}`}
-                className="px-3 py-1.5 rounded-full text-sm border border-orange-300 text-gray-700 hover:bg-primary hover:text-white hover:border-primary transition-colors"
-              >
-                {course.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
+      <RecipeFilterBar />
 
       {/* Recipe Grid */}
       {recipes.length > 0 ? (
