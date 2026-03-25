@@ -204,13 +204,13 @@ export default function GuidesPage() {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Failed to generate guide');
+        throw new Error(data.error || 'Failed to create guide');
       }
 
       router.push(`/guides/${data.slug}`);
     } catch (err) {
       console.error('Generation error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to generate guide. Please try again.');
+      setError(err instanceof Error ? err.message : 'Failed to create guide. Please try again.');
       setIsGenerating(false);
     }
   };

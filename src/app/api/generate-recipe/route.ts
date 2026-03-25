@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error:
-            "You've generated a lot of recipes recently — take a breather and try again in an hour!",
+            "You've created a lot of recipes recently — take a breather and try again in an hour!",
         },
         { status: 429 }
       );
@@ -143,7 +143,7 @@ async function handleGenerateRecipe(
       return NextResponse.json(
         {
           success: false,
-          error: `Generated recipe is invalid: ${validation.errors.join(', ')}`,
+          error: `Created recipe is invalid: ${validation.errors.join(', ')}`,
         },
         { status: 500 }
       );
@@ -160,14 +160,14 @@ async function handleGenerateRecipe(
     console.error('[Generate Recipe] Error type:', error instanceof Error ? 'Error' : typeof error);
     console.error('[Generate Recipe] Error message:', error instanceof Error ? error.message : String(error));
 
-    const errorMessage = error instanceof Error ? error.message : 'Recipe generation failed';
+    const errorMessage = error instanceof Error ? error.message : 'Recipe creation failed';
 
     // Check for specific error types
     if (errorMessage.includes('ANTHROPIC_API_KEY') || errorMessage.includes('not configured')) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Recipe generation service is not configured. Please check your API key.',
+          error: 'Recipe creation service is not configured. Please check your API key.',
         },
         { status: 500 }
       );
@@ -186,7 +186,7 @@ async function handleGenerateRecipe(
     return NextResponse.json(
       {
         success: false,
-        error: `Failed to generate recipe: ${errorMessage}`,
+        error: `Failed to create recipe: ${errorMessage}`,
       },
       { status: 500 }
     );

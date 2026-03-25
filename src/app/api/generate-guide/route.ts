@@ -304,7 +304,7 @@ export async function POST(req: NextRequest) {
         error:
           error instanceof Error
             ? error.message
-            : 'Failed to generate guide. Please try again.',
+            : 'Failed to create guide. Please try again.',
       },
       { status: 500 }
     );

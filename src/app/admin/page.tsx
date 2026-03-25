@@ -297,7 +297,7 @@ export default function AdminPage() {
 
         {/* AI-Generated Content */}
         <section className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Recently AI-Generated Content ({aiGeneratedContent.length})</h2>
+          <h2 className="text-xl font-bold mb-4">Recently AI-Created Content ({aiGeneratedContent.length})</h2>
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <table className="w-full">
               <thead className="bg-gray-50">
@@ -332,7 +332,7 @@ export default function AdminPage() {
                 ))}
                 {aiGeneratedContent.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-gray-500">No recent AI-generated content</td>
+                    <td colSpan={5} className="px-4 py-8 text-center text-gray-500">No recent AI-created content</td>
                   </tr>
                 )}
               </tbody>

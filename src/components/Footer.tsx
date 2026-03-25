@@ -29,7 +29,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/generate" className="text-secondary hover:text-primary transition-colors">
-                  Generate a Recipe
+                  Create a Recipe
                 </Link>
               </li>
               <li>
