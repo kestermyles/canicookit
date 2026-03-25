@@ -18,17 +18,16 @@ export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
 
 const PANTRY_CATEGORIES = [
-  { label: 'Fats & Oils', items: ['olive oil', 'vegetable oil', 'butter'] },
+  { label: 'Fats & Oils', items: ['olive oil (or any neutral oil)', 'vegetable oil (sunflower, rapeseed etc)', 'butter (salted or unsalted)'] },
   { label: 'Seasoning', items: ['salt', 'black pepper'] },
-  { label: 'Aromatics', items: ['garlic', 'onion'] },
-  { label: 'Acids', items: ['lemon juice', 'white wine vinegar', 'red wine vinegar'] },
-  { label: 'Sweeteners', items: ['sugar', 'honey'] },
-  { label: 'Dry Goods', items: ['plain flour', 'rice', 'pasta'] },
-  { label: 'Eggs & Dairy', items: ['eggs', 'milk'] },
-  { label: 'Tinned & Jarred', items: ['tinned tomatoes', 'tomato paste', 'tinned beans', 'tinned coconut milk', 'stock (cubes, homemade, whatever you have)'] },
-  { label: 'Condiments & Sauces', items: ['dijon mustard', 'worcestershire sauce', 'hot sauce', 'soy sauce'] },
-  { label: 'Spices', items: ['smoked paprika', 'cumin', 'ground coriander', 'cinnamon', 'chilli flakes', 'garlic powder'] },
-  { label: 'Dried Herbs', items: ['dried oregano', 'dried thyme', 'bay leaves', 'dried mixed herbs'] },
+  { label: 'Aromatics', items: ['garlic (fresh, powder or granules)', 'onion (or shallots)'] },
+  { label: 'Acids', items: ['lemon juice (fresh or bottled)', 'white wine vinegar', 'red wine vinegar'] },
+  { label: 'Sweeteners', items: ['sugar (white or brown)', 'honey'] },
+  { label: 'Dry Goods', items: ['plain flour (all-purpose)', 'rice (any variety)', 'pasta (any shape)'] },
+  { label: 'Eggs & Dairy', items: ['eggs', 'milk (any kind)'] },
+  { label: 'Tinned & Jarred', items: ['tinned tomatoes (chopped or whole)', 'tomato paste (also called tomato puree)', 'tinned coconut milk', 'stock (cubes, homemade, whatever you have)'] },
+  { label: 'Condiments & Sauces', items: ['dijon mustard (or any mustard)', 'worcestershire sauce', 'hot sauce (optional, any brand)', 'soy sauce (or tamari/coconut aminos)'] },
+  { label: 'Spices', items: ['smoked paprika (or regular paprika)', 'cumin (ground)', 'garlic powder', 'dried mixed herbs (oregano, thyme, basil etc)'] },
 ];
 
 function PreferencesPanel({
