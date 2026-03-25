@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import CommunityBadge from './CommunityBadge';
 import ReportButton from './ReportButton';
 import NoPhotoPlaceholder from './NoPhotoPlaceholder';
 
@@ -154,11 +153,6 @@ export default function RecipeCard({
           <span className="inline-block px-2 py-0.5 text-xs font-medium bg-orange-50 text-primary rounded-full capitalize">
             {displayCuisine}
           </span>
-          {isCommunity && status && cuisine === 'generated' && (
-            <div className="scale-75 origin-left">
-              <CommunityBadge status={status} qualityScore={qualityScore} />
-            </div>
-          )}
         </div>
         <h3 className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors font-display">
           {title}

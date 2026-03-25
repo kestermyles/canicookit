@@ -17,6 +17,20 @@ function normalizeImagePath(img: string): string {
   return `/images/recipes/${img}`;
 }
 
+/**
+ * Resolve relative image paths in rendered HTML to /images/recipes/[slug]/
+ * Handles both bare filenames (image.jpg) and already-absolute paths.
+ */
+function resolveContentImages(html: string, slug: string): string {
+  return html.replace(
+    /<img\s+src="([^"]+)"/g,
+    (_match, src: string) => {
+      if (src.startsWith('/') || src.startsWith('http')) return _match;
+      return `<img src="/images/recipes/${slug}/${src}"`;
+    }
+  );
+}
+
 function getRecipeFiles(): { cuisine: string; filename: string; filePath: string }[] {
   try {
     if (!fs.existsSync(recipesDirectory)) {
@@ -61,7 +75,8 @@ function getCuratedRecipes(): Recipe[] {
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const { data, content } = matter(fileContents);
     const frontmatter = data as RecipeFrontmatter;
-    const contentHtml = marked.parse(content) as string;
+    const rawHtml = marked.parse(content) as string;
+    const contentHtml = resolveContentImages(rawHtml, frontmatter.slug);
 
     return {
       ...frontmatter,
@@ -125,7 +140,8 @@ export async function getRecipeBySlug(
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const { data, content } = matter(fileContents);
     const frontmatter = data as RecipeFrontmatter;
-    const contentHtml = marked.parse(content) as string;
+    const rawHtml = marked.parse(content) as string;
+    const contentHtml = resolveContentImages(rawHtml, frontmatter.slug);
 
     return {
       ...frontmatter,

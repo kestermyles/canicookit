@@ -29,7 +29,7 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
   const photoRef = useRef<PhotoUploadHandle>(null);
 
   const displayName = user
-    ? user.user_metadata?.username || user.user_metadata?.name || ''
+    ? user.user_metadata?.username || user.user_metadata?.name || user.email?.split('@')[0] || 'Anonymous'
     : '';
 
   // Pre-fill name with username for logged-in users

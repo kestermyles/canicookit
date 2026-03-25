@@ -40,4 +40,8 @@
   .recipe-content li {
     @apply leading-relaxed;
   }
+
+  .recipe-content img {
+    @apply w-full h-auto rounded-lg my-6;
+  }
 }
