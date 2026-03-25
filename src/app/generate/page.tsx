@@ -25,7 +25,7 @@ const PANTRY_CATEGORIES = [
   { label: 'Sweeteners', items: ['sugar', 'honey'] },
   { label: 'Dry Goods', items: ['plain flour', 'rice', 'pasta'] },
   { label: 'Eggs & Dairy', items: ['eggs', 'milk'] },
-  { label: 'Tinned & Jarred', items: ['tinned tomatoes', 'tomato paste', 'tinned beans', 'tinned coconut milk', 'stock cubes'] },
+  { label: 'Tinned & Jarred', items: ['tinned tomatoes', 'tomato paste', 'tinned beans', 'tinned coconut milk', 'stock (cubes, homemade, whatever you have)'] },
   { label: 'Condiments & Sauces', items: ['dijon mustard', 'worcestershire sauce', 'hot sauce', 'soy sauce'] },
   { label: 'Spices', items: ['smoked paprika', 'cumin', 'ground coriander', 'cinnamon', 'chilli flakes', 'garlic powder'] },
   { label: 'Dried Herbs', items: ['dried oregano', 'dried thyme', 'bay leaves', 'dried mixed herbs'] },
