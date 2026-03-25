@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { getAllCuisines, getRecipesByCuisine } from '@/lib/recipes';
 import RecipeCard from '@/components/RecipeCard';
+import RecipeFilterBar from '@/components/RecipeFilterBar';
 
 interface PageProps {
   params: { cuisine: string };
@@ -32,6 +33,8 @@ export default async function CuisinePage({ params }: PageProps) {
       <p className="text-secondary mb-8">
         {recipes.length} recipe{recipes.length !== 1 ? 's' : ''} to explore
       </p>
+
+      <RecipeFilterBar activeFilter={params.cuisine} />
 
       {recipes.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
