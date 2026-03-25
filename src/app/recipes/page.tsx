@@ -71,26 +71,73 @@ export default async function RecipesPage() {
 
       {/* Recipe Grid */}
       {recipes.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recipes.map((recipe) => (
-            <RecipeCard
-              key={`${recipe.cuisine}-${recipe.slug}`}
-              title={recipe.title}
-              slug={recipe.slug}
-              cuisine={recipe.cuisine}
-              description={recipe.description}
-              heroImage={recipe.heroImage}
-              prepTime={recipe.prepTime}
-              cookTime={recipe.cookTime}
-              difficulty={recipe.difficulty}
-              calories={recipe.calories}
-              source={recipe.source}
-              qualityScore={recipe.quality_score}
-              status={recipe.status}
-              photoIsAiGenerated={recipe.photo_is_ai_generated}
-            />
-          ))}
-        </div>
+        <>
+          {/* Recipes with photos */}
+          {(() => {
+            const withImage = recipes.filter(
+              (r) => r.heroImage && r.heroImage.trim() !== '' && !r.photo_is_ai_generated
+            );
+            const withoutImage = recipes.filter(
+              (r) => !r.heroImage || r.heroImage.trim() === '' || r.photo_is_ai_generated
+            );
+            return (
+              <>
+                {withImage.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {withImage.map((recipe) => (
+                      <RecipeCard
+                        key={`${recipe.cuisine}-${recipe.slug}`}
+                        title={recipe.title}
+                        slug={recipe.slug}
+                        cuisine={recipe.cuisine}
+                        description={recipe.description}
+                        heroImage={recipe.heroImage}
+                        prepTime={recipe.prepTime}
+                        cookTime={recipe.cookTime}
+                        difficulty={recipe.difficulty}
+                        calories={recipe.calories}
+                        source={recipe.source}
+                        qualityScore={recipe.quality_score}
+                        status={recipe.status}
+                        photoIsAiGenerated={recipe.photo_is_ai_generated}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* Recipes without photos */}
+                {withoutImage.length > 0 && (
+                  <>
+                    <div className="mt-12 mb-8 border-t border-gray-200 pt-8">
+                      <h2 className="text-xl font-semibold text-gray-500">Be the first to cook this!</h2>
+                      <p className="text-sm text-secondary mt-1">These recipes are waiting for someone to bring them to life with a photo.</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {withoutImage.map((recipe) => (
+                        <RecipeCard
+                          key={`${recipe.cuisine}-${recipe.slug}`}
+                          title={recipe.title}
+                          slug={recipe.slug}
+                          cuisine={recipe.cuisine}
+                          description={recipe.description}
+                          heroImage={recipe.heroImage}
+                          prepTime={recipe.prepTime}
+                          cookTime={recipe.cookTime}
+                          difficulty={recipe.difficulty}
+                          calories={recipe.calories}
+                          source={recipe.source}
+                          qualityScore={recipe.quality_score}
+                          status={recipe.status}
+                          photoIsAiGenerated={recipe.photo_is_ai_generated}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </>
+            );
+          })()}
+        </>
       ) : (
         <p className="text-secondary">No recipes found.</p>
       )}

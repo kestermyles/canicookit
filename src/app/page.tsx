@@ -64,12 +64,13 @@ export default async function HomePage() {
     } : 'NONE - no recipes with real photos found',
   });
 
-  // Sort remaining recipes by photo quality
+  // Only show recipes with real photos on the homepage grid
   const recipes = [...allRecipes]
     .filter((r) => r.slug !== recipeOfWeek?.slug) // Exclude recipe of week
+    .filter((r) => r.heroImage && r.heroImage.trim() !== '' && r.photo_is_ai_generated !== true)
     .sort((a, b) => {
-      const scoreA = a.heroImage ? (a.quality_score || 10) : 0;
-      const scoreB = b.heroImage ? (b.quality_score || 10) : 0;
+      const scoreA = a.quality_score || (a.source === 'curated' ? 10 : 0);
+      const scoreB = b.quality_score || (b.source === 'curated' ? 10 : 0);
       return scoreB - scoreA;
     });
 

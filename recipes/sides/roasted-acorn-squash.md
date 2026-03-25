@@ -26,6 +26,7 @@ fat: 5
 heroImage: roasted-acorn-squash-hero.jpg
 videoUrl:
 tags:
+  - dinner
   - sides
   - vegetarian
   - vegan

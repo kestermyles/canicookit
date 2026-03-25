@@ -87,8 +87,14 @@ export async function getAllRecipes(): Promise<Recipe[]> {
     const communityRows = await getAllCommunityRecipes();
     const communityRecipes = communityRows.map(dbRowToRecipe);
 
-    // Merge and return
-    return [...curatedRecipes, ...communityRecipes];
+    // Deduplicate by slug — curated recipes take priority over community stubs
+    // (photo uploads for static recipes create stub rows in generated_recipes)
+    const curatedSlugs = new Set(curatedRecipes.map((r) => r.slug));
+    const uniqueCommunity = communityRecipes.filter(
+      (r) => !curatedSlugs.has(r.slug)
+    );
+
+    return [...curatedRecipes, ...uniqueCommunity];
   } catch (error) {
     console.error('Error fetching community recipes:', error);
     // Fallback to just curated recipes if Supabase fails
@@ -161,6 +167,10 @@ export async function getRecipesByIngredient(
   );
 }
 
+const COURSE_TAGS = new Set([
+  'breakfast', 'lunch', 'dinner', 'snacks', 'baking', 'starters', 'desserts', 'drinks',
+]);
+
 export async function getRecipesByFilter(filter: string): Promise<Recipe[]> {
   const recipes = await getAllRecipes();
 
@@ -176,6 +186,20 @@ export async function getRecipesByFilter(filter: string): Promise<Recipe[]> {
     case 'gluten-free':
       return recipes.filter((r) => r.glutenFree);
     default:
+      // Course-based filters (breakfast, lunch, dinner, snacks, baking, starters, desserts, drinks)
+      if (COURSE_TAGS.has(filter)) {
+        return recipes.filter((r) => {
+          const tags = (r.tags || []).map((t) => t.toLowerCase());
+          // If recipe has a matching tag, include it
+          if (tags.includes(filter)) return true;
+          // If recipe has no course tags at all, default to dinner
+          if (filter === 'dinner') {
+            const hasCourseTag = tags.some((t) => COURSE_TAGS.has(t));
+            if (!hasCourseTag) return true;
+          }
+          return false;
+        });
+      }
       return [];
   }
 }

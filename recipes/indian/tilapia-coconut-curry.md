@@ -30,6 +30,7 @@ fat: 22
 heroImage: tilapia-coconut-curry-hero.jpg
 videoUrl:
 tags:
+  - dinner
   - indian
   - fish
   - curry

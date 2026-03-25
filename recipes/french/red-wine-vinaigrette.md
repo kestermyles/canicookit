@@ -28,6 +28,8 @@ heroImagePosition: center 60%
 images: []
 videoUrl:
 tags:
+  - dinner
+  - lunch
   - dressings
   - french
   - salad

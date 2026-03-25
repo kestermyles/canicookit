@@ -29,6 +29,7 @@ fat: 24
 heroImage: pozole-verde-hero.jpg
 videoUrl:
 tags:
+  - dinner
   - mexican
   - slow cook
   - batch cook

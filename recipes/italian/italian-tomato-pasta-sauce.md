@@ -28,6 +28,8 @@ fat: 6
 heroImage: italian-tomato-pasta-sauce-hero.jpg
 videoUrl:
 tags:
+  - dinner
+  - lunch
   - italian
   - pasta
   - vegetarian

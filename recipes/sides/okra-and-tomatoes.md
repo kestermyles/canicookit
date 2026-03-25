@@ -27,6 +27,7 @@ fat: 5
 heroImage: okra-tomatoes-hero.jpg
 videoUrl:
 tags:
+  - dinner
   - sides
   - american
   - southern

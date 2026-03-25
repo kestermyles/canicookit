@@ -27,6 +27,7 @@ fat: 28
 heroImage: texas-chili-hero.jpg
 videoUrl:
 tags:
+  - dinner
   - slow cook
   - batch cook
   - spicy

@@ -33,6 +33,7 @@ heroImage: thanksgiving-turkey/42-turkey-finished-hero-1.jpg
 images: []
 videoUrl:
 tags:
+  - dinner
   - thanksgiving
   - christmas
   - roast

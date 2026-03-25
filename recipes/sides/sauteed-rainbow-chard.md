@@ -29,6 +29,7 @@ images:
   - rainbow-chard-cooked.jpg
 videoUrl:
 tags:
+  - dinner
   - sides
   - vegetables
   - quick
