@@ -272,6 +272,13 @@ export default async function RecipePage({ params }: PageProps) {
           </section>
         )}
 
+        {/* Recipe Q&A */}
+        <RecipeQA
+          recipeTitle={recipe.title}
+          recipeDescription={recipe.description}
+          ingredients={recipe.ingredients}
+        />
+
         {/* Nutrition */}
         <section className="mt-12">
           <h2 className="text-xl font-bold mb-4">Nutrition per Serving</h2>
@@ -300,13 +307,6 @@ export default async function RecipePage({ params }: PageProps) {
             </div>
           </div>
         </section>
-
-        {/* Recipe Q&A */}
-        <RecipeQA
-          recipeTitle={recipe.title}
-          recipeDescription={recipe.description}
-          ingredients={recipe.ingredients}
-        />
 
         {/* Share & Comments Section */}
         <section id="photo-upload" className="mt-12 border-t pt-8 scroll-mt-20">
