@@ -54,60 +54,51 @@ export interface SaveRecipeResponse {
  */
 export const PANTRY_ESSENTIALS = [
   // Fats & oils
-  'olive oil',
-  'vegetable oil',
-  'butter',
+  'olive oil (or any neutral oil)',
+  'vegetable oil (sunflower, rapeseed etc)',
+  'butter (salted or unsalted)',
 
   // Seasoning
   'salt',
   'black pepper',
 
   // Aromatics
-  'garlic',
-  'onion',
+  'garlic (fresh, powder or granules)',
+  'onion (or shallots)',
 
   // Acids
-  'lemon juice',
+  'lemon juice (fresh or bottled)',
   'white wine vinegar',
   'red wine vinegar',
 
   // Sweeteners
-  'sugar',
+  'sugar (white or brown)',
   'honey',
 
   // Dry goods
-  'plain flour',
-  'rice',
-  'pasta',
+  'plain flour (all-purpose)',
+  'rice (any variety)',
+  'pasta (any shape)',
 
   // Eggs & dairy
   'eggs',
-  'milk',
+  'milk (any kind)',
 
   // Tinned & jarred
-  'tinned tomatoes',
-  'tomato paste',
-  'tinned beans',
+  'tinned tomatoes (chopped or whole)',
+  'tomato paste (also called tomato puree)',
   'tinned coconut milk',
-  'stock cubes',
+  'stock (cubes, homemade, whatever you have)',
 
   // Condiments & sauces
-  'dijon mustard',
+  'dijon mustard (or any mustard)',
   'worcestershire sauce',
-  'hot sauce',
-  'soy sauce',
+  'hot sauce (optional, any brand)',
+  'soy sauce (or tamari/coconut aminos)',
 
   // Spices
-  'smoked paprika',
-  'cumin',
-  'ground coriander',
-  'cinnamon',
-  'chilli flakes',
+  'smoked paprika (or regular paprika)',
+  'cumin (ground)',
   'garlic powder',
-
-  // Dried herbs
-  'dried oregano',
-  'dried thyme',
-  'bay leaves',
-  'dried mixed herbs',
+  'dried mixed herbs (oregano, thyme, basil etc)',
 ] as const;

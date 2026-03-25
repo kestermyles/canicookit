@@ -40,7 +40,7 @@ export default function EssentialsPanel() {
               key={essential}
               className="px-3 py-1.5 sm:px-4 sm:py-2 bg-white text-secondary rounded-full text-xs sm:text-sm"
             >
-              {essential}
+              {essential.replace(/\s*\(.*?\)$/, '')}
             </span>
           ))}
         </div>
