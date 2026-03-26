@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { uploadPhoto, updateRecipePhoto, getServiceClient } from '@/lib/supabase';
+import { moderatePhoto } from '@/lib/moderation';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB (client-side compression handles reduction)
 
@@ -42,6 +43,28 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[Upload Photo] Uploading photo for recipe:', recipeSlug);
+
+    // Moderate photo content
+    try {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const base64 = buffer.toString('base64');
+      const mediaType = file.type as string;
+      const modResult = await moderatePhoto(base64, mediaType);
+
+      if (!modResult.appropriate) {
+        console.log('[Upload Photo] Photo rejected by moderation:', modResult.reason);
+        return NextResponse.json(
+          {
+            success: false,
+            error: "This image doesn't look like food — please upload a photo of your dish!",
+          },
+          { status: 400 }
+        );
+      }
+    } catch (modErr) {
+      console.error('[Upload Photo] Moderation check failed:', modErr);
+      // Continue — don't block uploads if moderation fails
+    }
 
     // Upload to Supabase Storage
     const uploadResult = await uploadPhoto(file);

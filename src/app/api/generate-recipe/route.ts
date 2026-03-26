@@ -4,6 +4,7 @@ import { createRecipe, updateRecipePhoto } from '@/lib/supabase';
 import { validateGeneratedRecipe, validateUserInput } from '@/lib/validation';
 import { scoreRecipe } from '@/lib/scoring';
 import { generateRecipeImage, downloadAndUploadImage } from '@/lib/imageGeneration';
+import { checkIngredientBlocklist } from '@/lib/moderation';
 import {
   GenerateRecipeRequest,
   GenerateRecipeResponse,
@@ -99,6 +100,19 @@ async function handleGenerateRecipe(
       {
         success: false,
         error: 'Essentials must be an array',
+      },
+      { status: 400 }
+    );
+  }
+
+  // Check ingredients against blocklist
+  const blockCheck = checkIngredientBlocklist(userIngredients);
+  if (!blockCheck.safe) {
+    console.log('[Generate Recipe] Ingredient blocked:', blockCheck.reason);
+    return NextResponse.json(
+      {
+        success: false,
+        error: "One or more ingredients don't look right — please check your list and try again.",
       },
       { status: 400 }
     );

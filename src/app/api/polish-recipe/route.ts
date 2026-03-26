@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { checkIngredientBlocklist } from '@/lib/moderation';
 
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 const CLAUDE_MODEL = 'claude-sonnet-4-6';
@@ -15,6 +16,18 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check ingredients against blocklist
+    const blockCheck = checkIngredientBlocklist(ingredients);
+    if (!blockCheck.safe) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "One or more ingredients don't look right — please check your list and try again.",
+        },
+        { status: 400 }
+      );
+    }
+
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
@@ -24,6 +37,8 @@ export async function POST(request: Request) {
     }
 
     const prompt = `You are helping a home cook share their recipe with a community. Lightly polish the following recipe submission — fix any spelling or typos, tidy up punctuation and capitalisation, and reorder any steps that are out of sequence. Do NOT change any ingredients, quantities, or the essence of the recipe. Preserve the author's voice and personality — this should still sound like them, just cleaned up.
+
+Also check if the recipe contains any inappropriate content, offensive language, or anything unsuitable for a family-friendly cooking website. If it does, return ONLY: { "flagged": true, "reason": "brief explanation" }
 
 Recipe submission:
 Title: ${title}
@@ -37,7 +52,7 @@ Difficulty: ${difficulty || 'easy'}
 
 Always round temperatures to the nearest 5 or 10 degrees.
 
-Return ONLY valid JSON (no markdown, no preamble, no code blocks):
+If the recipe is appropriate, return ONLY valid JSON (no markdown, no preamble, no code blocks):
 {
   "title": "Polished recipe title",
   "description": "Polished description",
@@ -90,6 +105,18 @@ Return ONLY valid JSON (no markdown, no preamble, no code blocks):
     }
 
     const polished = JSON.parse(jsonText);
+
+    // Check if content was flagged as inappropriate
+    if (polished.flagged) {
+      console.log('[Polish Recipe] Content flagged:', polished.reason);
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Your recipe contains some content we can't publish — please review and resubmit.",
+        },
+        { status: 400 }
+      );
+    }
 
     return NextResponse.json({ success: true, recipe: polished });
   } catch (error) {
