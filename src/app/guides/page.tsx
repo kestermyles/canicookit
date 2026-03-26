@@ -42,6 +42,16 @@ import {
 } from 'lucide-react';
 
 const GUIDES_PER_PAGE = 6;
+const GUIDE_SEARCH_PLACEHOLDERS = [
+  'e.g. How to build a grazing table...',
+  'e.g. How to host a dinner party on a budget...',
+  'e.g. How to set a dinner table...',
+  'e.g. How to caramelise onions properly...',
+  'e.g. How to cook rice perfectly...',
+  'e.g. How to store fresh herbs...',
+  'e.g. How to cook for a crowd...',
+  'e.g. How to debone a chicken...',
+];
 const CATEGORIES = ['All', 'Techniques', 'Ingredients', 'Hosting', 'Getting Started', 'Kitchen Skills', 'Kitchen Basics'];
 
 // Map guide slugs to specific contextual Lucide icons
@@ -84,6 +94,20 @@ export default function GuidesPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [visibleCount, setVisibleCount] = useState(GUIDES_PER_PAGE);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchPlaceholderIndex, setSearchPlaceholderIndex] = useState(0);
+  const [searchPlaceholderFade, setSearchPlaceholderFade] = useState(true);
+
+  // Rotate guide search placeholder
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSearchPlaceholderFade(false);
+      setTimeout(() => {
+        setSearchPlaceholderIndex((i) => (i + 1) % GUIDE_SEARCH_PLACEHOLDERS.length);
+        setSearchPlaceholderFade(true);
+      }, 300);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Load all featured guides on mount
   useEffect(() => {
@@ -252,9 +276,9 @@ export default function GuidesPage() {
           </p>
 
           {/* Search + Q&A Side by Side */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-5xl mx-auto relative text-left">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 relative text-left">
             {/* Left: Guide Search */}
-            <div className="h-full bg-white border border-gray-200 rounded-xl p-6">
+            <div className="h-full bg-orange-50 border border-orange-200 rounded-xl p-6">
               <h2 className="text-lg font-bold mb-1">Find a guide</h2>
               <p className="text-sm text-secondary mb-3">Search our library of cooking guides</p>
               <div className="relative">
@@ -262,9 +286,15 @@ export default function GuidesPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="e.g. 'how to debone a chicken', 'what is deglazing'"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-10"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white pr-10"
                 />
+                {!searchQuery && (
+                  <span
+                    className={`absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none transition-opacity duration-300 ${searchPlaceholderFade ? 'opacity-100' : 'opacity-0'}`}
+                  >
+                    {GUIDE_SEARCH_PLACEHOLDERS[searchPlaceholderIndex]}
+                  </span>
+                )}
                 {searchQuery && (
                   <button
                     onClick={() => {
@@ -292,7 +322,7 @@ export default function GuidesPage() {
 
             {/* "or" divider — desktop only */}
             <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-              <span className="bg-white border border-gray-200 text-gray-400 text-sm font-medium rounded-full w-10 h-10 flex items-center justify-center shadow-sm">
+              <span className="bg-white border border-orange-200 text-gray-400 text-sm font-medium rounded-full w-10 h-10 flex items-center justify-center shadow-sm">
                 or
               </span>
             </div>
