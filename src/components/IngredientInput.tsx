@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, KeyboardEvent, useImperativeHandle, forwardRef } from 'react';
+import { useState, useRef, KeyboardEvent, useImperativeHandle, forwardRef } from 'react';
 
 interface IngredientInputProps {
   ingredients: string[];
@@ -38,17 +38,51 @@ export interface IngredientInputHandle {
 const IngredientInput = forwardRef<IngredientInputHandle, IngredientInputProps>(
   function IngredientInput({ ingredients, onChange, onInputChange }, ref) {
   const [inputValue, setInputValue] = useState('');
+  const ingredientsRef = useRef(ingredients);
+  ingredientsRef.current = ingredients;
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  const normaliseIngredient = async (text: string): Promise<string> => {
+    try {
+      const res = await fetch('/api/normalise-ingredient', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ingredient: text }),
+      });
+      const data = await res.json();
+      return data.corrected || text;
+    } catch {
+      return text;
+    }
+  };
 
   const addIngredient = (value: string) => {
     const trimmed = value.trim().toLowerCase();
 
     // Don't add empty strings or duplicates
-    if (trimmed && !ingredients.includes(trimmed)) {
-      onChange([...ingredients, trimmed]);
+    if (!trimmed || ingredients.includes(trimmed)) {
+      setInputValue('');
+      onInputChange?.('');
+      return;
     }
 
+    // Add immediately, then correct in place
+    onChange([...ingredients, trimmed]);
     setInputValue('');
     onInputChange?.('');
+
+    // Fire-and-forget normalisation
+    normaliseIngredient(trimmed).then((corrected) => {
+      if (corrected && corrected !== trimmed) {
+        const current = ingredientsRef.current;
+        const idx = current.lastIndexOf(trimmed);
+        if (idx === -1 || current.includes(corrected)) return;
+        const updated = [...current];
+        updated[idx] = corrected;
+        onChangeRef.current(updated);
+      }
+    });
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
