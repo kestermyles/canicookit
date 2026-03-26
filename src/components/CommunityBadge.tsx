@@ -3,14 +3,27 @@ import React from 'react';
 interface CommunityBadgeProps {
   status?: 'pending' | 'featured' | 'rejected';
   qualityScore?: number;
+  authorName?: string;
   className?: string;
 }
 
 export default function CommunityBadge({
   status = 'pending',
   qualityScore,
+  authorName,
   className = '',
 }: CommunityBadgeProps) {
+  // "From X's Kitchen" badge for community-submitted recipes
+  if (authorName) {
+    return (
+      <div
+        className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border bg-purple-50 text-purple-700 border-purple-200 ${className}`}
+      >
+        <span>From {authorName}&apos;s Kitchen</span>
+      </div>
+    );
+  }
+
   // Different styles based on status
   const badgeStyles = {
     featured:

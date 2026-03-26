@@ -159,6 +159,7 @@ export default async function CommunityRecipePage({ params }: PageProps) {
           <CommunityBadge
             status={recipe.status}
             qualityScore={recipe.quality_score}
+            authorName={recipe.user_metadata?.name}
           />
         </div>
 
