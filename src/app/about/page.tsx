@@ -11,21 +11,21 @@ export default function AboutPage() {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-12 items-start">
         {/* Photo — top on mobile, right on desktop */}
         <div className="md:col-span-2 md:order-2">
-          <div className="relative max-w-sm mx-auto">
+          <div
+            style={{
+              maskImage: 'radial-gradient(ellipse 90% 90% at 50% 40%, black 40%, transparent 80%)',
+              WebkitMaskImage: 'radial-gradient(ellipse 90% 90% at 50% 40%, black 40%, transparent 80%)',
+            }}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/images/kester.jpg"
               alt="Kester, founder of Can I Cook It?"
-              className="w-full object-cover"
-              style={{
-                borderRadius: '60% 40% 50% 50% / 50% 50% 40% 60%',
-                maskImage: 'radial-gradient(ellipse 85% 85% at 50% 50%, black 60%, transparent 100%)',
-                WebkitMaskImage: 'radial-gradient(ellipse 85% 85% at 50% 50%, black 60%, transparent 100%)',
-                aspectRatio: '3/4',
-              }}
+              className="w-full max-w-md mx-auto object-cover rounded-lg"
+              style={{ aspectRatio: '3/4' }}
             />
           </div>
-          <p className="text-center text-sm text-gray-400 italic mt-3">Yes, that&apos;s a brisket.</p>
+          <p className="text-center text-sm text-gray-400 italic mt-2">Yes, that&apos;s a brisket.</p>
         </div>
 
         {/* Text — below photo on mobile, left on desktop */}
