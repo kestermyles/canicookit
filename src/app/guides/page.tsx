@@ -43,14 +43,16 @@ import {
 
 const GUIDES_PER_PAGE = 6;
 const GUIDE_SEARCH_PLACEHOLDERS = [
+  'e.g. How to host a dinner party...',
+  'e.g. How to feed a crowd on a budget...',
+  'e.g. How to set a table for a formal dinner...',
   'e.g. How to build a grazing table...',
-  'e.g. How to host a dinner party on a budget...',
-  'e.g. How to set a dinner table...',
-  'e.g. How to caramelise onions properly...',
-  'e.g. How to cook rice perfectly...',
-  'e.g. How to store fresh herbs...',
-  'e.g. How to cook for a crowd...',
-  'e.g. How to debone a chicken...',
+  'e.g. How to plan a barbecue for 20 people...',
+  'e.g. How to cater for a kids birthday party...',
+  'e.g. How to plan a Christmas dinner...',
+  'e.g. How to do a brunch for friends...',
+  'e.g. How to put together a cheese board...',
+  'e.g. How to plan a romantic dinner at home...',
 ];
 const CATEGORIES = ['All', 'Techniques', 'Ingredients', 'Hosting', 'Getting Started', 'Kitchen Skills', 'Kitchen Basics'];
 
