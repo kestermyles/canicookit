@@ -37,6 +37,11 @@ export default function Footer() {
                   Cooking Guides
                 </Link>
               </li>
+              <li>
+                <Link href="/about" className="text-secondary hover:text-primary transition-colors">
+                  About
+                </Link>
+              </li>
             </ul>
           </div>
 
