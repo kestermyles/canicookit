@@ -1,10 +1,12 @@
 import { GeneratedRecipeData } from '@/types/generator';
+import CookItMyWay from './CookItMyWay';
 
 interface GeneratedRecipeProps {
   recipe: GeneratedRecipeData;
   onSave: () => void;
   isSaving: boolean;
   isLoggedIn?: boolean;
+  userName?: string;
 }
 
 function formatLabel(s: string): string {
@@ -18,6 +20,7 @@ export default function GeneratedRecipe({
   recipe,
   onSave,
   isSaving,
+  userName,
 }: GeneratedRecipeProps) {
   const totalTime = recipe.prepTime + recipe.cookTime;
 
@@ -82,8 +85,8 @@ export default function GeneratedRecipe({
           </div>
         </div>
 
-        {/* CTA Button */}
-        <div className="flex justify-center">
+        {/* CTA Buttons */}
+        <div className="flex flex-col items-center gap-3">
           <button
             onClick={onSave}
             disabled={isSaving}
@@ -117,6 +120,14 @@ export default function GeneratedRecipe({
               'Yum! Can I Cook It? →'
             )}
           </button>
+
+          <CookItMyWay
+            originalTitle={recipe.title}
+            originalDescription={recipe.description}
+            originalIngredients={recipe.ingredients}
+            originalMethod={recipe.method || []}
+            defaultName={userName}
+          />
         </div>
       </div>
     </div>

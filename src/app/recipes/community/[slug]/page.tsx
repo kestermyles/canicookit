@@ -10,6 +10,7 @@ import NoPhotoPlaceholder from '@/components/NoPhotoPlaceholder';
 import PhotoGallery from '@/components/PhotoGallery';
 import RecipeBody from '@/components/RecipeBody';
 import RecipeQA from '@/components/RecipeQA';
+import CookItMyWay from '@/components/CookItMyWay';
 
 interface PageProps {
   params: { slug: string };
@@ -251,6 +252,17 @@ export default async function CommunityRecipePage({ params }: PageProps) {
           ingredients={recipe.ingredients}
           methodHtml={recipe.contentHtml}
         />
+
+        {/* Cook it My Way */}
+        <div className="mt-8 flex justify-center">
+          <CookItMyWay
+            originalSlug={params.slug}
+            originalTitle={recipe.title}
+            originalDescription={recipe.description}
+            originalIngredients={recipe.ingredients}
+            originalMethod={dbRecipe.method}
+          />
+        </div>
 
         {/* Recipe Q&A */}
         <RecipeQA

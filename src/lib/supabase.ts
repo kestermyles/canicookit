@@ -174,6 +174,28 @@ export async function createRecipe(recipeData: {
 }
 
 /**
+ * Delete a recipe by slug
+ */
+export async function deleteRecipe(slug: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { error } = await supabase
+      .from('generated_recipes')
+      .delete()
+      .eq('slug', slug);
+
+    if (error) {
+      console.error('Error deleting recipe:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error in deleteRecipe:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+  }
+}
+
+/**
  * Get a recipe by slug from the database
  */
 export async function getRecipeBySlug(
