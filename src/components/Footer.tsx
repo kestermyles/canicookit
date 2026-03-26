@@ -56,8 +56,17 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Disclaimer */}
+        <div className="border-t border-gray-100 pt-6 mb-4 text-center">
+          <p className="text-xs text-gray-400 max-w-2xl mx-auto">
+            Can I Cook It? is a community recipe platform. Recipes and photos are submitted by our community of home cooks. If you believe any content infringes your copyright, please contact us at{' '}
+            <a href="mailto:hello@canicookit.com" className="underline hover:text-gray-500">hello@canicookit.com</a>{' '}
+            and we will review and remove it promptly.
+          </p>
+        </div>
+
         {/* Copyright */}
-        <div className="border-t border-gray-100 pt-6 text-center text-sm text-secondary">
+        <div className="text-center text-sm text-secondary">
           <p>&copy; {new Date().getFullYear()} Can I Cook It? All rights reserved.</p>
         </div>
       </div>

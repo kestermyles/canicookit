@@ -50,6 +50,8 @@ export default function ShareRecipePage() {
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
+  const [confirmed, setConfirmed] = useState(false);
+
   // Flow state
   const [polishing, setPolishing] = useState(false);
   const [polishedRecipe, setPolishedRecipe] = useState<PolishedRecipe | null>(null);
@@ -413,14 +415,33 @@ export default function ShareRecipePage() {
           </div>
         )}
 
+        {/* Confirmation checkbox */}
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={confirmed}
+            onChange={(e) => setConfirmed(e.target.checked)}
+            className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+          />
+          <span className="text-sm text-gray-700">
+            I confirm this is my own original recipe and any photos are my own.
+          </span>
+        </label>
+
         {/* Submit */}
         <button
           onClick={handlePolish}
-          disabled={polishing}
+          disabled={polishing || !confirmed}
           className="w-full px-8 py-4 bg-primary text-white rounded-lg font-bold text-lg hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           {polishing ? 'Polishing your recipe...' : 'Polish & Preview \u2192'}
         </button>
+
+        <p className="text-xs text-gray-500">
+          By sharing your recipe, you confirm this is your own original work or your own adaptation, and that any photos are your own. Can I Cook It? is a community platform &mdash; if you believe any content on our site infringes your copyright, please let us know at{' '}
+          <a href="mailto:hello@canicookit.com" className="underline hover:text-gray-600">hello@canicookit.com</a>{' '}
+          and we will remove it promptly.
+        </p>
       </div>
     </div>
   );

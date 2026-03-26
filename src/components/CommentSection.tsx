@@ -157,6 +157,7 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
         <div className="space-y-4">
           {/* Photo Upload */}
           <PhotoUpload ref={photoRef} />
+          <p className="text-xs text-gray-500 -mt-2">Please only upload photos you took yourself.</p>
 
           {/* Name - show input for guests, plain text for logged-in users */}
           {user && displayName ? (
