@@ -61,6 +61,17 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
+
+      if (modResult.copyrightConcern) {
+        console.log('[Upload Photo] Photo rejected for copyright concern:', modResult.reason);
+        return NextResponse.json(
+          {
+            success: false,
+            error: "This image looks like it might not be your own photo. Please only upload photos you took yourself of your own cooking — we'd love to see the real thing!",
+          },
+          { status: 400 }
+        );
+      }
     } catch (modErr) {
       console.error('[Upload Photo] Moderation check failed:', modErr);
       // Continue — don't block uploads if moderation fails

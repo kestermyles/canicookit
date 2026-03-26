@@ -41,9 +41,9 @@ export function checkIngredientBlocklist(
 export async function moderatePhoto(
   imageBase64: string,
   mediaType: string
-): Promise<{ appropriate: boolean; reason?: string }> {
+): Promise<{ appropriate: boolean; copyrightConcern: boolean; reason?: string }> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return { appropriate: true }; // fail open if no key
+  if (!apiKey) return { appropriate: true, copyrightConcern: false };
 
   try {
     const response = await fetch(CLAUDE_API_URL, {
@@ -55,7 +55,7 @@ export async function moderatePhoto(
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 150,
+        max_tokens: 200,
         messages: [
           {
             role: 'user',
@@ -70,7 +70,7 @@ export async function moderatePhoto(
               },
               {
                 type: 'text',
-                text: 'Look at this image. Is it appropriate food/cooking content suitable for a family-friendly cooking website? Reply with JSON only: { "appropriate": true/false, "reason": "string" }. Flag as inappropriate if it contains: nudity, violence, gore, offensive content, non-food items being presented as food, or anything unsuitable for a general audience.',
+                text: 'Look at this image and check two things:\n1. Is it appropriate food/cooking content suitable for a family-friendly cooking website?\n2. Does it appear to be a professional stock photo, screenshot from a website, watermarked image, or someone else\'s published food photography (rather than a genuine home cook\'s own photo)?\n\nReply with JSON only: { "appropriate": true/false, "copyright_concern": true/false, "reason": "string" }\n\nFlag appropriate as false if it contains: nudity, violence, gore, offensive content, non-food items being presented as food, or anything unsuitable for a general audience.\n\nFlag copyright_concern as true if: the image has watermarks, looks like professional studio food photography, appears to be a screenshot, has text/logos overlaid, or otherwise doesn\'t look like a genuine home cook\'s own photo.',
               },
             ],
           },
@@ -80,7 +80,7 @@ export async function moderatePhoto(
 
     if (!response.ok) {
       console.error('[Photo Moderation] API error:', response.status);
-      return { appropriate: true }; // fail open
+      return { appropriate: true, copyrightConcern: false };
     }
 
     const data = await response.json();
@@ -92,10 +92,11 @@ export async function moderatePhoto(
     const result = JSON.parse(text);
     return {
       appropriate: result.appropriate === true,
+      copyrightConcern: result.copyright_concern === true,
       reason: result.reason,
     };
   } catch (err) {
     console.error('[Photo Moderation] Error:', err);
-    return { appropriate: true }; // fail open
+    return { appropriate: true, copyrightConcern: false };
   }
 }
