@@ -424,7 +424,7 @@ export default function ShareRecipePage() {
             className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
           />
           <span className="text-sm text-gray-700">
-            I confirm this is my own original recipe and any photos are my own.
+            I confirm this is my own original recipe, any photos are my own, and I am not copying someone else&apos;s work.
           </span>
         </label>
 
@@ -438,7 +438,11 @@ export default function ShareRecipePage() {
         </button>
 
         <p className="text-xs text-gray-500">
-          By sharing your recipe, you confirm this is your own original work or your own adaptation, and that any photos are your own. Can I Cook It? is a community platform &mdash; if you believe any content on our site infringes your copyright, please let us know at{' '}
+          By sharing you agree to our{' '}
+          <a href="/terms" className="underline hover:text-gray-600">Terms of Service</a>{' '}
+          and{' '}
+          <a href="/privacy" className="underline hover:text-gray-600">Privacy Policy</a>.
+          Can I Cook It? is a community platform &mdash; if you believe any content on our site infringes your copyright, please let us know at{' '}
           <a href="mailto:hello@canicookit.com" className="underline hover:text-gray-600">hello@canicookit.com</a>{' '}
           and we will remove it promptly.
         </p>
