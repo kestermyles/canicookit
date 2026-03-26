@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from './AuthModal';
-import { Menu, X, ChevronDown, UtensilsCrossed, BookOpen, ChefHat, GraduationCap, Flame, PenLine } from 'lucide-react';
+import { Menu, X, ChevronDown, UtensilsCrossed, BookOpen, ChefHat, Flame, PenLine } from 'lucide-react';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -112,16 +112,6 @@ export default function Header() {
               <PenLine className="w-4 h-4" />
               Share a Recipe
             </Link>
-            <Link
-              href="/basics"
-              className={`text-secondary hover:text-foreground transition-colors relative flex items-center gap-1.5 ${
-                isActive('/basics') ? 'after:absolute after:bottom-[-12px] after:left-0 after:right-0 after:h-0.5 after:bg-primary' : ''
-              }`}
-            >
-              <GraduationCap className="w-4 h-4" />
-              Kitchen Tips
-            </Link>
-
             {user ? (
               <div className="relative">
                 <button
@@ -262,16 +252,6 @@ export default function Header() {
             <PenLine className="w-5 h-5" />
             <span className="font-medium">Share a Recipe</span>
           </Link>
-          <Link
-            href="/basics"
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-              isActive('/basics') ? 'bg-orange-50 text-primary' : 'text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            <GraduationCap className="w-5 h-5" />
-            <span className="font-medium">Kitchen Tips</span>
-          </Link>
-
           {/* Auth Buttons */}
           <div className="mt-6 pt-6 border-t space-y-3">
             {user ? (

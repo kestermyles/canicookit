@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getFeaturedGuides, searchGuides, GuideRow, supabase } from '@/lib/supabase';
+import CookingQA from '@/components/CookingQA';
 import {
   BookOpen,
   AlertCircle,
@@ -41,7 +42,7 @@ import {
 } from 'lucide-react';
 
 const GUIDES_PER_PAGE = 6;
-const CATEGORIES = ['All', 'Techniques', 'Ingredients', 'Hosting', 'Getting Started', 'Kitchen Skills'];
+const CATEGORIES = ['All', 'Techniques', 'Ingredients', 'Hosting', 'Getting Started', 'Kitchen Skills', 'Kitchen Basics'];
 
 // Map guide slugs to specific contextual Lucide icons
 function getGuideIcon(slug: string) {
@@ -284,6 +285,9 @@ export default function GuidesPage() {
               <p className="text-sm text-gray-500 mt-2">Searching...</p>
             )}
           </div>
+
+          {/* Quick Cooking Q&A */}
+          <CookingQA />
 
           {/* Category Filter Pills */}
           {!searchQuery && (
