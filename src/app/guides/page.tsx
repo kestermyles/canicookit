@@ -251,43 +251,55 @@ export default function GuidesPage() {
             confidence.
           </p>
 
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mb-8">
-            <div className="relative">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="What do you want to know? e.g. 'how to debone a chicken', 'what is deglazing'"
-                className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-full focus:outline-none focus:border-primary transition-colors pr-12"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSearchResults([]);
-                  }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  aria-label="Clear search"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
+          {/* Search + Q&A Side by Side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-5xl mx-auto relative text-left">
+            {/* Left: Guide Search */}
+            <div className="h-full bg-white border border-gray-200 rounded-xl p-6">
+              <h2 className="text-lg font-bold mb-1">Find a guide</h2>
+              <p className="text-sm text-secondary mb-3">Search our library of cooking guides</p>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="e.g. 'how to debone a chicken', 'what is deglazing'"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-10"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSearchResults([]);
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    aria-label="Clear search"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                )}
+              </div>
+              {isSearching && (
+                <p className="text-sm text-gray-500 mt-2">Searching...</p>
               )}
             </div>
-            {isSearching && (
-              <p className="text-sm text-gray-500 mt-2">Searching...</p>
-            )}
-          </div>
 
-          {/* Quick Cooking Q&A */}
-          <CookingQA />
+            {/* "or" divider — desktop only */}
+            <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+              <span className="bg-white border border-gray-200 text-gray-400 text-sm font-medium rounded-full w-10 h-10 flex items-center justify-center shadow-sm">
+                or
+              </span>
+            </div>
+
+            {/* Right: Cooking Q&A */}
+            <CookingQA />
+          </div>
 
           {/* Category Filter Pills */}
           {!searchQuery && (

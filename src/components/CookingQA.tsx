@@ -66,8 +66,9 @@ export default function CookingQA() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mb-8 bg-orange-50 border border-orange-200 rounded-xl p-6">
-      <h2 className="text-lg font-bold mb-3">Quick Cooking Question?</h2>
+    <div className="h-full bg-orange-50 border border-orange-200 rounded-xl p-6 text-left">
+      <h2 className="text-lg font-bold mb-1">Ask anything about cooking</h2>
+      <p className="text-sm text-secondary mb-3">Get an instant answer from our AI assistant</p>
 
       <div className="flex gap-2">
         <div className="relative flex-1">
