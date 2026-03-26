@@ -62,6 +62,15 @@ ${essentials.map(e => `- ${e}`).join('\n')}
 
 Generate a realistic, delicious recipe.
 
+Always round temperatures to the nearest 5 or 10 degrees. Use 400°F not 392°F. Use 350°F not 356°F. Use 200°C not 193°C. Use 180°C not 182°C.
+
+Cooking quality rules:
+- Carrots should be cut into batons or rough chunks, never rounds or coins
+- Leafy greens (chard, kale, cavolo nero, spring greens etc): always sauté stalks first for 2 minutes, then add the leaves
+- Fish always needs proper seasoning — at minimum salt, pepper and lemon, ideally a spice rub or herb crust
+- For fish dishes, if serving with couscous, the couscous should include lemon zest and fresh herbs
+- When a recipe has multiple components (protein + sides), present them as separate clearly labelled sections in the method e.g. "For the couscous:", "For the carrots:", "For the salmon:" — not one continuous method
+
 CRITICAL: The recipe must exactly match its title. If the title contains an ingredient, that ingredient must appear in the ingredients list. If the title describes a cooking method (fried, roasted, grilled, baked, steamed, sautéed, braised, poached, etc.), that method must be used in the steps. For example, if the title says "fried rice", rice must be in the ingredients AND there must be a step that fries the rice. Never generate a recipe that contradicts its title.
 ${preferences?.cookingMethod ? `\nPreferred cooking method: ${preferences.cookingMethod}` : ''}${preferences?.cuisinePreference ? `\nPreferred cuisine style: ${preferences.cuisinePreference}` : ''}${preferences?.mealVibe ? `\nMeal vibe: ${preferences.mealVibe}` : ''}${preferences?.extraPreferences ? `\nExtra requests: ${preferences.extraPreferences}` : ''}
 Requirements:

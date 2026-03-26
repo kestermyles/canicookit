@@ -90,6 +90,9 @@ export const PANTRY_ESSENTIALS = [
   'tinned coconut milk',
   'stock (cubes, homemade, whatever you have)',
 
+  // Jarred extras
+  'capers (optional, great with fish and pasta)',
+
   // Condiments & sauces
   'dijon mustard (or any mustard)',
   'worcestershire sauce',

@@ -25,7 +25,7 @@ const PANTRY_CATEGORIES = [
   { label: 'Sweeteners', items: ['sugar (white or brown)', 'honey'] },
   { label: 'Dry Goods', items: ['plain flour (all-purpose)', 'rice (any variety)', 'pasta (any shape)'] },
   { label: 'Eggs & Dairy', items: ['eggs', 'milk (any kind)'] },
-  { label: 'Tinned & Jarred', items: ['tinned tomatoes (chopped or whole)', 'tomato paste (also called tomato puree)', 'tinned coconut milk', 'stock (cubes, homemade, whatever you have)'] },
+  { label: 'Tinned & Jarred', items: ['tinned tomatoes (chopped or whole)', 'tomato paste (also called tomato puree)', 'tinned coconut milk', 'stock (cubes, homemade, whatever you have)', 'capers (optional, great with fish and pasta)'] },
   { label: 'Condiments & Sauces', items: ['dijon mustard (or any mustard)', 'worcestershire sauce', 'hot sauce (optional, any brand)', 'soy sauce (or tamari/coconut aminos)'] },
   { label: 'Spices', items: ['smoked paprika (or regular paprika)', 'cumin (ground)', 'garlic powder', 'dried mixed herbs (oregano, thyme, basil etc)'] },
 ];
