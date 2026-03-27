@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateRecipe } from '@/lib/claude';
-import { createRecipe, updateRecipePhoto } from '@/lib/supabase';
+import { supabase, createRecipe, updateRecipePhoto } from '@/lib/supabase';
 import { validateGeneratedRecipe, validateUserInput } from '@/lib/validation';
 import { scoreRecipe } from '@/lib/scoring';
 import { generateRecipeImage, downloadAndUploadImage } from '@/lib/imageGeneration';
@@ -235,6 +235,20 @@ async function handleSaveRecipe(
   }
 
   try {
+    // Check for existing recipe with the same title to prevent duplicates
+    const existing = await supabase
+      .from('generated_recipes')
+      .select('slug')
+      .eq('title', recipe.title)
+      .single();
+
+    if (existing.data) {
+      return NextResponse.json({
+        success: true,
+        slug: existing.data.slug,
+      });
+    }
+
     // Generate slug from title
     let slug = recipe.title
       .toLowerCase()
