@@ -69,24 +69,25 @@ export default async function FilterPage({ params }: PageProps) {
       <RecipeFilterBar activeFilter={params.filter} />
 
       {recipes.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+        <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
           {recipes.map((recipe) => (
-            <RecipeCard
-              key={recipe.slug}
-              title={recipe.title}
-              slug={recipe.slug}
-              cuisine={recipe.cuisine}
-              description={recipe.description}
-              heroImage={recipe.heroImage}
-              prepTime={recipe.prepTime}
-              cookTime={recipe.cookTime}
-              difficulty={recipe.difficulty}
-              calories={recipe.calories}
-              source={recipe.source}
-              qualityScore={recipe.quality_score}
-              status={recipe.status}
-              photoIsAiGenerated={recipe.photo_is_ai_generated}
-            />
+            <div key={recipe.slug} className="break-inside-avoid mb-6">
+              <RecipeCard
+                title={recipe.title}
+                slug={recipe.slug}
+                cuisine={recipe.cuisine}
+                description={recipe.description}
+                heroImage={recipe.heroImage}
+                prepTime={recipe.prepTime}
+                cookTime={recipe.cookTime}
+                difficulty={recipe.difficulty}
+                calories={recipe.calories}
+                source={recipe.source}
+                qualityScore={recipe.quality_score}
+                status={recipe.status}
+                photoIsAiGenerated={recipe.photo_is_ai_generated}
+              />
+            </div>
           ))}
         </div>
       ) : (

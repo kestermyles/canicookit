@@ -34,39 +34,10 @@ export default async function RecipesPage() {
             return (
               <>
                 {withImage.length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
+                  <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
                     {withImage.map((recipe) => (
-                      <RecipeCard
-                        key={`${recipe.cuisine}-${recipe.slug}`}
-                        title={recipe.title}
-                        slug={recipe.slug}
-                        cuisine={recipe.cuisine}
-                        description={recipe.description}
-                        heroImage={recipe.heroImage}
-                        prepTime={recipe.prepTime}
-                        cookTime={recipe.cookTime}
-                        difficulty={recipe.difficulty}
-                        calories={recipe.calories}
-                        source={recipe.source}
-                        qualityScore={recipe.quality_score}
-                        status={recipe.status}
-                        photoIsAiGenerated={recipe.photo_is_ai_generated}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                {/* Recipes without photos */}
-                {withoutImage.length > 0 && (
-                  <>
-                    <div className="mt-12 mb-8 border-t border-gray-200 pt-8">
-                      <h2 className="text-xl font-semibold text-gray-500">Be the first to cook this!</h2>
-                      <p className="text-sm text-secondary mt-1">These recipes are waiting for someone to bring them to life with a photo.</p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-                      {withoutImage.map((recipe) => (
+                      <div key={`${recipe.cuisine}-${recipe.slug}`} className="break-inside-avoid mb-6">
                         <RecipeCard
-                          key={`${recipe.cuisine}-${recipe.slug}`}
                           title={recipe.title}
                           slug={recipe.slug}
                           cuisine={recipe.cuisine}
@@ -81,6 +52,37 @@ export default async function RecipesPage() {
                           status={recipe.status}
                           photoIsAiGenerated={recipe.photo_is_ai_generated}
                         />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Recipes without photos */}
+                {withoutImage.length > 0 && (
+                  <>
+                    <div className="mt-12 mb-8 border-t border-gray-200 pt-8">
+                      <h2 className="text-xl font-semibold text-gray-500">Be the first to cook this!</h2>
+                      <p className="text-sm text-secondary mt-1">These recipes are waiting for someone to bring them to life with a photo.</p>
+                    </div>
+                    <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
+                      {withoutImage.map((recipe) => (
+                        <div key={`${recipe.cuisine}-${recipe.slug}`} className="break-inside-avoid mb-6">
+                          <RecipeCard
+                            title={recipe.title}
+                            slug={recipe.slug}
+                            cuisine={recipe.cuisine}
+                            description={recipe.description}
+                            heroImage={recipe.heroImage}
+                            prepTime={recipe.prepTime}
+                            cookTime={recipe.cookTime}
+                            difficulty={recipe.difficulty}
+                            calories={recipe.calories}
+                            source={recipe.source}
+                            qualityScore={recipe.quality_score}
+                            status={recipe.status}
+                            photoIsAiGenerated={recipe.photo_is_ai_generated}
+                          />
+                        </div>
                       ))}
                     </div>
                   </>
