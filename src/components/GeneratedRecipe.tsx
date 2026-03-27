@@ -98,51 +98,21 @@ export default function GeneratedRecipe({
           </div>
         </div>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col items-center gap-3">
-          <button
-            onClick={onSave}
-            disabled={isSaving}
-            className="px-10 py-4 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-bold text-xl shadow-lg"
-          >
-            {isSaving ? (
-              <span className="flex items-center gap-2">
-                <svg
-                  className="animate-spin h-5 w-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                Saving...
-              </span>
-            ) : (
-              'Yum! Can I Cook It? →'
-            )}
-          </button>
+        {/* Ingredients */}
+        <div className="mb-6">
+          <h2 className="text-lg font-bold mb-3">Ingredients</h2>
+          <ul className="space-y-1.5">
+            {recipe.ingredients.map((ing, i) => (
+              <li key={i} className="text-sm text-gray-700 flex items-start gap-2">
+                <span className="text-primary mt-0.5">•</span>
+                {ing}
+              </li>
+            ))}
+          </ul>
+        </div>
 
-          <CookItMyWay
-            originalTitle={recipe.title}
-            originalDescription={recipe.description}
-            originalIngredients={recipe.ingredients}
-            originalMethod={recipe.method || []}
-            defaultName={userName}
-          />
-
-          {/* Shopping List Email */}
+        {/* Shopping List Email — right below ingredients */}
+        <div className="mb-8">
           {emailSent ? (
             <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -158,7 +128,7 @@ export default function GeneratedRecipe({
               Send me the shopping list &rarr;
             </button>
           ) : (
-            <div className="w-full max-w-sm text-left bg-gray-50 border border-gray-200 rounded-xl p-4 mt-1">
+            <div className="max-w-sm bg-gray-50 border border-gray-200 rounded-xl p-4">
               <p className="text-sm font-semibold text-gray-800 mb-3">Get your shopping list by email</p>
               <input
                 type="email"
@@ -221,6 +191,51 @@ export default function GeneratedRecipe({
               </p>
             </div>
           )}
+        </div>
+
+        {/* CTA Buttons */}
+        <div className="flex flex-col items-center gap-3">
+          <button
+            onClick={onSave}
+            disabled={isSaving}
+            className="px-10 py-4 bg-primary text-white rounded-full hover:bg-orange-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed font-bold text-xl shadow-lg"
+          >
+            {isSaving ? (
+              <span className="flex items-center gap-2">
+                <svg
+                  className="animate-spin h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
+                </svg>
+                Saving...
+              </span>
+            ) : (
+              'Yum! Can I Cook It? →'
+            )}
+          </button>
+
+          <CookItMyWay
+            originalTitle={recipe.title}
+            originalDescription={recipe.description}
+            originalIngredients={recipe.ingredients}
+            originalMethod={recipe.method || []}
+            defaultName={userName}
+          />
         </div>
       </div>
     </div>
