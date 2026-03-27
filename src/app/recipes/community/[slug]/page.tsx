@@ -1,6 +1,7 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { Metadata } from 'next';
 import { getRecipeBySlug as getDbRecipeBySlug, dbRowToRecipe } from '@/lib/supabase';
+import { getAllRecipesSync } from '@/lib/recipes';
 import CommunityBadge from '@/components/CommunityBadge';
 import CommentSection from '@/components/CommentSection';
 import StarRating from '@/components/StarRating';
@@ -22,6 +23,10 @@ export const revalidate = 60; // Revalidate every 60 seconds
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
+  // Don't generate metadata for slugs that have a curated version
+  const curatedRecipes = getAllRecipesSync();
+  if (curatedRecipes.some((r) => r.slug === params.slug)) return {};
+
   const dbRecipe = await getDbRecipeBySlug(params.slug);
   if (!dbRecipe) return {};
 
@@ -71,6 +76,13 @@ function formatLabel(s: string): string {
 }
 
 export default async function CommunityRecipePage({ params }: PageProps) {
+  // If a curated recipe exists with this slug, redirect to it
+  const curatedRecipes = getAllRecipesSync();
+  const curatedMatch = curatedRecipes.find((r) => r.slug === params.slug);
+  if (curatedMatch) {
+    redirect(`/recipes/${curatedMatch.cuisine}/${curatedMatch.slug}`);
+  }
+
   const dbRecipe = await getDbRecipeBySlug(params.slug);
 
   if (!dbRecipe) notFound();
@@ -254,7 +266,14 @@ export default async function CommunityRecipePage({ params }: PageProps) {
           methodHtml={recipe.contentHtml}
         />
 
-        {/* Cook it My Way */}
+        {/* Recipe Q&A */}
+        <RecipeQA
+          recipeTitle={recipe.title}
+          recipeDescription={recipe.description}
+          ingredients={recipe.ingredients}
+        />
+
+        {/* Cook it My Way — after all recipe content */}
         <div className="mt-8 flex justify-center">
           <CookItMyWay
             originalSlug={params.slug}
@@ -264,13 +283,6 @@ export default async function CommunityRecipePage({ params }: PageProps) {
             originalMethod={dbRecipe.method}
           />
         </div>
-
-        {/* Recipe Q&A */}
-        <RecipeQA
-          recipeTitle={recipe.title}
-          recipeDescription={recipe.description}
-          ingredients={recipe.ingredients}
-        />
 
         {/* Nutrition */}
         <section className="mt-12">

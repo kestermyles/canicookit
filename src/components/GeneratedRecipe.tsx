@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { GeneratedRecipeData } from '@/types/generator';
 import CookItMyWay from './CookItMyWay';
 
@@ -7,6 +10,8 @@ interface GeneratedRecipeProps {
   isSaving: boolean;
   isLoggedIn?: boolean;
   userName?: string;
+  userEmail?: string;
+  savedSlug?: string | null;
 }
 
 function formatLabel(s: string): string {
@@ -21,8 +26,16 @@ export default function GeneratedRecipe({
   onSave,
   isSaving,
   userName,
+  userEmail,
+  savedSlug,
 }: GeneratedRecipeProps) {
   const totalTime = recipe.prepTime + recipe.cookTime;
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [emailAddress, setEmailAddress] = useState(userEmail || '');
+  const [subscribeToNewsletter, setSubscribeToNewsletter] = useState(true);
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailError, setEmailError] = useState('');
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -128,6 +141,86 @@ export default function GeneratedRecipe({
             originalMethod={recipe.method || []}
             defaultName={userName}
           />
+
+          {/* Shopping List Email */}
+          {emailSent ? (
+            <div className="flex items-center gap-2 text-green-600 text-sm font-medium">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              Done! Check your inbox 📬
+            </div>
+          ) : !showEmailForm ? (
+            <button
+              onClick={() => setShowEmailForm(true)}
+              className="px-6 py-2.5 border border-gray-300 text-gray-500 bg-white rounded-full hover:border-gray-400 hover:text-gray-700 transition-colors font-medium text-sm"
+            >
+              Send me the shopping list &rarr;
+            </button>
+          ) : (
+            <div className="w-full max-w-sm text-left bg-gray-50 border border-gray-200 rounded-xl p-4 mt-1">
+              <p className="text-sm font-semibold text-gray-800 mb-3">Get your shopping list by email</p>
+              <input
+                type="email"
+                value={emailAddress}
+                onChange={(e) => setEmailAddress(e.target.value)}
+                placeholder="your@email.com"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                disabled={emailSending}
+              />
+              <label className="flex items-start gap-2 mt-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={subscribeToNewsletter}
+                  onChange={(e) => setSubscribeToNewsletter(e.target.checked)}
+                  className="mt-0.5 rounded border-gray-300 text-primary focus:ring-primary"
+                  disabled={emailSending}
+                />
+                <span className="text-xs text-gray-600 leading-snug">
+                  Keep me updated with recipes and news from Can I Cook It?
+                </span>
+              </label>
+              {emailError && (
+                <p className="mt-2 text-xs text-red-600">{emailError}</p>
+              )}
+              <button
+                onClick={async () => {
+                  if (!emailAddress.trim()) return;
+                  setEmailSending(true);
+                  setEmailError('');
+                  try {
+                    const res = await fetch('/api/send-shopping-list', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        email: emailAddress.trim(),
+                        recipeTitle: recipe.title,
+                        ingredients: recipe.ingredients,
+                        recipeSlug: savedSlug || null,
+                        subscribeToNewsletter,
+                      }),
+                    });
+                    const data = await res.json();
+                    if (!res.ok || data.error) {
+                      throw new Error(data.error || 'Failed to send');
+                    }
+                    setEmailSent(true);
+                  } catch {
+                    setEmailError('Something went wrong — please try again.');
+                  } finally {
+                    setEmailSending(false);
+                  }
+                }}
+                disabled={emailSending || !emailAddress.trim()}
+                className="mt-3 w-full px-4 py-2.5 bg-primary text-white rounded-lg font-medium text-sm hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              >
+                {emailSending ? 'Sending...' : 'Send it →'}
+              </button>
+              <p className="mt-2 text-xs text-gray-400 text-center">
+                We&apos;ll never spam you. Unsubscribe any time.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

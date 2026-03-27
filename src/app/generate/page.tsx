@@ -655,6 +655,8 @@ export default function GeneratePage() {
               isSaving={isSaving}
               isLoggedIn={!!user}
               userName={user?.user_metadata?.username || user?.user_metadata?.name || user?.email?.split('@')[0] || ''}
+              userEmail={user?.email || ''}
+              savedSlug={savedSlug}
             />
 
             {savedSlug && (
