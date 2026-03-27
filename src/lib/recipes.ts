@@ -168,8 +168,11 @@ export async function getRecipeBySlug(
 
 export async function getRecipesByCuisine(cuisine: string): Promise<Recipe[]> {
   const recipes = await getAllRecipes();
+  const lowerCuisine = cuisine.toLowerCase();
   return recipes.filter(
-    (r) => r.cuisine.toLowerCase() === cuisine.toLowerCase()
+    (r) =>
+      r.cuisine.toLowerCase() === lowerCuisine ||
+      (r.tags && r.tags.some((t) => t.toLowerCase() === lowerCuisine))
   );
 }
 

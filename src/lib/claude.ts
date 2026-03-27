@@ -85,6 +85,7 @@ Requirements:
 - Student kitchen: true if doable with basic equipment (pot, pan, knife, spoon)
 - Method: Clear numbered steps
 - Cuisine should be "generated" for generated recipes
+- Always include the cuisine type as a tag (e.g. 'italian', 'asian', 'mexican', 'british', 'french', 'indian', 'american') so recipes appear in the correct cuisine section
 - Include 3-4 optional "flavour boosters" — spices, seasonings, or condiments that would elevate the dish based on the cuisine and ingredients (e.g. for Asian: sesame oil, chilli flakes, ginger). These are suggestions the user might add, not required.
 
 Return ONLY valid JSON (no markdown, no preamble, no code blocks):
@@ -108,7 +109,7 @@ Return ONLY valid JSON (no markdown, no preamble, no code blocks):
   "dairyFree": true,
   "glutenFree": false,
   "studentKitchen": true,
-  "tags": ["main", "dinner"]
+  "tags": ["italian", "main", "dinner"]
 }`;
 
   try {
