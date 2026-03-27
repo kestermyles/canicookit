@@ -493,7 +493,7 @@ export default function GuidesPage() {
                     {guide.title}
                   </h2>
                   {GUIDE_HOOKS[guide.slug] && (
-                    <p className="text-sm italic text-gray-500 mb-2 font-handwritten text-base">
+                    <p className="text-base italic font-medium text-gray-500 mb-2 font-handwritten">
                       {GUIDE_HOOKS[guide.slug]}
                     </p>
                   )}
