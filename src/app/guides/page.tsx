@@ -56,6 +56,17 @@ const GUIDE_SEARCH_PLACEHOLDERS = [
 ];
 const CATEGORIES = ['All', 'Techniques', 'Ingredients', 'Hosting', 'Getting Started', 'Kitchen Skills', 'Kitchen Basics'];
 
+// Hook sentences for existing guides
+const GUIDE_HOOKS: Record<string, string> = {
+  'grazing-table': "The secret to a spread that looks effortless but isn't.",
+  'set-dinner-table': 'Because presentation is half the meal.',
+  'dinner-party-budget': "Impressive food doesn't have to cost a fortune.",
+  'caramelise-onions': 'The most transformative 45 minutes in cooking.',
+  'perfect-rice': 'Never soggy, never crunchy. Finally.',
+  'store-fresh-herbs': 'Keep them alive for weeks, not days.',
+  'cook-for-crowd-without-stress': 'Feed 10+ people and actually enjoy the evening.',
+};
+
 // Map guide slugs to specific contextual Lucide icons
 function getGuideIcon(slug: string) {
   // Slug-based mapping (most specific)
@@ -361,11 +372,11 @@ export default function GuidesPage() {
                 <BookOpen className="w-16 h-16 text-primary" />
               </div>
               <h2 className="text-2xl font-bold mb-3">
-                We don't have a guide for that yet
+                We haven&apos;t written that one yet
               </h2>
               <p className="text-secondary mb-6">
-                Want us to create one? We'll build a comprehensive guide
-                about "{searchQuery}" just for you.
+                But ask us below and we&apos;ll get on it! We&apos;ll build a comprehensive guide
+                about &ldquo;{searchQuery}&rdquo; just for you.
               </p>
 
               {error && (
@@ -478,9 +489,14 @@ export default function GuidesPage() {
                       </span>
                     </div>
                   </div>
-                  <h2 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors font-display">
+                  <h2 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors font-display">
                     {guide.title}
                   </h2>
+                  {GUIDE_HOOKS[guide.slug] && (
+                    <p className="text-sm italic text-gray-500 mb-2 font-handwritten text-base">
+                      {GUIDE_HOOKS[guide.slug]}
+                    </p>
+                  )}
                   <p className="text-secondary text-sm mb-4 line-clamp-2">
                     {guide.description}
                   </p>

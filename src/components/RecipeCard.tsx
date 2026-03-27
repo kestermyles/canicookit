@@ -19,6 +19,16 @@ interface RecipeCardProps {
   qualityScore?: number;
   status?: 'pending' | 'featured' | 'rejected';
   photoIsAiGenerated?: boolean;
+  authorName?: string;
+}
+
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
 }
 
 function RecipeImage({ src, alt, isAiGenerated }: { src: string; alt: string; isAiGenerated?: boolean }) {
@@ -131,6 +141,7 @@ export default function RecipeCard({
   qualityScore,
   status,
   photoIsAiGenerated = false,
+  authorName,
 }: RecipeCardProps) {
   const totalTime = prepTime + cookTime;
   const isCommunity = source === 'community';
@@ -157,6 +168,16 @@ export default function RecipeCard({
         <h3 className="mt-2 text-lg font-semibold text-foreground group-hover:text-primary transition-colors font-display">
           {title}
         </h3>
+
+        {/* Contributor attribution */}
+        {authorName && (
+          <div className="flex items-center gap-2 mt-1.5">
+            <span className="w-6 h-6 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0">
+              {getInitials(authorName)}
+            </span>
+            <span className="text-xs text-secondary">Shared by {authorName}</span>
+          </div>
+        )}
 
         {/* Star rating display */}
         <div className="mt-1.5">

@@ -90,7 +90,7 @@ export default async function RecipesPage() {
           })()}
         </>
       ) : (
-        <p className="text-secondary">No recipes found.</p>
+        <p className="text-secondary">Nothing here yet — but that could change today.</p>
       )}
     </div>
   );

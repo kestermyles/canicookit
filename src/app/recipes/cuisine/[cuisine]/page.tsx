@@ -59,7 +59,7 @@ export default async function CuisinePage({ params }: PageProps) {
         </div>
       ) : (
         <p className="text-secondary">
-          No recipes found for this cuisine yet.
+          Nothing here yet — fancy sharing one?
         </p>
       )}
     </div>

@@ -277,6 +277,31 @@ export async function getAllCommunityRecipes(): Promise<GeneratedRecipeRow[]> {
 }
 
 /**
+ * Get recent community recipes with real (non-AI) photos
+ */
+export async function getRecentCommunityPhotos(limit = 6): Promise<GeneratedRecipeRow[]> {
+  try {
+    const { data, error } = await supabase
+      .from('generated_recipes')
+      .select('*')
+      .not('photo_url', 'is', null)
+      .eq('photo_is_ai_generated', false)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error('Error fetching community photos:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in getRecentCommunityPhotos:', error);
+    return [];
+  }
+}
+
+/**
  * Get all recipe slugs that have at least one approved photo
  */
 export async function getSlugsWithApprovedPhotos(): Promise<Set<string>> {

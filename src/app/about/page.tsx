@@ -33,7 +33,7 @@ export default function AboutPage() {
           <h1 className="text-3xl md:text-4xl font-bold mb-3 font-display">
             About Can I Cook It?
           </h1>
-          <p className="text-lg text-secondary mb-8">
+          <p className="text-2xl text-secondary mb-8 font-handwritten">
             Real cooking. Real people. Real results.
           </p>
 
@@ -81,7 +81,7 @@ export default function AboutPage() {
               love that even more. Food is for everyone. So is this.
             </p>
 
-            <p className="text-lg italic pt-4">— Kester</p>
+            <p className="text-2xl pt-4 font-handwritten">— Kester</p>
           </div>
         </div>
       </div>

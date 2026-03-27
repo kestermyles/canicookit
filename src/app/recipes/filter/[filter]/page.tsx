@@ -91,7 +91,7 @@ export default async function FilterPage({ params }: PageProps) {
         </div>
       ) : (
         <p className="text-secondary">
-          No {label.toLowerCase()} recipes yet.
+          No {label.toLowerCase()} recipes yet — fancy sharing one?
         </p>
       )}
     </div>

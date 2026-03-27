@@ -240,7 +240,7 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
           </div>
         ) : comments.length === 0 ? (
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-            <p className="text-gray-600">No comments yet. Be the first to comment!</p>
+            <p className="text-gray-600">Nobody&apos;s cooked this yet — be the first and tell us how it went!</p>
           </div>
         ) : (
           <div className="space-y-4">

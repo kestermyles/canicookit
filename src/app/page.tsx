@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getAllRecipes, getAllCuisines, getPopularIngredients } from '@/lib/recipes';
-import { getSlugsWithApprovedPhotos } from '@/lib/supabase';
+import { getSlugsWithApprovedPhotos, getRecentCommunityPhotos } from '@/lib/supabase';
 import RecipeCard from '@/components/RecipeCard';
 import SearchBar from '@/components/SearchBar';
 import QuickFilterBar from '@/components/QuickFilterBar';
@@ -26,6 +26,9 @@ export default async function HomePage() {
 
   // Get slugs that have approved photos in recipe_photos
   const slugsWithPhotos = await getSlugsWithApprovedPhotos();
+
+  // Get recent community recipes with real photos for the community strip
+  const communityPhotos = await getRecentCommunityPhotos(6);
 
   // Helper: check if a recipe is eligible for featured/hero display
   // Must have a real (non-AI) hero image.
@@ -108,8 +111,8 @@ export default async function HomePage() {
           <p className="text-foreground/70 text-xl mb-4 max-w-2xl mx-auto">
             Tell us what you've got — we'll build something delicious.
           </p>
-          <p className="text-secondary text-lg mb-8 max-w-md mx-auto">
-            Great recipes. Great cooks. Great food.
+          <p className="text-secondary text-2xl mb-8 max-w-md mx-auto font-handwritten">
+            Real cooking. Real people. Real results.
           </p>
           <div className="max-w-2xl mx-auto">
             <SearchBar recipes={searchIndex} />
@@ -207,6 +210,37 @@ export default async function HomePage() {
         </section>
       )}
 
+      {/* Fresh from the Community */}
+      {communityPhotos.length > 0 && (
+        <div className="max-w-6xl mx-auto px-4 mb-12">
+          <h2 className="text-2xl font-bold mb-6 font-handwritten text-3xl">Fresh from the community</h2>
+          <div className="flex gap-4 overflow-x-auto scrollbar-hide md:grid md:grid-cols-3 lg:grid-cols-6 md:overflow-visible">
+            {communityPhotos.map((recipe) => (
+              <Link
+                key={recipe.slug}
+                href={`/recipes/community/${recipe.slug}`}
+                className="group shrink-0 w-40 md:w-auto"
+              >
+                <div className="aspect-square rounded-xl overflow-hidden bg-light-grey mb-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={recipe.photo_url!}
+                    alt={recipe.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <p className="text-sm font-medium text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                  {recipe.title}
+                </p>
+                {recipe.user_name && (
+                  <p className="text-xs text-secondary">{recipe.user_name}</p>
+                )}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Masonry/Pinterest-Style Recipe Grid */}
       <div className="max-w-6xl mx-auto px-4">
         {/* Quick Filter Bar */}
@@ -218,13 +252,13 @@ export default async function HomePage() {
             <div className="columns-1 md:columns-2 lg:columns-3 gap-4">
               {recipes.slice(0, 3).map((recipe, index) => (
                 <div key={`${recipe.source || 'curated'}-${recipe.slug}`} className="break-inside-avoid mb-4">
-                  <RecipeCard {...recipe} photoIsAiGenerated={recipe.photo_is_ai_generated} />
+                  <RecipeCard {...recipe} photoIsAiGenerated={recipe.photo_is_ai_generated} authorName={recipe.user_metadata?.name} />
                 </div>
               ))}
 
               {recipes.slice(3).map((recipe) => (
                 <div key={`${recipe.source || 'curated'}-${recipe.slug}`} className="break-inside-avoid mb-4">
-                  <RecipeCard {...recipe} photoIsAiGenerated={recipe.photo_is_ai_generated} />
+                  <RecipeCard {...recipe} photoIsAiGenerated={recipe.photo_is_ai_generated} authorName={recipe.user_metadata?.name} />
                 </div>
               ))}
             </div>
