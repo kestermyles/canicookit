@@ -34,7 +34,7 @@ export default async function RecipesPage() {
             return (
               <>
                 {withImage.length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                     {withImage.map((recipe) => (
                       <RecipeCard
                         key={`${recipe.cuisine}-${recipe.slug}`}
@@ -63,7 +63,7 @@ export default async function RecipesPage() {
                       <h2 className="text-xl font-semibold text-gray-500">Be the first to cook this!</h2>
                       <p className="text-sm text-secondary mt-1">These recipes are waiting for someone to bring them to life with a photo.</p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                       {withoutImage.map((recipe) => (
                         <RecipeCard
                           key={`${recipe.cuisine}-${recipe.slug}`}
