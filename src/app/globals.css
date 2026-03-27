@@ -30,9 +30,9 @@
 
   .font-handwritten {
     font-family: 'Caveat', cursive;
-    font-weight: 500;
-    font-size: 1.2em;
-    letter-spacing: 0.02em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
 
   .recipe-content h2 {
