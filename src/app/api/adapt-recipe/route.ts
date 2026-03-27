@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createRecipe, getRecipePhotos, getComments, deleteRecipe } from '@/lib/supabase';
+import { supabase, createRecipe, getRecipePhotos, getComments, deleteRecipe } from '@/lib/supabase';
 
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 const CLAUDE_MODEL = 'claude-sonnet-4-6';
@@ -115,6 +115,17 @@ Return ONLY valid JSON (no markdown, no preamble, no code blocks):
     }
 
     const recipe = JSON.parse(jsonText);
+
+    // Check for existing recipe with the same title to prevent duplicates
+    const { data: existing } = await supabase
+      .from('generated_recipes')
+      .select('slug')
+      .eq('title', recipe.title)
+      .maybeSingle();
+
+    if (existing) {
+      return NextResponse.json({ success: true, slug: existing.slug });
+    }
 
     // Generate slug
     const timestamp = Date.now().toString(36);

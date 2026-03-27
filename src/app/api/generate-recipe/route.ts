@@ -236,16 +236,16 @@ async function handleSaveRecipe(
 
   try {
     // Check for existing recipe with the same title to prevent duplicates
-    const existing = await supabase
+    const { data: existing } = await supabase
       .from('generated_recipes')
-      .select('slug')
+      .select('slug, photo_url, quality_score')
       .eq('title', recipe.title)
-      .single();
+      .maybeSingle();
 
-    if (existing.data) {
+    if (existing) {
       return NextResponse.json({
         success: true,
-        slug: existing.data.slug,
+        slug: existing.slug,
       });
     }
 

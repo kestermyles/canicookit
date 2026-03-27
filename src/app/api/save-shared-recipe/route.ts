@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createRecipe, uploadPhoto, updateRecipePhoto } from '@/lib/supabase';
+import { supabase, createRecipe, uploadPhoto, updateRecipePhoto } from '@/lib/supabase';
 
 function slugify(text: string): string {
   return text
@@ -44,6 +44,17 @@ export async function POST(request: Request) {
       .map((s) => s.trim())
       .filter((s) => s)
       .map((s) => s.replace(/^\d+\.\s*/, ''));
+
+    // Check for existing recipe with the same title to prevent duplicates
+    const { data: existing } = await supabase
+      .from('generated_recipes')
+      .select('slug')
+      .eq('title', title)
+      .maybeSingle();
+
+    if (existing) {
+      return NextResponse.json({ success: true, slug: existing.slug });
+    }
 
     // Generate slug
     const timestamp = Date.now().toString(36);
