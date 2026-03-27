@@ -213,7 +213,7 @@ export default async function HomePage() {
       {/* Fresh from the Community */}
       {communityPhotos.length > 0 && (
         <div className="max-w-6xl mx-auto px-4 mb-12">
-          <h2 className="text-2xl font-bold mb-6 font-handwritten text-3xl">Fresh from the community</h2>
+          <h2 className="text-2xl font-bold mb-6">Fresh from the community</h2>
           <div className="flex gap-4 overflow-x-auto scrollbar-hide md:grid md:grid-cols-3 lg:grid-cols-6 md:overflow-visible">
             {communityPhotos.map((recipe) => (
               <Link
