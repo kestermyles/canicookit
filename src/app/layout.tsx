@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import Script from 'next/script';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import CookieBanner from '@/components/CookieBanner';
 import { AuthProvider } from '@/contexts/AuthContext';
 import './globals.css';
 
@@ -46,6 +47,7 @@ export default function RootLayout({
           <Header />
           <main className="pt-20 md:pt-16">{children}</main>
           <Footer />
+          <CookieBanner />
         </AuthProvider>
       </body>
     </html>

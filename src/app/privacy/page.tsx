@@ -38,9 +38,18 @@ export default function PrivacyPage() {
 
         <section>
           <h2 className="text-xl font-bold mb-3">Cookies</h2>
+          <p className="mb-3">
+            We use a small number of essential cookies to keep you logged in and remember your
+            preferences. We do not currently use advertising or tracking cookies.
+          </p>
+          <p className="mb-3">
+            If we introduce advertising in the future, it may involve personalised ads based on your
+            browsing behaviour, served by third parties such as Google. Before any such cookies are
+            set, we will ask for your explicit consent — you will always have a choice, and you can
+            change your mind at any time.
+          </p>
           <p>
-            We use essential cookies to keep you logged in and remember your preferences. We do not
-            use advertising cookies.
+            You can manage or clear cookies in your browser settings at any time.
           </p>
         </section>
 
