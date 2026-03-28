@@ -187,7 +187,9 @@ export default function GeneratePage() {
           seenTitles.add(key);
           return true;
         });
-        setRecentRecipes(deduped.slice(0, 3));
+        const sliced = deduped.slice(0, 3);
+        console.log('Recipe fields:', JSON.stringify(sliced?.[0]));
+        setRecentRecipes(sliced);
       } catch (error) {
         console.error('Error fetching recent recipes:', error);
       }
