@@ -12,7 +12,7 @@ import { StylizedCamera } from '@/components/NoPhotoPlaceholder';
 import { useAuth } from '@/contexts/AuthContext';
 import { GeneratedRecipeData, PANTRY_ESSENTIALS } from '@/types/generator';
 import { getAllCommunityRecipes } from '@/lib/supabase';
-import { ShoppingBasket } from 'lucide-react';
+import { ShoppingBasket, Utensils } from 'lucide-react';
 
 // Force dynamic rendering for this page (uses searchParams)
 export const dynamic = 'force-dynamic';
@@ -714,9 +714,17 @@ export default function GeneratePage() {
                 <button
                   key={i}
                   onClick={() => setGeneratedRecipe(recipe)}
-                  className="group block rounded-2xl overflow-hidden h-40 relative text-left bg-white shadow-md border border-stone-100"
+                  className="group block rounded-2xl overflow-hidden text-left bg-white shadow-md border border-stone-100"
                 >
-                  <div className="h-full flex flex-col justify-end p-4">
+                  {recipe.heroImage ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={recipe.heroImage} alt={recipe.title} className="w-full h-40 object-cover rounded-t-2xl" />
+                  ) : (
+                    <div className="w-full h-40 bg-stone-100 rounded-t-2xl flex items-center justify-center">
+                      <Utensils className="w-8 h-8 text-gray-300" />
+                    </div>
+                  )}
+                  <div className="px-4 pb-4 pt-3">
                     <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 group-hover:text-primary transition-colors">
                       {recipe.title}
                     </h3>
@@ -746,9 +754,17 @@ export default function GeneratePage() {
                 <Link
                   key={recipe.id}
                   href={`/recipes/community/${recipe.slug}`}
-                  className="group block rounded-2xl overflow-hidden h-40 relative bg-white shadow-md border border-stone-100"
+                  className="group block rounded-2xl overflow-hidden bg-white shadow-md border border-stone-100"
                 >
-                  <div className="h-full flex flex-col justify-end p-4">
+                  {recipe.photo_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={recipe.photo_url} alt={recipe.title} className="w-full h-40 object-cover rounded-t-2xl" />
+                  ) : (
+                    <div className="w-full h-40 bg-stone-100 rounded-t-2xl flex items-center justify-center">
+                      <Utensils className="w-8 h-8 text-gray-300" />
+                    </div>
+                  )}
+                  <div className="px-4 pb-4 pt-3">
                     <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                       {recipe.title}
                     </h3>
