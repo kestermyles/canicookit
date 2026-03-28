@@ -178,11 +178,10 @@ export default function GeneratePage() {
   useEffect(() => {
     async function fetchRecent() {
       try {
-        const recipes = await getRecentCommunityPhotos(6);
-        // Filter out empty photo_url strings and deduplicate by title
+        const recipes = await getRecentCommunityPhotos(9);
+        // Deduplicate by title
         const seenTitles = new Set<string>();
         const deduped = recipes
-          .filter((r: any) => r.photo_url?.trim())
           .filter((r: any) => {
             const key = r.title?.toLowerCase().trim() ?? '';
             if (seenTitles.has(key)) return false;
@@ -228,19 +227,6 @@ export default function GeneratePage() {
   }, [searchParams]);
   const ingredientInputRef = useRef<IngredientInputHandle>(null);
   const [pendingInputText, setPendingInputText] = useState('');
-  const [recentGenerated, setRecentGenerated] = useState<GeneratedRecipeData[]>([]);
-
-  // Load recent generated recipes from localStorage
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('recentGeneratedRecipes');
-      if (stored) {
-        setRecentGenerated(JSON.parse(stored));
-      }
-    } catch {
-      // ignore localStorage errors
-    }
-  }, []);
 
   const [generatedRecipe, setGeneratedRecipe] = useState<GeneratedRecipeData | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -299,17 +285,6 @@ export default function GeneratePage() {
       }
 
       setGeneratedRecipe(data.recipe);
-
-      // Save to recent recipes in localStorage (keep last 5)
-      try {
-        const stored = localStorage.getItem('recentGeneratedRecipes');
-        const existing: GeneratedRecipeData[] = stored ? JSON.parse(stored) : [];
-        const updated = [data.recipe, ...existing].slice(0, 5);
-        localStorage.setItem('recentGeneratedRecipes', JSON.stringify(updated));
-        setRecentGenerated(updated);
-      } catch {
-        // ignore localStorage errors
-      }
     } catch (err) {
       console.error('Generation error:', err);
       setError(err instanceof Error ? err.message : 'Failed to create recipe. Please try again.');
@@ -706,44 +681,13 @@ export default function GeneratePage() {
         )}
 
         {/* Recently Cooked by Our Community */}
-        {!generatedRecipe && (() => {
-          const recentGeneratedTitles = new Set(
-            recentGenerated.map(r => r.title?.toLowerCase().trim()).filter(Boolean)
-          );
-          const filteredRecentRecipes = recentRecipes.filter(
-            r => !recentGeneratedTitles.has(r.title?.toLowerCase().trim())
-          );
-          const hasCards = recentGenerated.length > 0 || filteredRecentRecipes.length > 0;
-          if (!hasCards) return null;
-          return (
+        {!generatedRecipe && recentRecipes.length > 0 && (
           <div className="max-w-2xl mx-auto mb-8">
             <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
               Recently cooked by our community
             </h2>
             <div className="grid md:grid-cols-3 gap-4">
-              {recentGenerated.map((recipe, i) => (
-                <button
-                  key={`gen-${i}`}
-                  onClick={() => setGeneratedRecipe(recipe)}
-                  className="group block rounded-2xl overflow-hidden text-left bg-white shadow-md border border-stone-100"
-                >
-                  {recipe.heroImage?.trim() ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={recipe.heroImage} alt={recipe.title} className="w-full h-40 object-cover rounded-t-2xl" />
-                  ) : (
-                    <div className="w-full h-40 bg-stone-100 rounded-t-2xl flex items-center justify-center">
-                      <Utensils className="w-8 h-8 text-gray-300" />
-                    </div>
-                  )}
-                  <div className="px-4 pb-4 pt-3">
-                    <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 group-hover:text-primary transition-colors">
-                      {recipe.title}
-                    </h3>
-                    <p className="text-xs text-gray-600 line-clamp-2">{recipe.description}</p>
-                  </div>
-                </button>
-              ))}
-              {filteredRecentRecipes.map((recipe) => (
+              {recentRecipes.map((recipe) => (
                 <Link
                   key={recipe.id}
                   href={`/recipes/community/${recipe.slug}`}
@@ -769,8 +713,7 @@ export default function GeneratePage() {
               ))}
             </div>
           </div>
-        );
-        })()}
+        )}
       </div>
 
       <AuthModal

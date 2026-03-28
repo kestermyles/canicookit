@@ -294,7 +294,8 @@ export async function getRecentCommunityPhotos(limit = 6): Promise<GeneratedReci
       return [];
     }
 
-    return data || [];
+    // Strict client-side filter: only keep rows with a real URL (>10 chars)
+    return (data || []).filter(r => r.photo_url && r.photo_url.trim().length > 10);
   } catch (error) {
     console.error('Error in getRecentCommunityPhotos:', error);
     return [];
