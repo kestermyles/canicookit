@@ -274,23 +274,17 @@ export default function ShareRecipePage() {
     <div className="min-h-screen bg-[#FAF9F6]">
       {/* Hero Banner */}
       <div
-        className="h-48 relative flex items-center justify-center"
-        style={{ backgroundImage: "url('/images/hero-guides.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top' }}
+        className="h-72 relative flex items-center justify-center"
+        style={{ backgroundImage: "url('/images/hero-share-recipe.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}
       >
-        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 bg-black/25" />
         <div className="relative z-10 text-center px-4">
-          <h1 className="text-3xl font-bold text-white font-display">Share a recipe with the community</h1>
-          <p className="text-base font-light mt-2 text-white/90">Got a recipe people always ask you for? This is where it lives.</p>
+          <h1 className="text-4xl font-bold text-white font-display">Share a recipe with the community</h1>
+          <p className="text-lg font-light mt-2 text-white/90">Got a recipe people always ask you for? This is where it lives.</p>
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 py-12">
-      <p className="text-secondary mb-8">
-        Got an old family recipe, or something you absolutely love and want the world to try? Add it
-        here with your steps, ingredients and a photograph &mdash; and we&apos;ll share it with our
-        community of cooks.
-      </p>
-
+      <div className="max-w-2xl mx-auto px-6 py-8 bg-white rounded-2xl shadow-md border border-stone-100 mt-8 mb-12">
       <div className="space-y-6">
         {/* Recipe name */}
         <div>
@@ -446,7 +440,7 @@ export default function ShareRecipePage() {
         <button
           onClick={handlePolish}
           disabled={polishing || !confirmed}
-          className="w-full px-8 py-4 bg-primary text-white rounded-lg font-bold text-lg hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          className="w-full px-8 py-3 bg-orange-500 text-white rounded-full font-medium hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
         >
           {polishing ? 'Polishing your recipe...' : 'Polish & Preview \u2192'}
         </button>

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { getRecipesByCuisine } from '@/lib/recipes';
-import { Flame, ChefHat } from 'lucide-react';
+import { ChefHat } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'From Scratch — Can I Cook It?',
@@ -20,24 +20,24 @@ export default async function FromScratchPage() {
   const recipes = await getRecipesByCuisine('from-scratch');
 
   return (
-    <div className="max-w-6xl mx-auto px-4">
-      {/* Hero */}
-      <section className="py-16 md:py-24 text-center max-w-3xl mx-auto">
-        <div className="flex justify-center mb-6">
-          <Flame className="w-12 h-12 text-primary" />
+    <div className="min-h-screen bg-[#FAF9F6]">
+      {/* Hero Banner */}
+      <div
+        className="h-72 relative flex items-center justify-center"
+        style={{ backgroundImage: "url('/images/hero-from-scratch.jpg')", backgroundSize: 'cover', backgroundPosition: 'center 40%' }}
+      >
+        <div className="absolute inset-0 bg-black/25" />
+        <div className="relative z-10 text-center px-4">
+          <h1 className="text-5xl font-bold text-white font-display">
+            From Scratch
+          </h1>
+          <p className="text-lg font-light mt-2 text-white/90 max-w-xl text-center">
+            Some things are worth the time. Real bread. Proper roasts. Made from scratch.
+          </p>
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 font-display">
-          From Scratch
-        </h1>
-        <p className="text-xl md:text-2xl text-secondary leading-relaxed">
-          Some things are worth the time. Real bread. Proper roasts. Made from
-          scratch.
-        </p>
-        <p className="text-secondary mt-4">
-          Long-form, multi-stage recipes for when you want to do it properly.
-        </p>
-      </section>
+      </div>
 
+      <div className="max-w-6xl mx-auto px-4">
       {/* Recipe Cards */}
       {recipes.length > 0 ? (
         <section className="pb-16">
@@ -87,6 +87,7 @@ export default async function FromScratchPage() {
           </p>
         </section>
       )}
+      </div>
     </div>
   );
 }
