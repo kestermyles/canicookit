@@ -37,7 +37,7 @@ export default async function FromScratchPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="max-w-6xl mx-auto px-4 pt-8">
       {/* Recipe Cards */}
       {recipes.length > 0 ? (
         <section className="pb-16">

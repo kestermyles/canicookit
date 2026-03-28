@@ -440,7 +440,7 @@ export default function ShareRecipePage() {
         <button
           onClick={handlePolish}
           disabled={polishing || !confirmed}
-          className="w-full px-8 py-3 bg-orange-500 text-white rounded-full font-medium hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          className="w-full px-8 py-3 bg-orange-500 text-white rounded-full font-medium hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {polishing ? 'Polishing your recipe...' : 'Polish & Preview \u2192'}
         </button>
