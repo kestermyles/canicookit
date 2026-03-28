@@ -716,7 +716,7 @@ export default function GeneratePage() {
                   onClick={() => setGeneratedRecipe(recipe)}
                   className="group block rounded-2xl overflow-hidden text-left bg-white shadow-md border border-stone-100"
                 >
-                  {recipe.heroImage ? (
+                  {recipe.heroImage?.trim() ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={recipe.heroImage} alt={recipe.title} className="w-full h-40 object-cover rounded-t-2xl" />
                   ) : (
@@ -756,7 +756,7 @@ export default function GeneratePage() {
                   href={`/recipes/community/${recipe.slug}`}
                   className="group block rounded-2xl overflow-hidden bg-white shadow-md border border-stone-100"
                 >
-                  {recipe.photo_url ? (
+                  {recipe.photo_url?.trim() ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={recipe.photo_url} alt={recipe.title} className="w-full h-40 object-cover rounded-t-2xl" />
                   ) : (
