@@ -24,7 +24,7 @@ export default async function FromScratchPage() {
       {/* Hero Banner */}
       <div
         className="h-72 relative flex items-center justify-center"
-        style={{ backgroundImage: "url('/images/hero-from-scratch.jpg')", backgroundSize: 'cover', backgroundPosition: 'center 40%' }}
+        style={{ backgroundImage: "url('/images/hero-from-scratch.jpg')", backgroundSize: 'cover', backgroundPosition: 'center 15%' }}
       >
         <div className="absolute inset-0 bg-black/25" />
         <div className="relative z-10 text-center px-4">

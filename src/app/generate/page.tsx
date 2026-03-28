@@ -12,6 +12,7 @@ import { StylizedCamera } from '@/components/NoPhotoPlaceholder';
 import { useAuth } from '@/contexts/AuthContext';
 import { GeneratedRecipeData, PANTRY_ESSENTIALS } from '@/types/generator';
 import { getAllCommunityRecipes } from '@/lib/supabase';
+import { ShoppingBasket } from 'lucide-react';
 
 // Force dynamic rendering for this page (uses searchParams)
 export const dynamic = 'force-dynamic';
@@ -406,7 +407,7 @@ export default function GeneratePage() {
       {/* Hero Banner */}
       <div
         className="h-72 relative flex items-center justify-center"
-        style={{ backgroundImage: "url('/images/hero-generate.jpg')", backgroundSize: 'cover', backgroundPosition: 'center 60%' }}
+        style={{ backgroundImage: "url('/images/hero-generate.jpg')", backgroundSize: 'cover', backgroundPosition: 'center 10%' }}
       >
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 text-center px-4">
@@ -433,7 +434,7 @@ export default function GeneratePage() {
                     onClick={() => setShowPantryModal(true)}
                     className="px-2.5 py-1 text-xs bg-orange-50 border border-orange-200 rounded-full text-orange-700 hover:bg-orange-100 transition-colors flex-shrink-0"
                   >
-                    🧂 Pantry
+                    <ShoppingBasket className="w-3.5 h-3.5 inline -mt-0.5" /> Pantry
                   </button>
                 </div>
                 <button
