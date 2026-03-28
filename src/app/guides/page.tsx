@@ -281,9 +281,9 @@ export default function GuidesPage() {
       {/* Hero Banner */}
       <div
         className="h-72 relative flex items-center justify-center"
-        style={{ backgroundImage: "url('/images/hero-guides.jpg')", backgroundSize: 'cover', backgroundPosition: 'center 30%' }}
+        style={{ backgroundImage: "url('/images/hero-guides.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}
       >
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 text-center px-4">
           <h1 className="text-5xl font-bold text-white font-display">
             Cooking Guides

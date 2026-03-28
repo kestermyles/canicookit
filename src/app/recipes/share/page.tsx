@@ -277,7 +277,7 @@ export default function ShareRecipePage() {
         className="h-48 relative flex items-center justify-center"
         style={{ backgroundImage: "url('/images/hero-guides.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top' }}
       >
-        <div className="absolute inset-0 bg-black/55" />
+        <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 text-center px-4">
           <h1 className="text-3xl font-bold text-white font-display">Share a recipe with the community</h1>
           <p className="text-base font-light mt-2 text-white/90">Got a recipe people always ask you for? This is where it lives.</p>
