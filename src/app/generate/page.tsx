@@ -11,7 +11,7 @@ import AuthModal from '@/components/AuthModal';
 import { StylizedCamera } from '@/components/NoPhotoPlaceholder';
 import { useAuth } from '@/contexts/AuthContext';
 import { GeneratedRecipeData, PANTRY_ESSENTIALS } from '@/types/generator';
-import { getAllCommunityRecipes } from '@/lib/supabase';
+import { getRecentCommunityPhotos } from '@/lib/supabase';
 import { ShoppingBasket, Utensils } from 'lucide-react';
 
 // Force dynamic rendering for this page (uses searchParams)
@@ -174,22 +174,22 @@ export default function GeneratePage() {
   const [userIngredients, setUserIngredients] = useState<string[]>([]);
   const [recentRecipes, setRecentRecipes] = useState<any[]>([]);
 
-  // Fetch recent community recipes
+  // Fetch recent community recipes with photos
   useEffect(() => {
     async function fetchRecent() {
       try {
-        const recipes = await getAllCommunityRecipes();
-        // Deduplicate by normalised title, keeping first occurrence (most recent)
+        const recipes = await getRecentCommunityPhotos(6);
+        // Filter out empty photo_url strings and deduplicate by title
         const seenTitles = new Set<string>();
-        const deduped = recipes.filter((r: any) => {
-          const key = r.title?.toLowerCase().trim() ?? '';
-          if (seenTitles.has(key)) return false;
-          seenTitles.add(key);
-          return true;
-        });
-        const sliced = deduped.slice(0, 3);
-        console.log('Recipe fields:', JSON.stringify(sliced?.[0]));
-        setRecentRecipes(sliced);
+        const deduped = recipes
+          .filter((r: any) => r.photo_url?.trim())
+          .filter((r: any) => {
+            const key = r.title?.toLowerCase().trim() ?? '';
+            if (seenTitles.has(key)) return false;
+            seenTitles.add(key);
+            return true;
+          });
+        setRecentRecipes(deduped);
       } catch (error) {
         console.error('Error fetching recent recipes:', error);
       }
@@ -709,7 +709,7 @@ export default function GeneratePage() {
         {!generatedRecipe && recentGenerated.length > 0 && (
           <div className="max-w-2xl mx-auto mb-8">
             <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
-              Your recent recipes
+              Recently cooked by the community
             </h2>
             <div className="grid md:grid-cols-3 gap-4">
               {recentGenerated.map((recipe, i) => (
