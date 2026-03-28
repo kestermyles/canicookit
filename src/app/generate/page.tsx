@@ -705,16 +705,25 @@ export default function GeneratePage() {
           </div>
         )}
 
-        {/* Recent Generated Recipes */}
-        {!generatedRecipe && recentGenerated.length > 0 && (
+        {/* Recently Cooked by Our Community */}
+        {!generatedRecipe && (() => {
+          const recentGeneratedTitles = new Set(
+            recentGenerated.map(r => r.title?.toLowerCase().trim()).filter(Boolean)
+          );
+          const filteredRecentRecipes = recentRecipes.filter(
+            r => !recentGeneratedTitles.has(r.title?.toLowerCase().trim())
+          );
+          const hasCards = recentGenerated.length > 0 || filteredRecentRecipes.length > 0;
+          if (!hasCards) return null;
+          return (
           <div className="max-w-2xl mx-auto mb-8">
             <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
-              Recently cooked by the community
+              Recently cooked by our community
             </h2>
             <div className="grid md:grid-cols-3 gap-4">
               {recentGenerated.map((recipe, i) => (
                 <button
-                  key={i}
+                  key={`gen-${i}`}
                   onClick={() => setGeneratedRecipe(recipe)}
                   className="group block rounded-2xl overflow-hidden text-left bg-white shadow-md border border-stone-100"
                 >
@@ -734,24 +743,6 @@ export default function GeneratePage() {
                   </div>
                 </button>
               ))}
-            </div>
-          </div>
-        )}
-
-        {/* See What Others Have Made Section */}
-        {!generatedRecipe && (() => {
-          const recentGeneratedTitles = new Set(
-            recentGenerated.map(r => r.title?.toLowerCase().trim()).filter(Boolean)
-          );
-          const filteredRecentRecipes = recentRecipes.filter(
-            r => !recentGeneratedTitles.has(r.title?.toLowerCase().trim())
-          );
-          return filteredRecentRecipes.length > 0 && (
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
-              See what others have made
-            </h2>
-            <div className="grid md:grid-cols-3 gap-4">
               {filteredRecentRecipes.map((recipe) => (
                 <Link
                   key={recipe.id}
