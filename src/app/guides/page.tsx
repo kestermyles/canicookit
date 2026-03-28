@@ -277,16 +277,25 @@ export default function GuidesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 font-display">
+    <div className="min-h-screen bg-[#FAF9F6]">
+      {/* Hero Banner */}
+      <div
+        className="h-72 relative flex items-center justify-center"
+        style={{ backgroundImage: "url('/images/hero-guides.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="relative z-10 text-center px-4">
+          <h1 className="text-5xl font-bold text-white font-display">
             Cooking Guides
           </h1>
-          <p className="text-foreground/70 text-xl max-w-2xl mx-auto mb-8">
-            Master the fundamentals. Learn the techniques that matter. Cook with
-            confidence.
+          <p className="text-lg font-light mt-2 max-w-lg text-center text-white">
+            Master the fundamentals. Learn the techniques that actually matter.
           </p>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 py-12">
+        <div className="text-center mb-12">
 
           {/* Search + Q&A Side by Side */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 relative text-left">
@@ -479,7 +488,7 @@ export default function GuidesPage() {
                 <Link
                   key={guide.slug}
                   href={`/guides/${guide.slug}`}
-                  className="group block bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all border border-gray-100"
+                  className="group block bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-all border border-stone-100"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>{getGuideIcon(guide.slug)}</div>
@@ -513,7 +522,7 @@ export default function GuidesPage() {
               <div className="text-center">
                 <button
                   onClick={() => setVisibleCount((prev) => prev + GUIDES_PER_PAGE)}
-                  className="px-8 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-full hover:border-primary hover:text-primary transition-colors font-semibold"
+                  className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors font-semibold"
                 >
                   Load More Guides
                 </button>

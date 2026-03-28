@@ -162,6 +162,7 @@ export default function ShareRecipePage() {
     const methodSteps = polishedRecipe.method.split('\n').filter((s) => s.trim());
 
     return (
+      <div className="min-h-screen bg-[#FAF9F6]">
       <div className="max-w-3xl mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold mb-2 font-display">Here&apos;s how your recipe will look</h1>
         <p className="text-secondary mb-8">Check everything looks right before sharing with the community.</p>
@@ -264,13 +265,26 @@ export default function ShareRecipePage() {
           </button>
         </div>
       </div>
+      </div>
     );
   }
 
   // Form step
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-2 font-display">Share a recipe with the community</h1>
+    <div className="min-h-screen bg-[#FAF9F6]">
+      {/* Hero Banner */}
+      <div
+        className="h-48 relative flex items-center justify-center"
+        style={{ backgroundImage: "url('/images/hero-guides.jpg')", backgroundSize: 'cover', backgroundPosition: 'center top' }}
+      >
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="relative z-10 text-center px-4">
+          <h1 className="text-3xl font-bold text-white font-display">Share a recipe with the community</h1>
+          <p className="text-base font-light mt-2 text-white/90">Got a recipe people always ask you for? This is where it lives.</p>
+        </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto px-4 py-12">
       <p className="text-secondary mb-8">
         Got an old family recipe, or something you absolutely love and want the world to try? Add it
         here with your steps, ingredients and a photograph &mdash; and we&apos;ll share it with our
@@ -446,6 +460,7 @@ export default function ShareRecipePage() {
           <a href="mailto:hello@canicookit.com" className="underline hover:text-gray-600">hello@canicookit.com</a>{' '}
           and we will remove it promptly.
         </p>
+      </div>
       </div>
     </div>
   );
