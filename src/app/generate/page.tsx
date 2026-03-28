@@ -405,8 +405,8 @@ export default function GeneratePage() {
     <div className="min-h-screen bg-[#FAF9F6] overflow-x-hidden max-w-[100vw]">
       {/* Hero Banner */}
       <div
-        className="h-64 relative flex items-center justify-center"
-        style={{ backgroundImage: "url('/images/hero-generate.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}
+        className="h-72 relative flex items-center justify-center"
+        style={{ backgroundImage: "url('/images/hero-generate.jpg')", backgroundSize: 'cover', backgroundPosition: 'center 60%' }}
       >
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 text-center px-4">
@@ -422,7 +422,7 @@ export default function GeneratePage() {
       <div className="max-w-4xl mx-auto px-4 pb-12">
         {/* Form Card */}
         {!generatedRecipe ? (
-          <div className="bg-white rounded-2xl shadow-2xl px-5 py-4 sm:p-8 max-w-2xl mx-1 sm:mx-auto mb-12 overflow-hidden -mt-8 relative z-10 border border-stone-100">
+          <div className="bg-white rounded-2xl shadow-2xl px-5 py-4 sm:p-8 max-w-2xl mx-1 sm:mx-auto mb-12 overflow-hidden mt-6 border border-stone-100">
             <div className="space-y-3 sm:space-y-6">
               {/* Scan ingredients — compact on mobile, prominent on desktop */}
               <div>
