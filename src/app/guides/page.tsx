@@ -286,10 +286,10 @@ export default function GuidesPage() {
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 text-center px-4">
           <h1 className="text-5xl font-bold text-white font-display">
-            Cooking Guides
+            Learn. Cook. Improve.
           </h1>
           <p className="text-lg font-light mt-2 max-w-lg text-center text-white">
-            Master the fundamentals. Learn the techniques that actually matter.
+            Guides, techniques, tips and tricks — everything you need to cook with confidence.
           </p>
         </div>
       </div>
@@ -301,7 +301,7 @@ export default function GuidesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 relative text-left">
             {/* Left: Guide Search */}
             <div className="h-full bg-orange-50 border border-orange-200 rounded-xl p-6">
-              <h2 className="text-lg font-bold mb-1">Find a guide</h2>
+              <h2 className="text-lg mb-1 font-handwritten">Find a guide</h2>
               <p className="text-sm text-secondary mb-3">Search our library of cooking guides</p>
               <div className="relative">
                 <input
