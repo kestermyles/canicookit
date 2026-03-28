@@ -78,7 +78,7 @@ export default function RecipeQA({ recipeTitle, recipeDescription, ingredients }
 
   return (
     <section className="mt-12 border-t pt-8">
-      <h2 className="text-2xl font-bold mb-4 font-handwritten">Got a question while you&apos;re cooking?</h2>
+      <h2 className="text-2xl mb-4 font-handwritten">Got a question while you&apos;re cooking?</h2>
 
       <div className="flex gap-2">
         <div className="relative flex-1">
