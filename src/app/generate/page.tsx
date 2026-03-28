@@ -402,39 +402,27 @@ export default function GeneratePage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden max-w-[100vw]">
-      {/* Background Image with Dark Overlay */}
-      <div className="absolute inset-0 -z-10 w-full h-full overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/images/recipes/texas-chili-hero.jpg"
-          alt="Background"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-black/70" />
-      </div>
-
-      <div className="max-w-4xl mx-auto px-4 py-4 sm:py-12">
-        {/* Logo and Tagline */}
-        <div className="text-center mb-4 sm:mb-8">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/logo-color.svg"
-            alt="Can I Cook It"
-            style={{ height: '80px', width: 'auto' }}
-            className="mx-auto mb-4 mix-blend-darken hidden sm:block"
-          />
-          <p className="text-base sm:text-lg text-white/80">
-            Tell us what&apos;s in your fridge. We&apos;ll do the rest.
-          </p>
-          <p className="text-sm text-white/60 mt-2 hidden sm:block">
-            Share a photo of your finished dish — the best ones get featured!
+    <div className="min-h-screen bg-[#FAF9F6] overflow-x-hidden max-w-[100vw]">
+      {/* Hero Banner */}
+      <div
+        className="h-64 relative flex items-center justify-center"
+        style={{ backgroundImage: "url('/images/hero-generate.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }}
+      >
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="relative z-10 text-center px-4">
+          <h1 className="text-4xl font-bold text-white font-display">
+            What do you want to cook today?
+          </h1>
+          <p className="text-lg font-light mt-2 text-white/90">
+            Tell us what you&apos;ve got — we&apos;ll build something delicious.
           </p>
         </div>
+      </div>
 
+      <div className="max-w-4xl mx-auto px-4 pb-12">
         {/* Form Card */}
         {!generatedRecipe ? (
-          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl px-5 py-4 sm:p-8 max-w-2xl mx-1 sm:mx-auto mb-12 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-2xl px-5 py-4 sm:p-8 max-w-2xl mx-1 sm:mx-auto mb-12 overflow-hidden -mt-8 relative z-10 border border-stone-100">
             <div className="space-y-3 sm:space-y-6">
               {/* Scan ingredients — compact on mobile, prominent on desktop */}
               <div>
@@ -648,7 +636,7 @@ export default function GeneratePage() {
             </div>
           </div>
         ) : (
-          <div className="bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8 max-w-2xl mx-auto mb-12">
+          <div className="bg-white rounded-2xl shadow-md p-8 max-w-2xl mx-auto mb-12 border border-stone-100 mt-8">
             <GeneratedRecipe
               recipe={generatedRecipe}
               onSave={handleSave}
@@ -717,7 +705,7 @@ export default function GeneratePage() {
         {/* Recent Generated Recipes */}
         {!generatedRecipe && recentGenerated.length > 0 && (
           <div className="max-w-2xl mx-auto mb-8">
-            <h2 className="text-2xl font-bold text-white text-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
               Your recent recipes
             </h2>
             <div className="grid md:grid-cols-3 gap-4">
@@ -725,7 +713,7 @@ export default function GeneratePage() {
                 <button
                   key={i}
                   onClick={() => setGeneratedRecipe(recipe)}
-                  className="group block rounded-lg overflow-hidden h-40 relative text-left bg-gradient-to-br from-orange-50 to-amber-100 border border-orange-200"
+                  className="group block rounded-2xl overflow-hidden h-40 relative text-left bg-white shadow-md border border-stone-100"
                 >
                   <div className="h-full flex flex-col justify-end p-4">
                     <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2 group-hover:text-primary transition-colors">
@@ -749,7 +737,7 @@ export default function GeneratePage() {
           );
           return filteredRecentRecipes.length > 0 && (
           <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold text-white text-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
               See what others have made
             </h2>
             <div className="grid md:grid-cols-3 gap-4">
@@ -757,7 +745,7 @@ export default function GeneratePage() {
                 <Link
                   key={recipe.id}
                   href={`/recipes/community/${recipe.slug}`}
-                  className="group block rounded-lg overflow-hidden h-40 relative bg-gradient-to-br from-orange-50 to-amber-100 border border-orange-200"
+                  className="group block rounded-2xl overflow-hidden h-40 relative bg-white shadow-md border border-stone-100"
                 >
                   <div className="h-full flex flex-col justify-end p-4">
                     <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
