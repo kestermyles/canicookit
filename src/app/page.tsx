@@ -111,7 +111,7 @@ export default async function HomePage() {
           <p className="text-foreground/70 text-xl mb-4 max-w-2xl mx-auto">
             Tell us what you've got — we'll build something delicious.
           </p>
-          <p className="text-secondary text-2xl mb-8 max-w-md mx-auto font-handwritten">
+          <p className="text-secondary text-2xl mb-8 max-w-md mx-auto font-handwritten uppercase">
             Real cooking. Real people. Real results.
           </p>
           <div className="max-w-2xl mx-auto">

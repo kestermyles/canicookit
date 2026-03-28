@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -29,9 +29,9 @@
   }
 
   .font-handwritten {
-    font-family: 'Caveat Brush', cursive;
+    font-family: 'Kalam', sans-serif;
     font-style: normal;
-    font-weight: 400;
+    font-weight: 300;
   }
 
   .recipe-content h2 {
