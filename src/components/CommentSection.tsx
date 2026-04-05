@@ -16,6 +16,46 @@ interface CommentSectionProps {
   recipeSlug: string;
 }
 
+function StarRatingInput({ rating, hoverRating, onRate, onHover, onLeave }: {
+  rating: number;
+  hoverRating: number;
+  onRate: (r: number) => void;
+  onHover: (r: number) => void;
+  onLeave: () => void;
+}) {
+  return (
+    <div className="space-y-1">
+      <p className="text-sm font-medium text-gray-700">Rate this recipe <span className="text-gray-400 font-normal">(optional)</span></p>
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            onClick={() => onRate(star)}
+            onMouseEnter={() => onHover(star)}
+            onMouseLeave={onLeave}
+            className="text-2xl transition-transform hover:scale-110 focus:outline-none"
+            aria-label={`Rate ${star} star${star !== 1 ? 's' : ''}`}
+          >
+            <span className={(hoverRating || rating) >= star ? 'text-yellow-400' : 'text-gray-300'}>
+              ★
+            </span>
+          </button>
+        ))}
+        {rating > 0 && (
+          <button
+            type="button"
+            onClick={() => onRate(0)}
+            className="text-xs text-gray-400 hover:text-gray-600 ml-1 self-center"
+          >
+            clear
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function CommentSection({ recipeSlug }: CommentSectionProps) {
   const { user } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
@@ -26,6 +66,8 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
+  const [rating, setRating] = useState<number>(0);
+  const [hoverRating, setHoverRating] = useState<number>(0);
   const photoRef = useRef<PhotoUploadHandle>(null);
 
   const displayName = user
@@ -99,6 +141,7 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
             recipeSlug,
             name: name.trim(),
             comment: comment.trim(),
+            rating: rating > 0 ? rating : null,
           }),
         });
 
@@ -115,6 +158,7 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
       setSuccess(true);
       if (!user) setShowSignupPrompt(true);
       setComment('');
+      setRating(0);
       if (!user) setName('');
       photoRef.current?.reset();
 
@@ -158,6 +202,14 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
           {/* Photo Upload */}
           <PhotoUpload ref={photoRef} />
           <p className="text-xs text-gray-500 -mt-2">Please only upload photos you took yourself.</p>
+
+          <StarRatingInput
+            rating={rating}
+            hoverRating={hoverRating}
+            onRate={setRating}
+            onHover={setHoverRating}
+            onLeave={() => setHoverRating(0)}
+          />
 
           {/* Name - show input for guests, plain text for logged-in users */}
           {user && displayName ? (

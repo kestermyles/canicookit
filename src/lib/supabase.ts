@@ -519,6 +519,7 @@ export async function createComment(commentData: {
   recipe_slug: string;
   name: string;
   comment: string;
+  rating?: number | null;
   ip_address?: string;
   user_agent?: string;
   user_id?: string;
@@ -537,6 +538,7 @@ export async function createComment(commentData: {
           user_agent: commentData.user_agent || null,
           user_id: commentData.user_id || null,
           user_email: commentData.user_email || null,
+          rating: commentData.rating || null,
           status: commentData.status || 'approved',
         },
       ])

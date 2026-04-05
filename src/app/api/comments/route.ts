@@ -164,6 +164,7 @@ export async function POST(request: NextRequest) {
       recipe_slug: recipeSlug,
       name: name.trim(),
       comment: comment.trim(),
+      rating: body.rating || null,
       ip_address: ip,
       user_agent: userAgent,
       status: isFlagged ? 'pending' : 'approved',
