@@ -52,9 +52,15 @@ export async function generateRecipe(
 The user has entered:
 ${userIngredients.map(i => `- ${i}`).join('\n')}
 
-Some of these may be ingredient names (e.g. "chicken", "lemon") and some may be dish names (e.g. "pad thai", "tarte tatin", "carbonara"). If you recognise a dish name, generate a recipe for that dish using its traditional ingredients. If they are all raw ingredients, create a recipe that uses them. If it's a mix, use the ingredients and draw inspiration from any dish names.
+Carefully analyse what the user has entered. There are three distinct cases:
 
-If any ingredient or dish name appears to be misspelled, interpret it as the most likely intended ingredient or dish and generate the recipe for that — do not reject it or ask for clarification.
+CASE 1 - The user has entered a specific dish or recipe name (e.g. "lemon curd", "beef ragu", "chocolate chip cookies", "pad thai", "tarte tatin", "carbonara"). Generate EXACTLY that dish. The title must be the dish they named. Do not reinterpret it as a cake, a soup, or a different dish. Lemon curd means lemon curd. Beef ragu means beef ragu. Chocolate chip cookies means chocolate chip cookies. Use traditional ingredients and method for that specific dish. Do not deviate.
+
+CASE 2 - The user has entered raw ingredients only (e.g. "chicken, peppers, garlic"). Create an original recipe that uses those as the main ingredients.
+
+CASE 3 - The user has entered a mix of dish names and raw ingredients. Generate a recipe for the named dish and incorporate the loose ingredients where they naturally fit.
+
+If any ingredient or dish name appears to be misspelled, interpret it as the most likely intended ingredient or dish.
 
 Assume they also have these pantry basics available — but use good judgement. Only reach for pantry items that genuinely suit the dish you are creating. A British chicken pie should not contain soy sauce or cumin just because they are in the pantry list. An Italian pasta dish should not contain worcestershire sauce. A Thai curry should not use red wine vinegar. Match pantry items to the dish's cuisine and character. When in doubt, leave it out.
 
