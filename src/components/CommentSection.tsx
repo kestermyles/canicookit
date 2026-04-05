@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from './AuthModal';
 import PhotoUpload, { PhotoUploadHandle } from './PhotoUpload';
+import { supabase } from '@/lib/supabase';
 
 interface Comment {
   id: string;
@@ -68,6 +69,7 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
   const [showSignupPrompt, setShowSignupPrompt] = useState(false);
   const [rating, setRating] = useState<number>(0);
   const [hoverRating, setHoverRating] = useState<number>(0);
+  const [photos, setPhotos] = useState<any[]>([]);
   const photoRef = useRef<PhotoUploadHandle>(null);
 
   const displayName = user
@@ -84,6 +86,17 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
   // Load comments on mount
   useEffect(() => {
     loadComments();
+  }, [recipeSlug]);
+
+  // Load approved photos for this recipe
+  useEffect(() => {
+    supabase
+      .from('recipe_photos')
+      .select('*')
+      .eq('recipe_slug', recipeSlug)
+      .eq('status', 'approved')
+      .order('sort_order', { ascending: true })
+      .then(({ data }) => setPhotos(data || []));
   }, [recipeSlug]);
 
   const loadComments = async () => {
@@ -164,6 +177,15 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
 
       await loadComments();
 
+      // Reload photos to pick up newly uploaded ones
+      supabase
+        .from('recipe_photos')
+        .select('*')
+        .eq('recipe_slug', recipeSlug)
+        .eq('status', 'approved')
+        .order('sort_order', { ascending: true })
+        .then(({ data }) => setPhotos(data || []));
+
       setTimeout(() => setSuccess(false), 5000);
     } catch {
       setError('Network error. Please try again.');
@@ -201,7 +223,7 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
         <div className="space-y-4">
           {/* Photo Upload */}
           <PhotoUpload ref={photoRef} />
-          <p className="text-xs text-gray-500 -mt-2">Please only upload photos you took yourself.</p>
+          <p className="text-xs text-gray-500 -mt-2">Add up to 6 photos — share your steps and the finished dish!</p>
 
           <StarRatingInput
             rating={rating}
@@ -310,6 +332,24 @@ export default function CommentSection({ recipeSlug }: CommentSectionProps) {
                   </div>
                 </div>
                 <p className="text-gray-700 whitespace-pre-wrap">{c.comment}</p>
+                {(() => {
+                  const commentPhotos = photos.filter(p =>
+                    p.uploaded_by_name === c.name &&
+                    Math.abs(new Date(p.created_at).getTime() - new Date(c.created_at).getTime()) < 120000
+                  );
+                  if (commentPhotos.length === 0) return null;
+                  return (
+                    <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+                      {commentPhotos.map((p: any) => (
+                        <div key={p.id} className="flex-shrink-0 text-center">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={p.photo_url} alt={p.step_label} className="w-20 h-20 object-cover rounded-lg" />
+                          <p className="text-xs text-gray-500 mt-1">{p.step_label}</p>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
             ))}
           </div>

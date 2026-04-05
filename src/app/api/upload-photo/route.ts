@@ -10,6 +10,8 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file') as File;
     const recipeSlug = formData.get('recipeSlug') as string;
     const uploaderName = formData.get('uploaderName') as string;
+    const sortOrder = parseInt(formData.get('sort_order') as string || '1');
+    const stepLabel = formData.get('step_label') as string || 'Finished dish';
 
     // Validate inputs
     if (!file) {
@@ -139,6 +141,8 @@ export async function POST(request: NextRequest) {
           photo_url: photoUrl,
           uploaded_by_name: uploaderName || 'Anonymous',
           ip_address: ip,
+          sort_order: sortOrder,
+          step_label: stepLabel,
           status: 'pending',
         },
       ])
