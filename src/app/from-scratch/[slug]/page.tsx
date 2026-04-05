@@ -8,7 +8,7 @@ import RecipeBody from '@/components/RecipeBody';
 import { extractIngredients, stripIngredientsHtml } from '@/utils/parseRecipeContent';
 
 function isBatchRecipe(tags: string[] = []): boolean {
-  const batchKeywords = ['cookies', 'biscuits', 'brownies', 'muffins', 'cupcakes', 'scones', 'flapjacks', 'traybakes', 'bars'];
+  const batchKeywords = ['cookies', 'biscuits', 'brownies', 'muffins', 'cupcakes', 'scones', 'flapjacks', 'traybakes', 'bars', 'shortbread'];
   return batchKeywords.some(kw => tags.some(tag => tag.toLowerCase().includes(kw)));
 }
 

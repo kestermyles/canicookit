@@ -14,7 +14,7 @@ import RecipeQA from '@/components/RecipeQA';
 import CookItMyWay from '@/components/CookItMyWay';
 
 function isBatchRecipe(tags: string[] = []): boolean {
-  const batchKeywords = ['cookies', 'biscuits', 'brownies', 'muffins', 'cupcakes', 'scones', 'flapjacks', 'traybakes', 'bars'];
+  const batchKeywords = ['cookies', 'biscuits', 'brownies', 'muffins', 'cupcakes', 'scones', 'flapjacks', 'traybakes', 'bars', 'shortbread'];
   return batchKeywords.some(kw => tags.some(tag => tag.toLowerCase().includes(kw)));
 }
 
