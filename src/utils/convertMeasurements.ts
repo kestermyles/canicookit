@@ -44,6 +44,41 @@ function isButter(context: string): boolean {
     !lower.includes('peanut butter');
 }
 
+function isSugarOrSweetener(context: string): boolean {
+  const lower = context.toLowerCase();
+  const keywords = [
+    'sugar', 'caster', 'icing', 'powdered', 'brown sugar',
+    'demerara', 'muscovado', 'golden caster',
+  ];
+  return keywords.some((kw) => lower.includes(kw));
+}
+
+function formatSugarCups(grams: number): string {
+  // 1 cup granulated/caster sugar = 200g; icing/powdered = 120g
+  // Use 200g as default (most recipes use granulated/caster)
+  const cups = grams / 200;
+  const whole = Math.floor(cups);
+  const frac = cups - whole;
+
+  const CUP_MAP: [number, string][] = [
+    [0.25, '¼'], [1/3, '⅓'], [0.5, '½'], [2/3, '⅔'], [0.75, '¾'],
+  ];
+
+  let fracSymbol: string | null = null;
+  for (const [val, sym] of CUP_MAP) {
+    if (Math.abs(frac - val) < 0.08) { fracSymbol = sym; break; }
+  }
+
+  if (Math.abs(frac) < 0.08 && whole > 0) {
+    return `${whole} cup${whole !== 1 ? 's' : ''}`;
+  }
+  if (fracSymbol) {
+    return whole > 0 ? `${whole}${fracSymbol} cups` : `${fracSymbol} cup`;
+  }
+  // No clean cup match — fall back to oz
+  return formatOz(grams);
+}
+
 // --- Formatting helpers ---
 
 // Small volume shortcuts (tbsp / tsp)
@@ -185,11 +220,13 @@ function convertSingleMetric(
     case 'g':
       if (isFlour(context)) return formatFlourCups(value);
       if (isButter(context)) return formatButterVolume(value);
+      if (isSugarOrSweetener(context)) return formatSugarCups(value);
       if (isLiquidDairy(context)) return formatVolume(value);
       return formatOz(value);
     case 'kg':
       if (isFlour(context)) return formatFlourCups(value * 1000);
       if (isButter(context)) return formatButterVolume(value * 1000);
+      if (isSugarOrSweetener(context)) return formatSugarCups(value * 1000);
       if (isLiquidDairy(context)) return formatVolume(value * 1000);
       return formatOz(value * 1000);
     case 'ml':
