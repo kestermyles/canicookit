@@ -79,6 +79,41 @@ function formatSugarCups(grams: number): string {
   return formatOz(grams);
 }
 
+function isOatsOrGrains(context: string): boolean {
+  const lower = context.toLowerCase();
+  const keywords = [
+    'oat', 'rolled oat', 'porridge oat', 'quick oat',
+    'cornmeal', 'polenta', 'semolina', 'breadcrumb',
+    'desiccated coconut', 'shredded coconut',
+    'ground almond', 'almond flour', 'almond meal',
+  ];
+  return keywords.some((kw) => lower.includes(kw));
+}
+
+function formatOatsCups(grams: number): string {
+  // 1 cup rolled oats = 90g
+  const cups = grams / 90;
+  const whole = Math.floor(cups);
+  const frac = cups - whole;
+
+  const CUP_MAP: [number, string][] = [
+    [0.25, '¼'], [1/3, '⅓'], [0.5, '½'], [2/3, '⅔'], [0.75, '¾'],
+  ];
+
+  let fracSymbol: string | null = null;
+  for (const [val, sym] of CUP_MAP) {
+    if (Math.abs(frac - val) < 0.08) { fracSymbol = sym; break; }
+  }
+
+  if (Math.abs(frac) < 0.08 && whole > 0) {
+    return `${whole} cup${whole !== 1 ? 's' : ''}`;
+  }
+  if (fracSymbol) {
+    return whole > 0 ? `${whole}${fracSymbol} cups` : `${fracSymbol} cup`;
+  }
+  return formatOz(grams);
+}
+
 // --- Formatting helpers ---
 
 // Small volume shortcuts (tbsp / tsp)
@@ -221,12 +256,14 @@ function convertSingleMetric(
       if (isFlour(context)) return formatFlourCups(value);
       if (isButter(context)) return formatButterVolume(value);
       if (isSugarOrSweetener(context)) return formatSugarCups(value);
+      if (isOatsOrGrains(context)) return formatOatsCups(value);
       if (isLiquidDairy(context)) return formatVolume(value);
       return formatOz(value);
     case 'kg':
       if (isFlour(context)) return formatFlourCups(value * 1000);
       if (isButter(context)) return formatButterVolume(value * 1000);
       if (isSugarOrSweetener(context)) return formatSugarCups(value * 1000);
+      if (isOatsOrGrains(context)) return formatOatsCups(value * 1000);
       if (isLiquidDairy(context)) return formatVolume(value * 1000);
       return formatOz(value * 1000);
     case 'ml':
