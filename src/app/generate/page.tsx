@@ -241,9 +241,73 @@ export default function GeneratePage() {
   const [showPantryModal, setShowPantryModal] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
   const [highlightCamera, setHighlightCamera] = useState(false);
+  const [inputMode, setInputMode] = useState<'ingredients' | 'describe'>('ingredients');
+  const [freeformDescription, setFreeformDescription] = useState('');
+  const [descPlaceholderIndex, setDescPlaceholderIndex] = useState(0);
+  const [descFadeIn, setDescFadeIn] = useState(true);
   const { user } = useAuth();
 
+  const DESCRIBE_PLACEHOLDERS = [
+    'e.g. A really lovely traditional English lemon curd',
+    'e.g. Something impressive I can make ahead for a dinner party',
+    'e.g. A comforting Italian chicken dish, not too heavy',
+    'e.g. Simple homemade bread I can bake on a Sunday',
+    'e.g. A classic French tarte tatin, done properly',
+  ];
+
+  // Rotate describe placeholder
+  useEffect(() => {
+    if (inputMode !== 'describe') return;
+    const interval = setInterval(() => {
+      setDescFadeIn(false);
+      setTimeout(() => {
+        setDescPlaceholderIndex((i) => (i + 1) % DESCRIBE_PLACEHOLDERS.length);
+        setDescFadeIn(true);
+      }, 300);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [inputMode]);
+
   const handleGenerate = async () => {
+    if (inputMode === 'describe') {
+      if (freeformDescription.trim().length < 5) {
+        setError('Please describe what you\'d like to cook');
+        return;
+      }
+
+      setIsGenerating(true);
+      setError(null);
+      setGeneratedRecipe(null);
+
+      try {
+        const response = await fetch('/api/generate-recipe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userIngredients: [],
+            essentials: Array.from(PANTRY_ESSENTIALS),
+            freeformDescription: freeformDescription.trim(),
+            ...(cookingMethod && { cookingMethod }),
+            ...(cuisinePreference && { cuisinePreference }),
+            ...(mealVibe && { mealVibe }),
+            ...(extraPreferences.trim() && { extraPreferences: extraPreferences.trim() }),
+          }),
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || 'Failed to create recipe');
+        }
+        setGeneratedRecipe(data.recipe);
+      } catch (err) {
+        console.error('Generation error:', err);
+        setError(err instanceof Error ? err.message : 'Failed to create recipe. Please try again.');
+      } finally {
+        setIsGenerating(false);
+      }
+      return;
+    }
+
     // Flush any pending text in the input before generating
     const flushed = ingredientInputRef.current?.flush();
 
@@ -402,90 +466,139 @@ export default function GeneratePage() {
         {!generatedRecipe ? (
           <div className="bg-white rounded-2xl shadow-2xl px-5 py-4 sm:p-8 max-w-2xl mx-1 sm:mx-auto mb-12 overflow-hidden mt-6 border border-stone-100">
             <div className="space-y-3 sm:space-y-6">
-              {/* Scan ingredients — compact on mobile, prominent on desktop */}
-              <div>
-                <div className="flex items-center gap-2 mb-2 sm:mb-3">
-                  <h2 className="text-lg sm:text-xl font-semibold">What ingredients do you have?</h2>
-                  <button
-                    type="button"
-                    onClick={() => setShowPantryModal(true)}
-                    className="px-2.5 py-1 text-xs bg-orange-50 border border-orange-200 rounded-full text-orange-700 hover:bg-orange-100 transition-colors flex-shrink-0"
-                  >
-                    <ShoppingBasket className="w-3.5 h-3.5 inline -mt-0.5" /> Pantry
-                  </button>
-                </div>
+              {/* Mode toggle */}
+              <div className="flex rounded-lg bg-gray-100 p-1">
                 <button
-                  ref={cameraButtonRef}
                   type="button"
-                  onClick={() => { setHighlightCamera(false); fileInputRef.current?.click(); }}
-                  disabled={isScanning}
-                  className={`w-full bg-orange-50 border-2 border-orange-300 rounded-xl p-3 sm:p-6 flex flex-row sm:flex-col items-center gap-2 sm:gap-2 cursor-pointer hover:border-primary hover:bg-orange-100/70 transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${highlightCamera ? 'ring-2 ring-primary ring-offset-2 animate-pulse' : ''}`}
+                  onClick={() => setInputMode('ingredients')}
+                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    inputMode === 'ingredients'
+                      ? 'bg-primary text-white'
+                      : 'bg-white text-gray-600 border border-gray-200'
+                  }`}
                 >
-                  {isScanning ? (
-                    <>
-                      <svg
-                        className="animate-spin h-5 w-5 sm:h-8 sm:w-8 text-primary flex-shrink-0"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
-                      <span className="text-sm font-medium text-primary">Identifying ingredients...</span>
-                    </>
-                  ) : (
-                    <>
-                      <StylizedCamera size={28} />
-                      <div className="sm:text-center">
-                        <span className="text-sm sm:text-base font-semibold text-gray-800">Show us what you&apos;ve got</span>
-                        <span className="text-sm text-gray-500 hidden sm:block mt-1">Take a photo of your fridge or ingredients</span>
-                      </div>
-                    </>
-                  )}
+                  I have ingredients
                 </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) handleScan(file);
-                  }}
-                />
-                {scanError && (
-                  <p className="mt-2 text-sm text-red-600">{scanError}</p>
-                )}
+                <button
+                  type="button"
+                  onClick={() => setInputMode('describe')}
+                  className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    inputMode === 'describe'
+                      ? 'bg-primary text-white'
+                      : 'bg-white text-gray-600 border border-gray-200'
+                  }`}
+                >
+                  Describe what you&apos;d like
+                </button>
               </div>
 
-              {/* Divider */}
-              <div className="flex items-center gap-3">
-                <div className="flex-1 border-t border-gray-200" />
-                <span className="text-xs text-gray-400 uppercase tracking-wide">or type them in</span>
-                <div className="flex-1 border-t border-gray-200" />
-              </div>
+              {inputMode === 'ingredients' ? (
+                <>
+                  {/* Scan ingredients — compact on mobile, prominent on desktop */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                      <h2 className="text-lg sm:text-xl font-semibold">What ingredients do you have?</h2>
+                      <button
+                        type="button"
+                        onClick={() => setShowPantryModal(true)}
+                        className="px-2.5 py-1 text-xs bg-orange-50 border border-orange-200 rounded-full text-orange-700 hover:bg-orange-100 transition-colors flex-shrink-0"
+                      >
+                        <ShoppingBasket className="w-3.5 h-3.5 inline -mt-0.5" /> Pantry
+                      </button>
+                    </div>
+                    <button
+                      ref={cameraButtonRef}
+                      type="button"
+                      onClick={() => { setHighlightCamera(false); fileInputRef.current?.click(); }}
+                      disabled={isScanning}
+                      className={`w-full bg-orange-50 border-2 border-orange-300 rounded-xl p-3 sm:p-6 flex flex-row sm:flex-col items-center gap-2 sm:gap-2 cursor-pointer hover:border-primary hover:bg-orange-100/70 transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${highlightCamera ? 'ring-2 ring-primary ring-offset-2 animate-pulse' : ''}`}
+                    >
+                      {isScanning ? (
+                        <>
+                          <svg
+                            className="animate-spin h-5 w-5 sm:h-8 sm:w-8 text-primary flex-shrink-0"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                          <span className="text-sm font-medium text-primary">Identifying ingredients...</span>
+                        </>
+                      ) : (
+                        <>
+                          <StylizedCamera size={28} />
+                          <div className="sm:text-center">
+                            <span className="text-sm sm:text-base font-semibold text-gray-800">Show us what you&apos;ve got</span>
+                            <span className="text-sm text-gray-500 hidden sm:block mt-1">Take a photo of your fridge or ingredients</span>
+                          </div>
+                        </>
+                      )}
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleScan(file);
+                      }}
+                    />
+                    {scanError && (
+                      <p className="mt-2 text-sm text-red-600">{scanError}</p>
+                    )}
+                  </div>
 
-              {/* Text ingredient input */}
-              <div>
-                <IngredientInput
-                  ref={ingredientInputRef}
-                  ingredients={userIngredients}
-                  onChange={setUserIngredients}
-                  onInputChange={setPendingInputText}
-                />
-              </div>
+                  {/* Divider */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 border-t border-gray-200" />
+                    <span className="text-xs text-gray-400 uppercase tracking-wide">or type them in</span>
+                    <div className="flex-1 border-t border-gray-200" />
+                  </div>
+
+                  {/* Text ingredient input */}
+                  <div>
+                    <IngredientInput
+                      ref={ingredientInputRef}
+                      ingredients={userIngredients}
+                      onChange={setUserIngredients}
+                      onInputChange={setPendingInputText}
+                    />
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-2">Describe the recipe you&apos;d like to create</p>
+                  <div className="relative">
+                    <textarea
+                      rows={4}
+                      value={freeformDescription}
+                      onChange={(e) => setFreeformDescription(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"
+                    />
+                    {!freeformDescription && (
+                      <span
+                        className={`absolute left-4 top-3 text-gray-400 pointer-events-none text-sm transition-opacity duration-300 ${descFadeIn ? 'opacity-100' : 'opacity-0'}`}
+                      >
+                        {DESCRIBE_PLACEHOLDERS[descPlaceholderIndex]}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Error Display */}
               {error && (
@@ -521,7 +634,7 @@ export default function GeneratePage() {
               )}
 
               {/* Surprise Me / Let Me Choose dual-card UX */}
-              {(userIngredients.length > 0 || pendingInputText.trim() !== '') && (
+              {((inputMode === 'ingredients' && (userIngredients.length > 0 || pendingInputText.trim() !== '')) || (inputMode === 'describe' && freeformDescription.trim().length > 10)) && (
                 <div className="pt-1 sm:pt-2">
                   {isGenerating ? (
                     <div className="text-center py-4">

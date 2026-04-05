@@ -29,7 +29,7 @@ interface ClaudeResponse {
 export async function generateRecipe(
   userIngredients: string[],
   essentials: string[],
-  preferences?: { cookingMethod?: string; cuisinePreference?: string; mealVibe?: string; extraPreferences?: string }
+  preferences?: { cookingMethod?: string; cuisinePreference?: string; mealVibe?: string; extraPreferences?: string; freeformDescription?: string }
 ): Promise<GeneratedRecipeData> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
 
@@ -47,9 +47,14 @@ export async function generateRecipe(
   }
 
   // Build the prompt
-  const prompt = `You are a creative chef helping someone cook with what they have.
+  const freeform = preferences?.freeformDescription;
 
-The user has entered:
+  const userInputSection = freeform
+    ? `The user has described what they want to make:
+"${freeform}"
+
+Generate a recipe that exactly matches this description. Honour every detail they have given — the specific dish, the character they describe (e.g. "traditional", "lovely", "comforting", "impressive"), and any constraints. Do not reinterpret or substitute. If they say "traditional English lemon curd", make a traditional English lemon curd — not a cake, tart, or variation.`
+    : `The user has entered:
 ${userIngredients.map(i => `- ${i}`).join('\n')}
 
 Carefully analyse what the user has entered. There are three distinct cases:
@@ -60,7 +65,11 @@ CASE 2 - The user has entered raw ingredients only (e.g. "chicken, peppers, garl
 
 CASE 3 - The user has entered a mix of dish names and raw ingredients (e.g. "lemon curd, almonds"). Generate a recipe for the named dish and incorporate the loose ingredients where they naturally fit — in this example, an almond lemon curd.
 
-If any ingredient or dish name appears to be misspelled, interpret it as the most likely intended ingredient or dish.
+If any ingredient or dish name appears to be misspelled, interpret it as the most likely intended ingredient or dish.`;
+
+  const prompt = `You are a creative chef helping someone cook with what they have.
+
+${userInputSection}
 
 Assume they also have these pantry basics available — but use good judgement. Only reach for pantry items that genuinely suit the dish you are creating. A British chicken pie should not contain soy sauce or cumin just because they are in the pantry list. An Italian pasta dish should not contain worcestershire sauce. A Thai curry should not use red wine vinegar. Match pantry items to the dish's cuisine and character. When in doubt, leave it out.
 

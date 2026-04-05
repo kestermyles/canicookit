@@ -70,12 +70,12 @@ export async function POST(request: NextRequest) {
 async function handleGenerateRecipe(
   body: GenerateRecipeRequest
 ): Promise<NextResponse<GenerateRecipeResponse>> {
-  const { userIngredients, essentials, cookingMethod, cuisinePreference, mealVibe, extraPreferences } = body;
+  const { userIngredients, essentials, cookingMethod, cuisinePreference, mealVibe, extraPreferences, freeformDescription } = body;
 
-  console.log('[Generate Recipe] Request body:', JSON.stringify({ userIngredients, essentials: essentials?.length, cookingMethod, cuisinePreference, mealVibe, extraPreferences }));
+  console.log('[Generate Recipe] Request body:', JSON.stringify({ userIngredients, essentials: essentials?.length, cookingMethod, cuisinePreference, mealVibe, extraPreferences, freeformDescription: freeformDescription?.substring(0, 50) }));
 
-  // Validate input
-  if (!Array.isArray(userIngredients) || userIngredients.length === 0) {
+  // Validate input — freeform mode skips ingredient count check
+  if (!freeformDescription && (!Array.isArray(userIngredients) || userIngredients.length === 0)) {
     return NextResponse.json(
       {
         success: false,
@@ -105,40 +105,45 @@ async function handleGenerateRecipe(
     );
   }
 
-  // Check ingredients against blocklist
-  const blockCheck = checkIngredientBlocklist(userIngredients);
-  if (!blockCheck.safe) {
-    console.log('[Generate Recipe] Ingredient blocked:', blockCheck.reason);
-    return NextResponse.json(
-      {
-        success: false,
-        error: "One or more ingredients don't look right — please check your list and try again.",
-      },
-      { status: 400 }
-    );
+  // Check ingredients against blocklist (skip in freeform mode)
+  if (!freeformDescription && userIngredients.length > 0) {
+    const blockCheck = checkIngredientBlocklist(userIngredients);
+    if (!blockCheck.safe) {
+      console.log('[Generate Recipe] Ingredient blocked:', blockCheck.reason);
+      return NextResponse.json(
+        {
+          success: false,
+          error: "One or more ingredients don't look right — please check your list and try again.",
+        },
+        { status: 400 }
+      );
+    }
   }
 
   try {
     console.log('[Generate Recipe] Starting generation...');
     console.log('[Generate Recipe] User ingredients:', userIngredients);
     console.log('[Generate Recipe] Essentials count:', essentials.length);
+    if (freeformDescription) console.log('[Generate Recipe] Freeform:', freeformDescription.substring(0, 80));
 
-    // Validate user input before making expensive API calls
-    console.log('[Generate Recipe] Validating user input...');
-    const inputValidation = await validateUserInput(userIngredients, essentials);
+    // Validate user input before making expensive API calls (skip in freeform mode)
+    if (!freeformDescription && userIngredients.length > 0) {
+      console.log('[Generate Recipe] Validating user input...');
+      const inputValidation = await validateUserInput(userIngredients, essentials);
 
-    if (!inputValidation.valid) {
-      console.log('[Generate Recipe] Input validation failed:', inputValidation.reason);
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Hmm, that doesn't look like something we can cook! Try entering real ingredients or a dish name 🍳",
-        },
-        { status: 400 }
-      );
+      if (!inputValidation.valid) {
+        console.log('[Generate Recipe] Input validation failed:', inputValidation.reason);
+        return NextResponse.json(
+          {
+            success: false,
+            error: "Hmm, that doesn't look like something we can cook! Try entering real ingredients or a dish name 🍳",
+          },
+          { status: 400 }
+        );
+      }
+
+      console.log('[Generate Recipe] Input validation passed');
     }
-
-    console.log('[Generate Recipe] Input validation passed');
 
     // Call Claude API to generate recipe
     const recipe = await generateRecipe(userIngredients, essentials, {
@@ -146,6 +151,7 @@ async function handleGenerateRecipe(
       cuisinePreference,
       mealVibe,
       extraPreferences,
+      freeformDescription,
     });
 
     console.log('[Generate Recipe] Recipe generated successfully:', recipe.title);
