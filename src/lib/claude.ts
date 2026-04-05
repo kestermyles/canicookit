@@ -54,11 +54,11 @@ ${userIngredients.map(i => `- ${i}`).join('\n')}
 
 Carefully analyse what the user has entered. There are three distinct cases:
 
-CASE 1 - The user has entered a specific dish or recipe name (e.g. "lemon curd", "beef ragu", "chocolate chip cookies", "pad thai", "tarte tatin", "carbonara"). Generate EXACTLY that dish. The title must be the dish they named. Do not reinterpret it as a cake, a soup, or a different dish. Lemon curd means lemon curd. Beef ragu means beef ragu. Chocolate chip cookies means chocolate chip cookies. Use traditional ingredients and method for that specific dish. Do not deviate.
+CASE 1 - The user has entered a specific dish or recipe name (e.g. "lemon curd", "beef ragu", "chocolate chip cookies", "pad thai", "tarte tatin", "carbonara"). Generate EXACTLY that dish. The title must be the dish they named. Do not reinterpret it as a variation — lemon curd means lemon curd, not lemon curd cake. Beef ragu means beef ragu, not a pasta bake. Use traditional ingredients and method for that specific dish. Do not deviate.
 
 CASE 2 - The user has entered raw ingredients only (e.g. "chicken, peppers, garlic"). Create an original recipe that uses those as the main ingredients.
 
-CASE 3 - The user has entered a mix of dish names and raw ingredients. Generate a recipe for the named dish and incorporate the loose ingredients where they naturally fit.
+CASE 3 - The user has entered a mix of dish names and raw ingredients (e.g. "lemon curd, almonds"). Generate a recipe for the named dish and incorporate the loose ingredients where they naturally fit — in this example, an almond lemon curd.
 
 If any ingredient or dish name appears to be misspelled, interpret it as the most likely intended ingredient or dish.
 
