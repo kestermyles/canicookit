@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
 
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 const CLAUDE_MODEL = 'claude-sonnet-4-6';
 
 export async function POST(request: Request) {
   try {
-    const { question, recipeTitle, recipeDescription, ingredients } = await request.json();
+    const { question, recipeTitle, recipeDescription, ingredients, recipeSlug } = await request.json();
 
     if (!question || !recipeTitle) {
       return NextResponse.json(
@@ -53,6 +54,14 @@ Ingredients: ${(ingredients || []).join(', ')}`;
 
     const data = await response.json();
     const answer = data.content?.[0]?.text || 'Sorry, I couldn\'t come up with an answer. Try rephrasing your question.';
+
+    try {
+      if (recipeSlug && answer && question) {
+        await supabase.from('recipe_questions').insert({ recipe_slug: recipeSlug, question: question.trim(), answer });
+      }
+    } catch (saveError) {
+      console.error('[Recipe QA] Failed to save Q&A:', saveError);
+    }
 
     return NextResponse.json({ answer });
   } catch (error) {

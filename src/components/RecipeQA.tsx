@@ -19,16 +19,33 @@ interface RecipeQAProps {
   recipeTitle: string;
   recipeDescription: string;
   ingredients: string[];
+  recipeSlug: string;
 }
 
-export default function RecipeQA({ recipeTitle, recipeDescription, ingredients }: RecipeQAProps) {
+export default function RecipeQA({ recipeTitle, recipeDescription, ingredients, recipeSlug }: RecipeQAProps) {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [fadeIn, setFadeIn] = useState(true);
+  const [previousQAs, setPreviousQAs] = useState<Array<{question: string; answer: string; created_at: string}>>([]);
+  const [loadingHistory, setLoadingHistory] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    async function fetchQAs() {
+      try {
+        const res = await fetch(`/api/recipe-qa/history?slug=${encodeURIComponent(recipeSlug)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setPreviousQAs(data.questions || []);
+        }
+      } catch {}
+      finally { setLoadingHistory(false); }
+    }
+    fetchQAs();
+  }, [recipeSlug]);
 
   // Rotate placeholder text with fade
   useEffect(() => {
@@ -59,6 +76,7 @@ export default function RecipeQA({ recipeTitle, recipeDescription, ingredients }
           recipeTitle,
           recipeDescription,
           ingredients,
+          recipeSlug,
         }),
       });
 
@@ -68,6 +86,7 @@ export default function RecipeQA({ recipeTitle, recipeDescription, ingredients }
         setError(data.error || 'Failed to get an answer. Please try again.');
       } else {
         setAnswer(data.answer);
+        setPreviousQAs(prev => [{ question: q, answer: data.answer, created_at: new Date().toISOString() }, ...prev]);
       }
     } catch {
       setError('Network error. Please try again.');
@@ -130,6 +149,25 @@ export default function RecipeQA({ recipeTitle, recipeDescription, ingredients }
       {error && !loading && (
         <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-sm text-red-700">{error}</p>
+        </div>
+      )}
+
+      {!loadingHistory && previousQAs.length > 0 && (
+        <div className="mt-8">
+          <h3 className="text-lg font-semibold mb-4 text-gray-700">People also asked</h3>
+          <div className="space-y-3">
+            {previousQAs.map((qa, i) => (
+              <details key={i} className="border border-gray-200 rounded-lg overflow-hidden">
+                <summary className="px-4 py-3 cursor-pointer font-medium text-gray-800 hover:bg-gray-50 list-none flex justify-between items-center">
+                  <span>{qa.question}</span>
+                  <span className="text-gray-400 text-sm ml-2">+</span>
+                </summary>
+                <div className="px-4 py-3 bg-orange-50 text-gray-800 leading-relaxed text-sm border-t border-gray-200">
+                  {qa.answer}
+                </div>
+              </details>
+            ))}
+          </div>
         </div>
       )}
     </section>

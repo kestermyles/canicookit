@@ -277,6 +277,7 @@ export default async function RecipePage({ params }: PageProps) {
           recipeTitle={recipe.title}
           recipeDescription={recipe.description}
           ingredients={recipe.ingredients}
+          recipeSlug={recipe.slug}
         />
 
         {/* Nutrition */}

@@ -271,6 +271,7 @@ export default async function CommunityRecipePage({ params }: PageProps) {
           recipeTitle={recipe.title}
           recipeDescription={recipe.description}
           ingredients={recipe.ingredients}
+          recipeSlug={params.slug}
         />
 
         {/* Cook it My Way — after all recipe content */}
