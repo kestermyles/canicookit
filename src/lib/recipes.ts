@@ -4,6 +4,7 @@ import matter from 'gray-matter';
 import { marked } from 'marked';
 import { Recipe, RecipeFrontmatter, RecipeSearchItem } from './types';
 import {
+  supabase,
   getAllCommunityRecipes,
   getRecipeBySlug as getDbRecipeBySlug,
   dbRowToRecipe,
@@ -169,11 +170,51 @@ export async function getRecipeBySlug(
 export async function getRecipesByCuisine(cuisine: string): Promise<Recipe[]> {
   const recipes = await getAllRecipes();
   const lowerCuisine = cuisine.toLowerCase();
-  return recipes.filter(
+  const markdownRecipes = recipes.filter(
     (r) =>
       r.cuisine.toLowerCase() === lowerCuisine ||
       (r.tags && r.tags.some((t) => t.toLowerCase() === lowerCuisine))
   );
+
+  // Also fetch community/generated recipes from Supabase
+  let mappedDbRecipes: Recipe[] = [];
+  try {
+    const { data: dbRecipes } = await supabase
+      .from('generated_recipes')
+      .select('slug, title, description, tags, prep_time, cook_time, serves, difficulty, calories, photo_url, quality_score, photo_is_ai_generated')
+      .contains('tags', [lowerCuisine])
+      .not('photo_url', 'is', null)
+      .order('created_at', { ascending: false });
+
+    mappedDbRecipes = (dbRecipes || []).map((r: any) => ({
+      slug: r.slug,
+      title: r.title,
+      description: r.description,
+      cuisine: lowerCuisine,
+      heroImage: r.photo_url || '',
+      prepTime: r.prep_time,
+      cookTime: r.cook_time,
+      serves: r.serves,
+      difficulty: r.difficulty,
+      calories: r.calories,
+      source: 'community' as const,
+      quality_score: r.quality_score,
+      status: 'approved' as const,
+      photo_is_ai_generated: r.photo_is_ai_generated,
+      tags: r.tags || [],
+    })) as Recipe[];
+  } catch (error) {
+    console.error('Error fetching community recipes by cuisine:', error);
+  }
+
+  // Merge and deduplicate by slug
+  const allRecipes = [...markdownRecipes, ...mappedDbRecipes];
+  const seen = new Set<string>();
+  return allRecipes.filter(r => {
+    if (seen.has(r.slug)) return false;
+    seen.add(r.slug);
+    return true;
+  });
 }
 
 export async function getRecipesByIngredient(
