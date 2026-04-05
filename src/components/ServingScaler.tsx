@@ -5,12 +5,18 @@ import { scaleIngredient } from '@/utils/scaleIngredient';
 import { convertIngredient } from '@/utils/convertMeasurements';
 import MeasurementToggle, { useMeasurementPreference } from './MeasurementToggle';
 
+function isBatchRecipe(tags: string[] = []): boolean {
+  const batchKeywords = ['cookies', 'biscuits', 'brownies', 'muffins', 'cupcakes', 'scones', 'flapjacks', 'traybakes', 'bars'];
+  return batchKeywords.some(kw => tags.some(tag => tag.toLowerCase().includes(kw)));
+}
+
 interface ServingScalerProps {
   defaultServings: number;
   ingredients: string[];
+  tags?: string[];
 }
 
-export default function ServingScaler({ defaultServings, ingredients }: ServingScalerProps) {
+export default function ServingScaler({ defaultServings, ingredients, tags }: ServingScalerProps) {
   const [servings, setServings] = useState(defaultServings);
   const [checked, setChecked] = useState<Set<number>>(new Set());
   const { isImperial } = useMeasurementPreference();
@@ -34,7 +40,7 @@ export default function ServingScaler({ defaultServings, ingredients }: ServingS
         <div className="flex items-center gap-3">
           <MeasurementToggle />
           <div className="flex items-center gap-1.5">
-            <span className="text-sm text-secondary mr-1">Serves</span>
+            <span className="text-sm text-secondary mr-1">{isBatchRecipe(tags) ? 'Makes' : 'Serves'}</span>
             <button
               type="button"
               onClick={() => setServings((s) => Math.max(min, s - 1))}

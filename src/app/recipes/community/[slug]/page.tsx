@@ -13,6 +13,11 @@ import RecipeBody from '@/components/RecipeBody';
 import RecipeQA from '@/components/RecipeQA';
 import CookItMyWay from '@/components/CookItMyWay';
 
+function isBatchRecipe(tags: string[] = []): boolean {
+  const batchKeywords = ['cookies', 'biscuits', 'brownies', 'muffins', 'cupcakes', 'scones', 'flapjacks', 'traybakes', 'bars'];
+  return batchKeywords.some(kw => tags.some(tag => tag.toLowerCase().includes(kw)));
+}
+
 interface PageProps {
   params: { slug: string };
 }
@@ -242,7 +247,7 @@ export default async function CommunityRecipePage({ params }: PageProps) {
             <p className="font-semibold">{recipe.cookTime} mins</p>
           </div>
           <div className="text-center px-4">
-            <p className="text-sm text-secondary">Serves</p>
+            <p className="text-sm text-secondary">{isBatchRecipe(recipe.tags) ? 'Makes' : 'Serves'}</p>
             <p className="font-semibold">{recipe.serves}</p>
           </div>
           <div className="text-center px-4">
@@ -264,6 +269,7 @@ export default async function CommunityRecipePage({ params }: PageProps) {
           defaultServings={recipe.serves || 4}
           ingredients={recipe.ingredients}
           methodHtml={recipe.contentHtml}
+          tags={recipe.tags}
         />
 
         {/* Recipe Q&A */}

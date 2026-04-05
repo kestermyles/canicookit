@@ -7,6 +7,11 @@ import PhotoGallery from '@/components/PhotoGallery';
 import RecipeBody from '@/components/RecipeBody';
 import { extractIngredients, stripIngredientsHtml } from '@/utils/parseRecipeContent';
 
+function isBatchRecipe(tags: string[] = []): boolean {
+  const batchKeywords = ['cookies', 'biscuits', 'brownies', 'muffins', 'cupcakes', 'scones', 'flapjacks', 'traybakes', 'bars'];
+  return batchKeywords.some(kw => tags.some(tag => tag.toLowerCase().includes(kw)));
+}
+
 interface PageProps {
   params: { slug: string };
 }
@@ -184,7 +189,7 @@ export default async function FromScratchRecipePage({ params }: PageProps) {
         {/* Quick Stats Bar — Active Time, not total */}
         <div className="flex flex-wrap gap-4 py-4 border-y border-gray-200 mb-8">
           <div className="text-center px-4">
-            <p className="text-sm text-secondary">Serves</p>
+            <p className="text-sm text-secondary">{isBatchRecipe(recipe.tags) ? 'Makes' : 'Serves'}</p>
             <p className="font-semibold">{recipe.serves}</p>
           </div>
           <div className="text-center px-4">
@@ -218,6 +223,7 @@ export default async function FromScratchRecipePage({ params }: PageProps) {
               : recipe.ingredients
           }
           methodHtml={methodHtml}
+          tags={recipe.tags}
         />
 
         {/* Additional Images */}

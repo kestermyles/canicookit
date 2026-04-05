@@ -14,6 +14,11 @@ interface GeneratedRecipeProps {
   savedSlug?: string | null;
 }
 
+function isBatchRecipe(tags: string[] = []): boolean {
+  const batchKeywords = ['cookies', 'biscuits', 'brownies', 'muffins', 'cupcakes', 'scones', 'flapjacks', 'traybakes', 'bars'];
+  return batchKeywords.some(kw => tags.some(tag => tag.toLowerCase().includes(kw)));
+}
+
 function formatLabel(s: string): string {
   return s
     .split('-')
@@ -89,7 +94,7 @@ export default function GeneratedRecipe({
             <p className="font-semibold">{totalTime} mins</p>
           </div>
           <div className="text-center px-4">
-            <p className="text-sm text-secondary">Serves</p>
+            <p className="text-sm text-secondary">{isBatchRecipe(recipe.tags) ? 'Makes' : 'Serves'}</p>
             <p className="font-semibold">{recipe.serves}</p>
           </div>
           <div className="text-center px-4">
