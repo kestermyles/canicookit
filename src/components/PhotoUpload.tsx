@@ -28,6 +28,8 @@ const PhotoUpload = forwardRef<PhotoUploadHandle>(function PhotoUpload(_props, r
   const [slots, setSlots] = useState<PhotoSlot[]>([]);
   const [compressing, setCompressing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const labels = getStepLabels(slots.length);
@@ -117,13 +119,52 @@ const PhotoUpload = forwardRef<PhotoUploadHandle>(function PhotoUpload(_props, r
     setSlots((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleDragStart = (index: number) => {
+    setDragIndex(index);
+  };
+
+  const handleSlotDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    setDragOverIndex(index);
+  };
+
+  const handleSlotDrop = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (dragIndex === null || dragIndex === index) {
+      setDragIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+    const newSlots = [...slots];
+    const dragged = newSlots[dragIndex];
+    newSlots.splice(dragIndex, 1);
+    newSlots.splice(index, 0, dragged);
+    setSlots(newSlots);
+    setDragIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDragIndex(null);
+    setDragOverIndex(null);
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex gap-2 overflow-x-auto pb-1">
         {/* Occupied slots */}
         {slots.map((slot, i) => (
-          <div key={i} className="flex-shrink-0 text-center relative">
+          <div
+            key={i}
+            className={`flex-shrink-0 text-center relative cursor-grab active:cursor-grabbing ${dragOverIndex === i ? 'ring-2 ring-primary rounded-lg' : ''}`}
+            draggable={true}
+            onDragStart={() => handleDragStart(i)}
+            onDragOver={(e) => handleSlotDragOver(e, i)}
+            onDrop={(e) => handleSlotDrop(e, i)}
+            onDragEnd={handleDragEnd}
+          >
             <div className="relative w-20 h-20">
+              <span className="absolute top-0.5 left-0.5 text-xs text-gray-300 leading-none select-none z-10">⠿</span>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={slot.preview}
